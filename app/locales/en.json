@@ -7,7 +7,9 @@
         "audit": "Audit Trail",
         "monitoring": "Monitoring",
         "settings": "Settings",
-        "logout": "Log out"
+        "logout": "Log out",
+        "brand_subtitle": "Cloud Manager",
+        "system_status_ok": "SYSTEM OPERATIONAL"
     },
     "common": {
         "close": "Close",
@@ -328,5 +330,21 @@
         "success": "Setup Successful!",
         "created": "Your administrator account has been created.",
         "err_occurred": "An error occurred during setup."
+    },
+    "footer": {
+        "powered_by": "Powered by Cloudflare API",
+        "developed_by": "Developed by",
+        "copyright": "© {year} TetherDNS. All rights reserved.",
+        "brand_description": "Professional Cloudflare DNS & DDNS management dashboard with advanced monitoring and audit capabilities.",
+        "infrastructure": "Infrastructure",
+        "engine_status": "Core Engine v4.3.1 - Stable",
+        "links": {
+            "home": "Home",
+            "audit": "Audit",
+            "monitoring": "Monitoring",
+            "settings": "Settings",
+            "github": "GitHub Profile",
+            "repository": "Source Code"
+        }
     }
 }

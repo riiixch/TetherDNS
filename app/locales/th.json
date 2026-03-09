@@ -7,7 +7,9 @@
         "audit": "บันทึกกิจกรรม",
         "monitoring": "การตรวจสอบสถานะ",
         "settings": "ตั้งค่า",
-        "logout": "ออกจากระบบ"
+        "logout": "ออกจากระบบ",
+        "brand_subtitle": "ระบบจัดการคลาวด์",
+        "system_status_ok": "ระบบทำงานปกติ"
     },
     "common": {
         "close": "ปิด",
@@ -328,5 +330,21 @@
         "success": "ตั้งค่าสำเร็จ!",
         "created": "สร้างบัญชีผู้ดูแลระบบของคุณเรียบร้อยแล้ว",
         "err_occurred": "เกิดข้อผิดพลาดระหว่างการตั้งค่า"
+    },
+    "footer": {
+        "powered_by": "ขับเคลื่อนโดย Cloudflare API",
+        "developed_by": "พัฒนาโดย",
+        "copyright": "© {year} TetherDNS สงวนลิขสิทธิ์",
+        "brand_description": "แดชบอร์ดสำหรับจัดการ Cloudflare DNS และ DDNS ระดับมืออาชีพ พร้อมระบบตรวจสอบและบันทึกกิจกรรมขั้นสูง",
+        "infrastructure": "โครงสร้างพื้นฐาน",
+        "engine_status": "Core Engine v4.3.1 - สถียร",
+        "links": {
+            "home": "หน้าแรก",
+            "audit": "บันทึกกิจกรรม",
+            "monitoring": "การตรวจสอบสถานะ",
+            "settings": "ตั้งค่า",
+            "github": "โปรไฟล์ GitHub",
+            "repository": "ซอร์สโค้ด"
+        }
     }
 }

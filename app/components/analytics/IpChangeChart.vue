@@ -11,23 +11,30 @@ interface AnalyticsData {
     }
 }
 
+const { t } = useI18n()
 const { data: analytics, pending } = await useFetch<AnalyticsData>('/api/analytics/ip-changes')
+const colorMode = useColorMode()
+
+const isDark = computed(() => colorMode.value === 'dark')
 
 const chartOptions = computed(() => ({
     chart: {
         id: 'ip-changes-chart',
         toolbar: { show: false },
-        animations: { enabled: true }
+        animations: { enabled: true },
+        background: 'transparent'
     },
     xaxis: {
         categories: analytics.value?.data?.labels || [],
         labels: {
-            style: { colors: '#94a3b8' }
-        }
+            style: { colors: isDark.value ? '#94a3b8' : '#64748b' }
+        },
+        axisBorder: { show: false },
+        axisTicks: { show: false }
     },
     yaxis: {
         labels: {
-            style: { colors: '#94a3b8' }
+            style: { colors: isDark.value ? '#94a3b8' : '#64748b' }
         }
     },
     stroke: {
@@ -39,23 +46,34 @@ const chartOptions = computed(() => ({
         type: 'gradient',
         gradient: {
             shadeIntensity: 1,
-            opacityFrom: 0.7,
-            opacityTo: 0.3,
-            stops: [0, 90, 100]
+            opacityFrom: 0.45,
+            opacityTo: 0.05,
+            stops: [0, 100]
         }
     },
     grid: {
-        borderColor: '#1e293b',
-        strokeDashArray: 4
+        borderColor: isDark.value ? '#1e293b' : '#e2e8f0',
+        strokeDashArray: 4,
+        padding: { left: 10, right: 10 }
     },
     theme: {
-        mode: 'dark' as const
+        mode: isDark.value ? 'dark' as const : 'light' as const
+    },
+    tooltip: {
+        theme: isDark.value ? 'dark' : 'light'
+    },
+    markers: {
+        size: 4,
+        colors: ['#3b82f6'],
+        strokeColors: isDark.value ? '#0f172a' : '#fff',
+        strokeWidth: 2,
+        hover: { size: 6 }
     }
 }))
 
 const series = computed(() => [
     {
-        name: 'IP Changes',
+        name: t('analytics.ip_changes'),
         data: analytics.value?.data?.datasets[0]?.data || []
     }
 ])
