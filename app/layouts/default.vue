@@ -51,6 +51,21 @@ const currentYear = new Date().getFullYear();
                             :class="$route.path === '/' ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-primary-400 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'">
                             {{ $t('nav.dashboard') }}
                         </NuxtLink>
+                        <NuxtLink v-if="user" to="/zones"
+                            class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all"
+                            :class="$route.path === '/zones' ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-primary-400 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'">
+                            {{ $t('nav.zones') }}
+                        </NuxtLink>
+                        <NuxtLink v-if="user" to="/accounts"
+                            class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all"
+                            :class="$route.path === '/accounts' ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-primary-400 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'">
+                            {{ $t('nav.accounts') }}
+                        </NuxtLink>
+                        <NuxtLink v-if="user" to="/logs"
+                            class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all"
+                            :class="$route.path === '/logs' ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-primary-400 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'">
+                            {{ $t('nav.logs') }}
+                        </NuxtLink>
                         <NuxtLink v-if="user" to="/audit"
                             class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all"
                             :class="$route.path === '/audit' ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-primary-400 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'">
@@ -67,7 +82,7 @@ const currentYear = new Date().getFullYear();
                     <div class="flex items-center gap-2">
                         <div
                             class="hidden sm:flex items-center gap-2 border-r border-slate-200 dark:border-slate-800 pr-2 mr-2">
-                            <LanguageSwitcher />
+                            <CommonLanguageSwitcher />
                             <ClientOnly>
                                 <UButton
                                     :icon="$colorMode.preference === 'dark' ? 'i-heroicons-moon' : 'i-heroicons-sun'"
@@ -126,6 +141,24 @@ const currentYear = new Date().getFullYear();
                                                     <UIcon name="i-heroicons-squares-2x2" class="w-5 h-5" />
                                                     {{ $t('nav.dashboard') }}
                                                 </NuxtLink>
+                                                <NuxtLink v-if="user" to="/zones" @click="isOpenMenu = false"
+                                                    class="flex items-center gap-3 p-3 rounded-xl transition-colors font-medium"
+                                                    :class="$route.path === '/zones' ? 'bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'">
+                                                    <UIcon name="i-heroicons-globe-alt" class="w-5 h-5" />
+                                                    {{ $t('nav.zones') }}
+                                                </NuxtLink>
+                                                <NuxtLink v-if="user" to="/accounts" @click="isOpenMenu = false"
+                                                    class="flex items-center gap-3 p-3 rounded-xl transition-colors font-medium"
+                                                    :class="$route.path === '/accounts' ? 'bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'">
+                                                    <UIcon name="i-heroicons-user-group" class="w-5 h-5" />
+                                                    {{ $t('nav.accounts') }}
+                                                </NuxtLink>
+                                                <NuxtLink v-if="user" to="/logs" @click="isOpenMenu = false"
+                                                    class="flex items-center gap-3 p-3 rounded-xl transition-colors font-medium"
+                                                    :class="$route.path === '/logs' ? 'bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'">
+                                                    <UIcon name="i-heroicons-clock" class="w-5 h-5" />
+                                                    {{ $t('nav.logs') }}
+                                                </NuxtLink>
                                                 <NuxtLink v-if="user" to="/audit" @click="isOpenMenu = false"
                                                     class="flex items-center gap-3 p-3 rounded-xl transition-colors font-medium"
                                                     :class="$route.path === '/audit' ? 'bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'">
@@ -143,7 +176,7 @@ const currentYear = new Date().getFullYear();
                                             <div class="mt-auto space-y-4">
                                                 <div
                                                     class="flex items-center justify-between gap-4 p-2 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
-                                                    <LanguageSwitcher class="flex-1" />
+                                                    <CommonLanguageSwitcher class="flex-1" />
                                                     <ClientOnly>
                                                         <UButton
                                                             :icon="$colorMode.preference === 'dark' ? 'i-heroicons-moon' : 'i-heroicons-sun'"

@@ -210,6 +210,11 @@
     "settings": {
         "title": "ตั้งค่า",
         "subtitle": "ตั้งค่าความถี่ของ DDNS และการแจ้งเตือนต่างๆ",
+        "tab_general": "ระบบทั่วไป",
+        "tab_security": "ความปลอดภัย",
+        "tab_api": "API และการเข้าถึง",
+        "tab_notifications": "การแจ้งเตือน",
+        "tab_users": "จัดการผู้ใช้",
         "ddns_title": "ตั้งค่า DDNS",
         "ddns_interval": "ความถี่ในการตรวจสอบ DDNS",
         "ddns_interval_hint": "ระบุความถี่ที่ระบบจะทำการตรวจสอบการเปลี่ยนแปลง IP",

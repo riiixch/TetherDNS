@@ -53,23 +53,36 @@ watch(isOpen, (val) => {
 </script>
 
 <template>
-    <UModal v-model:open="isOpen" :title="$t('zones.add_modal_title')" :description="$t('zones.add_modal_desc')">
+    <UModal v-model:open="isOpen" :title="$t('zones.add_modal_title')" :description="$t('zones.add_modal_desc')" :ui="{
+        content: 'dark:bg-slate-900/90 backdrop-blur-2xl border-slate-800/50 rounded-3xl',
+        header: 'font-black tracking-tight text-xl font-sans'
+    }">
         <template #body>
-            <form @submit.prevent="handleAdd" class="space-y-4">
+            <form @submit.prevent="handleAdd" class="space-y-6">
                 <UFormField :label="$t('zones.account_field')" name="account">
                     <USelect v-model="selectedAccountId" :items="accountOptions" value-key="value"
-                        :placeholder="$t('zones.account_placeholder')" class="w-full" />
-                    <p class="text-xs text-gray-400 mt-1">{{ $t('zones.account_hint') }}</p>
+                        :placeholder="$t('zones.account_placeholder')" class="w-full"
+                        :ui="{ base: 'rounded-xl h-12 font-sans' }" />
+                    <template #help>
+                        <p class="text-xs text-slate-500 font-sans mt-1">{{ $t('zones.account_hint') }}</p>
+                    </template>
                 </UFormField>
 
                 <UFormField :label="$t('zones.domain_field')" name="domain">
-                    <UInput v-model="domainName" :placeholder="$t('zones.domain_placeholder')" class="w-full" />
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $t('zones.domain_hint') }}</p>
+                    <UInput v-model="domainName" :placeholder="$t('zones.domain_placeholder')" class="w-full"
+                        :ui="{ base: 'rounded-xl h-12 font-sans' }" />
+                    <template #help>
+                        <p class="text-xs text-slate-500 font-sans mt-1">{{ $t('zones.domain_hint') }}</p>
+                    </template>
                 </UFormField>
 
                 <div class="flex justify-end gap-3 pt-2">
-                    <UButton color="neutral" variant="ghost" @click="isOpen = false">{{ $t('common.cancel') }}</UButton>
-                    <UButton type="submit" color="primary" :loading="isLoading">{{ $t('zones.add_zone') }}</UButton>
+                    <UButton color="neutral" variant="ghost" class="rounded-xl font-bold font-sans"
+                        @click="isOpen = false">{{
+                            $t('common.cancel') }}</UButton>
+                    <UButton type="submit" color="primary" :loading="isLoading"
+                        class="rounded-xl font-bold font-sans px-8">{{
+                            $t('zones.add_zone') }}</UButton>
                 </div>
             </form>
         </template>

@@ -109,23 +109,27 @@ const exportJson = () => {
 </script>
 
 <template>
-    <UCard>
+    <UCard
+        class="bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl border-slate-200 dark:border-slate-800/50 shadow-xl rounded-2xl ring-1 ring-slate-200 dark:ring-slate-800/50">
         <template #header>
-            <div class="flex flex-wrap items-center justify-between">
-                <div class="columns-12 lg:columns-6 flex flex-col">
-                    <h2 class="text-lg font-semibold">{{ $t('zones.title') }}</h2>
-                    <p class="text-sm text-gray-400">{{ $t('zones.subtitle') }}</p>
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="flex flex-col">
+                    <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight font-sans">{{
+                        $t('zones.title') }}</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 font-medium mt-1 font-sans">{{
+                        $t('zones.subtitle') }}</p>
                 </div>
-                <div class="columns-12 lg:columns-6 flex flex-wrap gap-2 lg:w-auto w-full justify-end">
-                    <UButton icon="i-heroicons-document-arrow-down" color="neutral" variant="ghost"
-                        :disabled="!hasAccounts" @click="exportJson">
+                <div class="flex flex-wrap items-center gap-2 lg:w-auto w-full justify-end">
+                    <UButton icon="i-heroicons-document-arrow-down" color="neutral" variant="soft"
+                        :disabled="!hasAccounts" class="rounded-xl font-semibold font-sans" @click="exportJson">
                         {{ $t('zones.export_json') }}
                     </UButton>
-                    <UButton icon="i-heroicons-arrow-down-tray" color="neutral" variant="ghost" :disabled="!hasAccounts"
-                        @click="openImportModal">
+                    <UButton icon="i-heroicons-arrow-down-tray" color="neutral" variant="soft" :disabled="!hasAccounts"
+                        class="rounded-xl font-semibold font-sans" @click="openImportModal">
                         {{ $t('zones.import_all') }}
                     </UButton>
-                    <UButton icon="i-heroicons-plus" color="primary" :disabled="!hasAccounts"
+                    <UButton icon="i-heroicons-plus" color="primary" variant="solid" :disabled="!hasAccounts"
+                        class="rounded-xl font-bold font-sans shadow-lg shadow-primary-500/20"
                         @click="isAddModalOpen = true">
                         {{ $t('zones.add_zone') }}
                     </UButton>
@@ -140,12 +144,14 @@ const exportJson = () => {
 
         <div v-if="hasAccounts">
             <!-- Search -->
-            <div class="mb-4">
+            <div class="mb-6 flex items-center justify-between gap-4">
                 <UInput v-model="searchQuery" :placeholder="$t('common.search')" icon="i-heroicons-magnifying-glass"
-                    class="max-w-sm" />
+                    class="max-w-sm w-full" :ui="{ base: 'rounded-xl font-sans' }" />
             </div>
 
-            <UTable :data="filteredZones" :columns="columns" :loading="pending">
+            <UTable :data="filteredZones" :columns="columns" :loading="pending" :ui="{
+                th: 'bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-md text-slate-900 dark:text-slate-100 font-bold whitespace-nowrap'
+            }">
                 <template #accountLabel-cell="{ row }">
                     <UBadge color="neutral" variant="subtle">{{ row.original?.account?.label || 'N/A' }}</UBadge>
                 </template>
@@ -153,12 +159,14 @@ const exportJson = () => {
                     <UBadge color="secondary" variant="solid">{{ row.original?._count?.records || 0 }}</UBadge>
                 </template>
                 <template #actions-cell="{ row }">
-                    <div class="flex justify-end gap-2">
-                        <UButton size="sm" color="secondary" variant="ghost" icon="i-heroicons-cog-8-tooth"
+                    <div class="flex justify-end gap-1">
+                        <UButton size="sm" color="neutral" variant="ghost" icon="i-heroicons-cog-8-tooth"
+                            class="rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                             :to="`/zones/${row.original.cfZoneId}`">
                             {{ $t('common.edit') }}
                         </UButton>
                         <UButton size="sm" color="error" variant="ghost" icon="i-heroicons-trash"
+                            class="rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors"
                             @click="openDeleteModal(row.original)" />
                     </div>
                 </template>
@@ -179,7 +187,7 @@ const exportJson = () => {
                         <div class="flex justify-end gap-3">
                             <UButton color="neutral" variant="ghost" @click="deleteModalOpen = false">{{
                                 $t('common.cancel')
-                            }}</UButton>
+                                }}</UButton>
                             <UButton color="error" :loading="deleteLoading" @click="executeDelete">{{
                                 $t('common.delete') }}
                             </UButton>

@@ -210,6 +210,11 @@
     "settings": {
         "title": "Settings",
         "subtitle": "Configure DDNS interval and notification preferences",
+        "tab_general": "General System",
+        "tab_security": "Security",
+        "tab_api": "API & Access",
+        "tab_notifications": "Notifications",
+        "tab_users": "User Management",
         "ddns_title": "DDNS Configuration",
         "ddns_interval": "DDNS Check Interval",
         "ddns_interval_hint": "How often the system checks for IP changes.",

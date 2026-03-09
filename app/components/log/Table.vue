@@ -59,25 +59,29 @@ const onFilterChange = () => {
 </script>
 
 <template>
-    <UCard>
+    <UCard
+        class="bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl border-slate-200 dark:border-slate-800/50 shadow-xl rounded-2xl ring-1 ring-slate-200 dark:ring-slate-800/50">
         <template #header>
-            <div class="flex flex-wrap items-center justify-between">
-                <div class="columns-12 lg:columns-6 flex flex-col">
-                    <h2 class="text-lg font-semibold">{{ $t('logs.title') }}</h2>
-                    <p class="text-sm text-gray-400">{{ $t('logs.subtitle') }}</p>
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="flex flex-col">
+                    <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight font-sans">{{
+                        $t('logs.title') }}</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 font-medium mt-1 font-sans">{{
+                        $t('logs.subtitle') }}</p>
                 </div>
-                <div class="columns-12 lg:columns-6 flex flex-wrap gap-3 lg:w-auto w-full justify-end">
+                <div class="flex flex-wrap items-center gap-3 lg:w-auto w-full justify-end">
                     <USelect v-model="statusFilter"
                         :items="[{ label: $t('logs.filter_status'), value: 'ALL' }, { label: $t('common.success'), value: 'SUCCESS' }, { label: $t('common.failed'), value: 'FAILED' }]"
-                        value-key="value" class="w-36" @update:model-value="onFilterChange" />
-                    <UButton icon="i-heroicons-arrow-path" color="neutral" variant="ghost" @click="loadData"
-                        :loading="pending" />
+                        value-key="value" class="w-36" :ui="{ base: 'font-sans rounded-xl' }"
+                        @update:model-value="onFilterChange" />
+                    <UButton icon="i-heroicons-arrow-path" color="neutral" variant="soft" class="rounded-xl shadow-sm"
+                        @click="loadData" :loading="pending" />
                 </div>
             </div>
         </template>
 
         <UTable :data="logs" :columns="columns" :loading="pending" class="overflow-auto relative" :ui="{
-            th: 'sticky top-0 z-10 bg-white dark:bg-gray-900 shadow-[0_1px_0_0_theme(colors.gray.200)] dark:shadow-[0_1px_0_0_theme(colors.gray.800)] whitespace-nowrap'
+            th: 'sticky top-0 z-10 bg-slate-50/90 dark:bg-slate-900/90 backdrop-blur-md shadow-[0_1px_0_0_theme(colors.slate.200)] dark:shadow-[0_1px_0_0_theme(colors.slate.800)] text-slate-900 dark:text-slate-100 font-bold whitespace-nowrap'
         }">
             <template #time-cell="{ row }">
                 <span class="text-sm text-gray-400 whitespace-nowrap">{{ formatDate(row.original.createdAt) }}</span>
@@ -89,7 +93,8 @@ const onFilterChange = () => {
                 <UBadge color="neutral" variant="subtle">{{ row.original.record?.zone?.name || 'N/A' }}</UBadge>
             </template>
             <template #status-cell="{ row }">
-                <UBadge :color="row.original.status === 'SUCCESS' ? 'success' : 'error'" variant="subtle">
+                <UBadge :color="row.original.status === 'SUCCESS' ? 'success' : 'error'" variant="soft"
+                    class="font-bold tracking-wide shadow-sm">
                     {{ row.original.status }}
                 </UBadge>
             </template>

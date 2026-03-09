@@ -5,12 +5,6 @@ definePageMeta({
 
 const { user } = useAuth()
 const { t } = useI18n()
-
-const items = computed(() => [
-    { label: t('dashboard.tab_zones'), icon: 'i-heroicons-globe-alt' },
-    { label: t('dashboard.tab_accounts'), icon: 'i-heroicons-user-group' },
-    { label: t('dashboard.tab_logs'), icon: 'i-heroicons-clock' }
-])
 </script>
 
 <template>
@@ -133,43 +127,6 @@ const items = computed(() => [
                     <DashboardStats />
                 </ClientOnly>
             </div>
-        </div>
-
-        <!-- Management Section (Full Width) -->
-        <div class="pt-6 flex-1 space-y-6">
-            <div class="flex items-center gap-4">
-                <h2 class="text-2xl font-black text-white tracking-tight font-sans">{{ $t('dashboard.management_title')
-                }}</h2>
-                <div class="h-px flex-1 bg-linear-to-r from-slate-800 to-transparent"></div>
-            </div>
-
-            <UTabs :items="items" class="w-full" :ui="{
-                list: 'relative flex-none rounded-2xl bg-slate-900/60 p-1 border border-slate-800/50 shadow-inner'
-            }">
-                <template #content="{ item }">
-                    <div
-                        class="mt-6 transform transition-all duration-500 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-4">
-                        <UCard
-                            class="bg-slate-900/30 backdrop-blur-md border-slate-800/40 overflow-hidden shadow-2xl rounded-2xl ring-1 ring-slate-800/50">
-                            <div v-if="item.icon === 'i-heroicons-globe-alt'">
-                                <ClientOnly>
-                                    <ZoneTable />
-                                </ClientOnly>
-                            </div>
-                            <div v-else-if="item.icon === 'i-heroicons-user-group'">
-                                <ClientOnly>
-                                    <AccountTable />
-                                </ClientOnly>
-                            </div>
-                            <div v-else-if="item.icon === 'i-heroicons-clock'">
-                                <ClientOnly>
-                                    <LogTable />
-                                </ClientOnly>
-                            </div>
-                        </UCard>
-                    </div>
-                </template>
-            </UTabs>
         </div>
     </div>
 </template>
