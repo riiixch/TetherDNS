@@ -96,26 +96,3 @@ model AuditLog {
     details   String?
     createdAt DateTime @default(now())
 }
-
-model HealthCheck {
-    id          Int              @id @default(autoincrement())
-    name        String
-    type        String // PING, HTTP, HTTPS
-    target      String // IP or URL
-    interval    Int              @default(5) // minutes
-    lastStatus  String? // UP, DOWN
-    lastCheckAt DateTime?
-    isEnabled   Boolean          @default(true)
-    logs        HealthCheckLog[]
-    createdAt   DateTime         @default(now())
-}
-
-model HealthCheckLog {
-    id            Int         @id @default(autoincrement())
-    healthCheckId Int
-    healthCheck   HealthCheck @relation(fields: [healthCheckId], references: [id], onDelete: Cascade)
-    status        String // UP, DOWN
-    responseTime  Int? // ms
-    message       String?
-    createdAt     DateTime    @default(now())
-}

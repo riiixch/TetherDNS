@@ -5,7 +5,6 @@
         "accounts": "Accounts",
         "logs": "Update Logs",
         "audit": "Audit Trail",
-        "monitoring": "Monitoring",
         "settings": "Settings",
         "logout": "Log out",
         "brand_subtitle": "Cloud Manager",
@@ -28,7 +27,8 @@
         "are_you_sure": "Are you sure?",
         "you": "Welcome",
         "showing_results": "Showing {start} - {end} of {total}",
-        "err_occurred": "An error occurred."
+        "err_occurred": "An error occurred.",
+        "details": "Details"
     },
     "auth": {
         "title": "TetherDNS",
@@ -56,13 +56,23 @@
         "stats_zones": "Managed Zones",
         "stats_records": "Total Records",
         "stats_ddns": "Active DDNS",
-        "stats_health": "Global Health",
         "stats_current_ip": "Current Public IP",
         "stats_last_update": "Last IP Update",
         "tab_overview": "Overview",
         "tab_zones": "Active Zones",
         "tab_accounts": "Cloudflare Accounts",
-        "tab_logs": "DDNS Update Logs"
+        "tab_logs": "DDNS Update Logs",
+        "pulse_title": "Infrastructure Pulse",
+        "pulse_security": "Security Status",
+        "pulse_security_desc": "All tokens are encrypted",
+        "pulse_sync": "DDNS Synchronization",
+        "pulse_sync_desc": "Global sync active",
+        "pulse_secure": "SECURE",
+        "pulse_live": "LIVE",
+        "scale_title": "Scale Infrastructure",
+        "scale_desc": "Add more zones and accounts to your TetherDNS ecosystem.",
+        "btn_global_settings": "Global Settings",
+        "management_title": "Infrastructure Management"
     },
     "accounts": {
         "title": "Cloudflare Accounts",
@@ -266,22 +276,6 @@
         "desc2": "Record {name} is currently Type {type} → it will be automatically changed to Type A.",
         "confirm": "Confirm, Change Type to A"
     },
-    "monitoring": {
-        "title": "Uptime Monitoring",
-        "subtitle": "Monitor your domains and receive alerts when they go down.",
-        "btn_add": "Add Monitor",
-        "table_name": "Name",
-        "table_type": "Type",
-        "table_target": "Target",
-        "table_status": "Status",
-        "table_last_check": "Last Check",
-        "modal_title": "Add New Monitor",
-        "label_name": "Monitor Name",
-        "label_type": "Type",
-        "label_target": "Target (URL or IP)",
-        "label_interval": "Interval (minutes)",
-        "help_target": "Example: https://example.com or 1.2.3.4"
-    },
     "analytics": {
         "title": "Analytics",
         "ip_changes": "IP Changes History"
@@ -341,7 +335,6 @@
         "links": {
             "home": "Home",
             "audit": "Audit",
-            "monitoring": "Monitoring",
             "settings": "Settings",
             "github": "GitHub Profile",
             "repository": "Source Code"

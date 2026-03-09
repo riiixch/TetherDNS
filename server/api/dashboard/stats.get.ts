@@ -9,9 +9,7 @@ export default defineEventHandler(async () => {
             totalRecords,
             ddnsEnabledCount,
             lastLog,
-            recentLogs,
-            totalHealthChecks,
-            upHealthChecks
+            recentLogs
         ] = await Promise.all([
             prisma.cloudflareAccount.count(),
             prisma.zone.count(),
@@ -22,9 +20,7 @@ export default defineEventHandler(async () => {
                 take: 5,
                 orderBy: { createdAt: 'desc' },
                 select: { status: true }
-            }),
-            prisma.healthCheck.count(),
-            prisma.healthCheck.count({ where: { lastStatus: 'UP' } })
+            })
         ])
 
         // Fetch current IP
@@ -50,11 +46,7 @@ export default defineEventHandler(async () => {
                 } : null,
                 recentSuccessRate: recentLogs.length > 0
                     ? Math.round((recentLogs.filter(l => l.status === 'SUCCESS').length / recentLogs.length) * 100)
-                    : 100,
-                healthStats: {
-                    total: totalHealthChecks || 0,
-                    up: upHealthChecks || 0
-                }
+                    : 100
             }
         }
     } catch (error: any) {

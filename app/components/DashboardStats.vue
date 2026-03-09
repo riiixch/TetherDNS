@@ -24,91 +24,126 @@ const formatTime = (dateStr: string) => {
 </script>
 
 <template>
-    <div v-if="!pending && stats" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+    <div v-if="!pending && stats" class="grid grid-cols-2 lg:grid-cols-6 gap-4">
         <!-- Accounts -->
-        <UCard>
-            <div class="text-center">
-                <p class="text-2xl font-bold text-primary">{{ stats.totalAccounts }}</p>
-                <p class="text-xs text-gray-400 mt-1">{{ $t('dashboard.stats_accounts') }}</p>
+        <UCard
+            class="bg-slate-900/50 backdrop-blur-md border-slate-800/50 group hover:border-primary-500/50 transition-all duration-300">
+            <div class="flex flex-col items-center justify-center p-1">
+                <div class="flex items-center gap-2 mb-2">
+                    <UIcon name="i-heroicons-user-group" class="w-4 h-4 text-primary-400" />
+                    <span
+                        class="text-[10px] font-bold uppercase tracking-wider text-slate-500 group-hover:text-primary-400 transition-colors">
+                        {{ $t('dashboard.stats_accounts') }}
+                    </span>
+                </div>
+                <p class="text-3xl font-black text-white group-hover:scale-110 transition-transform duration-300">
+                    {{ stats.totalAccounts }}
+                </p>
             </div>
         </UCard>
 
         <!-- Zones -->
-        <UCard>
-            <div class="text-center">
-                <p class="text-2xl font-bold text-blue-400">{{ stats.totalZones }}</p>
-                <p class="text-xs text-gray-400 mt-1">{{ $t('dashboard.stats_zones') }}</p>
+        <UCard
+            class="bg-slate-900/50 backdrop-blur-md border-slate-800/50 group hover:border-blue-500/50 transition-all duration-300">
+            <div class="flex flex-col items-center justify-center p-1">
+                <div class="flex items-center gap-2 mb-2">
+                    <UIcon name="i-heroicons-globe-alt" class="w-4 h-4 text-blue-400" />
+                    <span
+                        class="text-[10px] font-bold uppercase tracking-wider text-slate-500 group-hover:text-blue-400 transition-colors">
+                        {{ $t('dashboard.stats_zones') }}
+                    </span>
+                </div>
+                <p class="text-3xl font-black text-white group-hover:scale-110 transition-transform duration-300">
+                    {{ stats.totalZones }}
+                </p>
             </div>
         </UCard>
 
         <!-- Records -->
-        <UCard>
-            <div class="text-center">
-                <p class="text-2xl font-bold text-purple-400">{{ stats.totalRecords }}</p>
-                <p class="text-xs text-gray-400 mt-1">{{ $t('dashboard.stats_records') }}</p>
+        <UCard
+            class="bg-slate-900/50 backdrop-blur-md border-slate-800/50 group hover:border-purple-500/50 transition-all duration-300">
+            <div class="flex flex-col items-center justify-center p-1">
+                <div class="flex items-center gap-2 mb-2">
+                    <UIcon name="i-heroicons-list-bullet" class="w-4 h-4 text-purple-400" />
+                    <span
+                        class="text-[10px] font-bold uppercase tracking-wider text-slate-500 group-hover:text-purple-400 transition-colors">
+                        {{ $t('dashboard.stats_records') }}
+                    </span>
+                </div>
+                <p class="text-3xl font-black text-white group-hover:scale-110 transition-transform duration-300">
+                    {{ stats.totalRecords }}
+                </p>
             </div>
         </UCard>
 
         <!-- DDNS Enabled -->
-        <UCard>
-            <div class="text-center">
-                <p class="text-2xl font-bold text-green-400">{{ stats.ddnsEnabledCount }}</p>
-                <p class="text-xs text-gray-400 mt-1">{{ $t('dashboard.stats_ddns') }}</p>
-            </div>
-        </UCard>
-
-        <!-- Global Health -->
-        <UCard>
-            <div class="text-center">
-                <div v-if="stats.healthStats.total > 0" class="flex flex-col items-center">
-                    <p class="text-2xl font-bold"
-                        :class="stats.healthStats.up === stats.healthStats.total ? 'text-green-500' : 'text-error'">
-                        {{ stats.healthStats.up }}/{{ stats.healthStats.total }}
-                    </p>
-                    <p class="text-[10px] uppercase font-bold"
-                        :class="stats.healthStats.up === stats.healthStats.total ? 'text-green-500' : 'text-error'">
-                        {{ stats.healthStats.up === stats.healthStats.total ? 'All Up' : 'Checking' }}
-                    </p>
+        <UCard
+            class="bg-slate-900/50 backdrop-blur-md border-slate-800/50 group hover:border-emerald-500/50 transition-all duration-300">
+            <div class="flex flex-col items-center justify-center p-1">
+                <div class="flex items-center gap-2 mb-2">
+                    <UIcon name="i-heroicons-bolt" class="w-4 h-4 text-emerald-400" />
+                    <span
+                        class="text-[10px] font-bold uppercase tracking-wider text-slate-500 group-hover:text-emerald-400 transition-colors">
+                        {{ $t('dashboard.stats_ddns') }}
+                    </span>
                 </div>
-                <div v-else>
-                    <p class="text-2xl font-bold text-gray-500">-</p>
-                </div>
-                <p class="text-xs text-gray-400 mt-1">{{ $t('dashboard.stats_health') }}</p>
+                <p class="text-3xl font-black text-white group-hover:scale-110 transition-transform duration-300">
+                    {{ stats.ddnsEnabledCount }}
+                </p>
             </div>
         </UCard>
 
         <!-- Current IP -->
-        <UCard>
-            <div class="text-center">
-                <p class="text-sm md:text-lg font-bold font-mono text-yellow-400 truncate">{{ stats.currentIp }}</p>
-                <p class="text-xs text-gray-400 mt-1">{{ $t('dashboard.stats_current_ip') }}</p>
+        <UCard
+            class="bg-slate-900/50 backdrop-blur-md border-slate-800/50 group hover:border-amber-500/50 transition-all duration-300 group">
+            <div class="flex flex-col items-center justify-center p-1">
+                <div class="flex items-center gap-2 mb-2">
+                    <UIcon name="i-heroicons-map-pin" class="w-4 h-4 text-amber-400" />
+                    <span
+                        class="text-[10px] font-bold uppercase tracking-wider text-slate-500 group-hover:text-amber-400 transition-colors">
+                        {{ $t('dashboard.stats_current_ip') }}
+                    </span>
+                </div>
+                <p
+                    class="text-base font-mono font-bold text-amber-100 group-hover:text-amber-400 transition-colors truncate w-full text-center">
+                    {{ stats.currentIp }}
+                </p>
             </div>
         </UCard>
 
         <!-- Last Update -->
-        <UCard>
-            <div class="text-center">
+        <UCard
+            class="bg-slate-900/50 backdrop-blur-md border-slate-800/50 group hover:border-sky-500/50 transition-all duration-300">
+            <div class="flex flex-col items-center justify-center p-1">
+                <div class="flex items-center gap-2 mb-2">
+                    <UIcon name="i-heroicons-arrow-path" class="w-4 h-4 text-sky-400" />
+                    <span
+                        class="text-[10px] font-bold uppercase tracking-wider text-slate-500 group-hover:text-sky-400 transition-colors">
+                        {{ $t('dashboard.stats_last_update') }}
+                    </span>
+                </div>
                 <template v-if="stats.lastUpdate">
-                    <UBadge :color="stats.lastUpdate.status === 'SUCCESS' ? 'success' : 'error'" variant="subtle"
-                        class="mb-1 text-[10px] px-1 py-0 shadow-none">
-                        {{ stats.lastUpdate.status }}
-                    </UBadge>
-                    <p class="text-[10px] text-gray-400 truncate">{{ formatTime(stats.lastUpdate.time) }}</p>
+                    <div class="flex flex-col items-center">
+                        <UBadge :color="stats.lastUpdate.status === 'SUCCESS' ? 'success' : 'error'" variant="subtle"
+                            class="mb-1 text-[10px] px-2 py-0.5 font-bold uppercase rounded-full">
+                            {{ stats.lastUpdate.status }}
+                        </UBadge>
+                        <p class="text-[10px] font-medium text-slate-400">{{ formatTime(stats.lastUpdate.time) }}</p>
+                    </div>
                 </template>
                 <template v-else>
-                    <p class="text-sm text-gray-500">-</p>
+                    <p class="text-sm font-bold text-slate-600">-</p>
                 </template>
-                <p class="text-xs text-gray-400 mt-1">{{ $t('dashboard.stats_last_update') }}</p>
             </div>
         </UCard>
     </div>
 
     <!-- Loading skeleton -->
-    <div v-else-if="pending" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-        <UCard v-for="i in 7" :key="i">
-            <div class="text-center">
-                <div class="h-7 w-12 mx-auto rounded bg-gray-700 animate-pulse" />
-                <div class="h-3 w-16 mx-auto mt-2 rounded bg-gray-700 animate-pulse" />
+    <div v-else-if="pending" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <UCard v-for="i in 6" :key="i" class="bg-slate-900/50 border-slate-800/50">
+            <div class="flex flex-col items-center justify-center">
+                <div class="h-3 w-16 mb-4 rounded bg-slate-800 animate-pulse" />
+                <div class="h-8 w-12 rounded bg-slate-800 animate-pulse" />
             </div>
         </UCard>
     </div>

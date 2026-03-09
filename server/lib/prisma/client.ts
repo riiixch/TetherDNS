@@ -86,13 +86,3 @@ export type NotificationChannel = Prisma.NotificationChannelModel
  * 
  */
 export type AuditLog = Prisma.AuditLogModel
-/**
- * Model HealthCheck
- * 
- */
-export type HealthCheck = Prisma.HealthCheckModel
-/**
- * Model HealthCheckLog
- * 
- */
-export type HealthCheckLog = Prisma.HealthCheckLogModel

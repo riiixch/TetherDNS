@@ -179,7 +179,7 @@ const exportJson = () => {
                         <div class="flex justify-end gap-3">
                             <UButton color="neutral" variant="ghost" @click="deleteModalOpen = false">{{
                                 $t('common.cancel')
-                                }}</UButton>
+                            }}</UButton>
                             <UButton color="error" :loading="deleteLoading" @click="executeDelete">{{
                                 $t('common.delete') }}
                             </UButton>

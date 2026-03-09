@@ -56,11 +56,6 @@ const currentYear = new Date().getFullYear();
                             :class="$route.path === '/audit' ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-primary-400 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'">
                             {{ $t('nav.audit') }}
                         </NuxtLink>
-                        <NuxtLink v-if="user" to="/monitoring"
-                            class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all"
-                            :class="$route.path === '/monitoring' ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-primary-400 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'">
-                            {{ $t('nav.monitoring') }}
-                        </NuxtLink>
                         <NuxtLink v-if="user" to="/settings"
                             class="px-4 py-1.5 rounded-lg text-sm font-medium transition-all"
                             :class="$route.path === '/settings' ? 'bg-white dark:bg-slate-700 text-primary-600 dark:text-primary-400 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'">
@@ -136,12 +131,6 @@ const currentYear = new Date().getFullYear();
                                                     :class="$route.path === '/audit' ? 'bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'">
                                                     <UIcon name="i-heroicons-clipboard-document-list" class="w-5 h-5" />
                                                     {{ $t('nav.audit') }}
-                                                </NuxtLink>
-                                                <NuxtLink v-if="user" to="/monitoring" @click="isOpenMenu = false"
-                                                    class="flex items-center gap-3 p-3 rounded-xl transition-colors font-medium"
-                                                    :class="$route.path === '/monitoring' ? 'bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'">
-                                                    <UIcon name="i-heroicons-pulse" class="w-5 h-5" />
-                                                    {{ $t('nav.monitoring') }}
                                                 </NuxtLink>
                                                 <NuxtLink v-if="user" to="/settings" @click="isOpenMenu = false"
                                                     class="flex items-center gap-3 p-3 rounded-xl transition-colors font-medium"
@@ -220,11 +209,6 @@ const currentYear = new Date().getFullYear();
                                 <NuxtLink to="/"
                                     class="text-sm text-slate-500 dark:text-slate-400 hover:text-primary-500 transition-colors">
                                     {{ $t('footer.links.home') }}</NuxtLink>
-                            </li>
-                            <li v-if="user">
-                                <NuxtLink to="/monitoring"
-                                    class="text-sm text-slate-500 dark:text-slate-400 hover:text-primary-500 transition-colors">
-                                    {{ $t('footer.links.monitoring') }}</NuxtLink>
                             </li>
                             <li v-if="user">
                                 <NuxtLink to="/audit"

@@ -59,9 +59,7 @@ export const ModelName = {
   UpdateLog: 'UpdateLog',
   Settings: 'Settings',
   NotificationChannel: 'NotificationChannel',
-  AuditLog: 'AuditLog',
-  HealthCheck: 'HealthCheck',
-  HealthCheckLog: 'HealthCheckLog'
+  AuditLog: 'AuditLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -182,33 +180,6 @@ export const AuditLogScalarFieldEnum = {
 } as const
 
 export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
-
-
-export const HealthCheckScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  type: 'type',
-  target: 'target',
-  interval: 'interval',
-  lastStatus: 'lastStatus',
-  lastCheckAt: 'lastCheckAt',
-  isEnabled: 'isEnabled',
-  createdAt: 'createdAt'
-} as const
-
-export type HealthCheckScalarFieldEnum = (typeof HealthCheckScalarFieldEnum)[keyof typeof HealthCheckScalarFieldEnum]
-
-
-export const HealthCheckLogScalarFieldEnum = {
-  id: 'id',
-  healthCheckId: 'healthCheckId',
-  status: 'status',
-  responseTime: 'responseTime',
-  message: 'message',
-  createdAt: 'createdAt'
-} as const
-
-export type HealthCheckLogScalarFieldEnum = (typeof HealthCheckLogScalarFieldEnum)[keyof typeof HealthCheckLogScalarFieldEnum]
 
 
 export const SortOrder = {

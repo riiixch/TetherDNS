@@ -5,7 +5,6 @@
         "accounts": "บัญชี",
         "logs": "ประวัติอัปเดต",
         "audit": "บันทึกกิจกรรม",
-        "monitoring": "การตรวจสอบสถานะ",
         "settings": "ตั้งค่า",
         "logout": "ออกจากระบบ",
         "brand_subtitle": "ระบบจัดการคลาวด์",
@@ -28,7 +27,8 @@
         "are_you_sure": "คุณแน่ใจหรือไม่?",
         "you": "ยินดีต้อนรับ",
         "showing_results": "แสดง {start} - {end} จากทั้งหมด {total} รายการ",
-        "err_occurred": "เกิดข้อผิดพลาดขึ้น"
+        "err_occurred": "เกิดข้อผิดพลาดขึ้น",
+        "details": "รายละเอียด"
     },
     "auth": {
         "title": "TetherDNS",
@@ -56,13 +56,23 @@
         "stats_zones": "โซนที่จัดการ",
         "stats_records": "เรคคอร์ดทั้งหมด",
         "stats_ddns": "DDNS ที่ทำงานอยู่",
-        "stats_health": "สถานะระบบภาพรวม",
         "stats_current_ip": "IP สาธารณะปัจจุบัน",
         "stats_last_update": "อัปเดต IP ล่าสุด",
         "tab_overview": "ภาพรวม",
         "tab_zones": "โซนที่ใช้งานอยู่",
         "tab_accounts": "บัญชี Cloudflare",
-        "tab_logs": "ประวัติการอัปเดต DDNS"
+        "tab_logs": "ประวัติการอัปเดต DDNS",
+        "pulse_title": "สถานะโครงสร้างพื้นฐาน",
+        "pulse_security": "สถานะความปลอดภัย",
+        "pulse_security_desc": "Token ทั้งหมดถูกเข้ารหัสอย่างปลอดภัย",
+        "pulse_sync": "การซิงโครไนซ์ DDNS",
+        "pulse_sync_desc": "ระบบซิงโครไนซ์ทำงานปกติ",
+        "pulse_secure": "ปลอดภัย",
+        "pulse_live": "เรียลไทม์",
+        "scale_title": "ขยายโครงสร้างพื้นฐาน",
+        "scale_desc": "เพิ่มโซนและบัญชีใหม่ให้กับระบบ TetherDNS ของคุณ",
+        "btn_global_settings": "ตั้งค่าระบบรวม",
+        "management_title": "การจัดการโครงสร้างพื้นฐาน"
     },
     "accounts": {
         "title": "บัญชี Cloudflare",
@@ -266,22 +276,6 @@
         "desc2": "ปัจจุบันเรคคอร์ด {name} เป็นประเภท {type} → ระบบจะทำการเปลี่ยนให้เป็นประเภท A อัตโนมัติ",
         "confirm": "ยืนยัน, เปลี่ยนเป็นประเภท A"
     },
-    "monitoring": {
-        "title": "การตรวจสอบสถานะการทำงาน",
-        "subtitle": "ตรวจสอบโดเมนของคุณและรับการแจ้งเตือนเมื่อระบบขัดข้อง",
-        "btn_add": "เพิ่มการตรวจสอบ",
-        "table_name": "ชื่อ",
-        "table_type": "ประเภท",
-        "table_target": "เป้าหมาย",
-        "table_status": "สถานะ",
-        "table_last_check": "ตรวจสอบล่าสุด",
-        "modal_title": "เพิ่มการตรวจสอบใหม่",
-        "label_name": "ชื่อการตรวจสอบ",
-        "label_type": "ประเภท",
-        "label_target": "เป้าหมาย (URL หรือ IP)",
-        "label_interval": "ความถี่ (นาที)",
-        "help_target": "ตัวอย่าง: https://example.com หรือ 1.2.3.4"
-    },
     "analytics": {
         "title": "การวิเคราะห์ข้อมูล",
         "ip_changes": "ประวัติการเปลี่ยนแปลง IP"
@@ -341,7 +335,6 @@
         "links": {
             "home": "หน้าแรก",
             "audit": "บันทึกกิจกรรม",
-            "monitoring": "การตรวจสอบสถานะ",
             "settings": "ตั้งค่า",
             "github": "โปรไฟล์ GitHub",
             "repository": "ซอร์สโค้ด"
