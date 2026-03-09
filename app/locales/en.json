@@ -5,6 +5,7 @@
         "accounts": "Accounts",
         "logs": "Update Logs",
         "audit": "Audit Trail",
+        "monitoring": "Monitoring",
         "settings": "Settings",
         "logout": "Log out"
     },
@@ -24,9 +25,8 @@
         "search": "Search...",
         "are_you_sure": "Are you sure?",
         "you": "Welcome",
-        "prev": "Previous",
-        "next": "Next",
-        "showing_results": "Showing {start} - {end} of {total}"
+        "showing_results": "Showing {start} - {end} of {total}",
+        "err_occurred": "An error occurred."
     },
     "auth": {
         "title": "TetherDNS",
@@ -39,7 +39,13 @@
         "login_button": "Login",
         "login_failed": "Login Failed!",
         "err_required": "Please fill out all fields.",
-        "err_invalid": "Invalid username or password."
+        "err_invalid": "Invalid username or password.",
+        "err_2fa_required": "Please enter your 2FA code.",
+        "2fa_notice": "Two-Factor Authentication required.",
+        "auth_code": "Authenticator Code",
+        "code_placeholder": "6-digit code",
+        "verify_code": "Verify Code",
+        "back_to_login": "Back to Login"
     },
     "dashboard": {
         "title": "Dashboard",
@@ -48,6 +54,7 @@
         "stats_zones": "Managed Zones",
         "stats_records": "Total Records",
         "stats_ddns": "Active DDNS",
+        "stats_health": "Global Health",
         "stats_current_ip": "Current Public IP",
         "stats_last_update": "Last IP Update",
         "tab_overview": "Overview",
@@ -217,7 +224,11 @@
         "username": "Username",
         "password": "Password",
         "create_user": "Create User",
-        "you": "You"
+        "you": "You",
+        "err_label": "Label is required.",
+        "err_webhook": "Webhook URL is required.",
+        "err_line": "LINE Token is required.",
+        "err_user_pass": "Username and password are required."
     },
     "audit": {
         "title": "Audit Trail",
@@ -252,5 +263,70 @@
         "desc1": "DDNS Auto-Update works by updating the IP automatically, which requires the record to be Type A.",
         "desc2": "Record {name} is currently Type {type} → it will be automatically changed to Type A.",
         "confirm": "Confirm, Change Type to A"
+    },
+    "monitoring": {
+        "title": "Uptime Monitoring",
+        "subtitle": "Monitor your domains and receive alerts when they go down.",
+        "btn_add": "Add Monitor",
+        "table_name": "Name",
+        "table_type": "Type",
+        "table_target": "Target",
+        "table_status": "Status",
+        "table_last_check": "Last Check",
+        "modal_title": "Add New Monitor",
+        "label_name": "Monitor Name",
+        "label_type": "Type",
+        "label_target": "Target (URL or IP)",
+        "label_interval": "Interval (minutes)",
+        "help_target": "Example: https://example.com or 1.2.3.4"
+    },
+    "analytics": {
+        "title": "Analytics",
+        "ip_changes": "IP Changes History"
+    },
+    "security": {
+        "title": "Security Settings",
+        "subtitle": "Manage Two-Factor Authentication (2FA)",
+        "totp_title": "Two-Factor Authentication (TOTP)",
+        "totp_desc": "Add an extra layer of security to your account.",
+        "enable_2fa": "Enable 2FA",
+        "disable_2fa": "Disable 2FA",
+        "setup_title": "Set Up Two-Factor Authentication",
+        "setup_desc": "Scan the QR code with an authenticator app (e.g., Google Authenticator, Authy), or enter the secret manually:",
+        "auth_code": "Authentication Code",
+        "code_placeholder": "6-digit code",
+        "verify_enable": "Verify & Enable",
+        "disable_title": "Disable Two-Factor Authentication",
+        "disable_desc": "Please enter your 6-digit authenticator code to confirm disabling 2FA.",
+        "enabled_success": "2FA enabled successfully.",
+        "disabled_success": "2FA disabled successfully."
+    },
+    "api_tokens": {
+        "title": "Personal Access Tokens",
+        "subtitle": "Manage API keys to access TetherDNS programmatically",
+        "generate_new": "Generate New Token",
+        "col_name": "Token Name",
+        "col_created": "Created",
+        "modal_title": "Generate API Token",
+        "important": "Important",
+        "important_desc": "This is your new API token. Make sure to copy it now, as you won't be able to see it again!",
+        "copied": "I have copied it",
+        "name_hint": "e.g. Home Assistant",
+        "name_placeholder": "What's this token for?",
+        "btn_generate": "Generate",
+        "generate_success": "Token generated successfully.",
+        "delete_success": "Token deleted successfully."
+    },
+    "setup": {
+        "title": "Initial Setup",
+        "subtitle": "Create your master administrator account to secure the DDNS manager.",
+        "confirm_password": "Confirm Password",
+        "save_continue": "Save & Continue",
+        "failed": "Setup Failed!",
+        "err_fields": "Please fill out all fields.",
+        "err_match": "Passwords do not match.",
+        "success": "Setup Successful!",
+        "created": "Your administrator account has been created.",
+        "err_occurred": "An error occurred during setup."
     }
 }

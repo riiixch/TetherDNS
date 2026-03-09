@@ -25,6 +25,14 @@ const items = computed(() => [
             <DashboardStats />
         </ClientOnly>
 
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-3">
+                <ClientOnly>
+                    <AnalyticsIpChangeChart />
+                </ClientOnly>
+            </div>
+        </div>
+
         <UTabs :items="items" class="flex-1">
             <template #content="{ item }">
                 <div v-if="item.icon === 'i-heroicons-globe-alt'" class="mt-4">

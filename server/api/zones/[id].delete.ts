@@ -1,5 +1,4 @@
 import { prisma } from '../../utils/prisma'
-import { createCloudflareClient } from '../../utils/cloudflare'
 import { logAudit } from '../../utils/audit'
 
 export default defineEventHandler(async (event) => {
@@ -17,15 +16,6 @@ export default defineEventHandler(async (event) => {
             throw createError({ statusCode: 404, statusMessage: 'Zone not found in local database.' })
         }
 
-        // Create client from the zone's linked account
-        if (!localZone.accountId) {
-            throw createError({ statusCode: 400, statusMessage: 'Zone is not linked to any Cloudflare account.' })
-        }
-        const cf = await createCloudflareClient(localZone.accountId)
-
-        // Delete from Cloudflare
-        await cf.zones.delete({ zone_id: zoneId })
-
         // Delete related update logs
         const records = await prisma.dnsRecord.findMany({ where: { zoneId: localZone.id } })
         const recordIds = records.map(r => r.id)
@@ -42,7 +32,7 @@ export default defineEventHandler(async (event) => {
             )
         }
 
-        return { success: true, message: 'Zone deleted successfully from Cloudflare and local database.' }
+        return { success: true, message: 'Zone removed from TetherDNS successfully. Cloudflare records remain intact.' }
     } catch (error: any) {
         throw createError({
             statusCode: error.statusCode || 500,

@@ -506,14 +506,6 @@ export type DnsRecordUncheckedUpdateManyWithoutZoneNestedInput = {
   deleteMany?: Prisma.DnsRecordScalarWhereInput | Prisma.DnsRecordScalarWhereInput[]
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
 export type DnsRecordCreateNestedOneWithoutUpdateLogsInput = {
   create?: Prisma.XOR<Prisma.DnsRecordCreateWithoutUpdateLogsInput, Prisma.DnsRecordUncheckedCreateWithoutUpdateLogsInput>
   connectOrCreate?: Prisma.DnsRecordCreateOrConnectWithoutUpdateLogsInput

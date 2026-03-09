@@ -12,16 +12,20 @@ export const useAuth = () => {
         }
     }
 
-    const login = async (username: string, password: string) => {
+    const login = async (username: string, password: string, totpCode?: string) => {
         // For manual actions like login, use $fetch, not useFetch
-        const response = await $fetch('/api/auth/login', {
+        const response = await $fetch<{ success: boolean; requires2FA?: boolean; message?: string }>('/api/auth/login', {
             method: 'POST',
-            body: { username, password }
+            body: { username, password, totpCode }
         })
+
+        if (response && response.requires2FA) {
+            return { requires2FA: true }
+        }
 
         // Refresh session state after login
         await checkSession()
-        return true
+        return { success: true }
     }
 
     const setup = async (username: string, password: string) => {

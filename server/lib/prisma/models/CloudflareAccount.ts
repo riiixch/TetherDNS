@@ -36,6 +36,7 @@ export type CloudflareAccountSumAggregateOutputType = {
 
 export type CloudflareAccountMinAggregateOutputType = {
   id: number | null
+  providerType: string | null
   label: string | null
   email: string | null
   apiToken: string | null
@@ -44,6 +45,7 @@ export type CloudflareAccountMinAggregateOutputType = {
 
 export type CloudflareAccountMaxAggregateOutputType = {
   id: number | null
+  providerType: string | null
   label: string | null
   email: string | null
   apiToken: string | null
@@ -52,6 +54,7 @@ export type CloudflareAccountMaxAggregateOutputType = {
 
 export type CloudflareAccountCountAggregateOutputType = {
   id: number
+  providerType: number
   label: number
   email: number
   apiToken: number
@@ -70,6 +73,7 @@ export type CloudflareAccountSumAggregateInputType = {
 
 export type CloudflareAccountMinAggregateInputType = {
   id?: true
+  providerType?: true
   label?: true
   email?: true
   apiToken?: true
@@ -78,6 +82,7 @@ export type CloudflareAccountMinAggregateInputType = {
 
 export type CloudflareAccountMaxAggregateInputType = {
   id?: true
+  providerType?: true
   label?: true
   email?: true
   apiToken?: true
@@ -86,6 +91,7 @@ export type CloudflareAccountMaxAggregateInputType = {
 
 export type CloudflareAccountCountAggregateInputType = {
   id?: true
+  providerType?: true
   label?: true
   email?: true
   apiToken?: true
@@ -181,8 +187,9 @@ export type CloudflareAccountGroupByArgs<ExtArgs extends runtime.Types.Extension
 
 export type CloudflareAccountGroupByOutputType = {
   id: number
+  providerType: string
   label: string
-  email: string
+  email: string | null
   apiToken: string
   createdAt: Date
   _count: CloudflareAccountCountAggregateOutputType | null
@@ -212,8 +219,9 @@ export type CloudflareAccountWhereInput = {
   OR?: Prisma.CloudflareAccountWhereInput[]
   NOT?: Prisma.CloudflareAccountWhereInput | Prisma.CloudflareAccountWhereInput[]
   id?: Prisma.IntFilter<"CloudflareAccount"> | number
+  providerType?: Prisma.StringFilter<"CloudflareAccount"> | string
   label?: Prisma.StringFilter<"CloudflareAccount"> | string
-  email?: Prisma.StringFilter<"CloudflareAccount"> | string
+  email?: Prisma.StringNullableFilter<"CloudflareAccount"> | string | null
   apiToken?: Prisma.StringFilter<"CloudflareAccount"> | string
   createdAt?: Prisma.DateTimeFilter<"CloudflareAccount"> | Date | string
   zones?: Prisma.ZoneListRelationFilter
@@ -221,8 +229,9 @@ export type CloudflareAccountWhereInput = {
 
 export type CloudflareAccountOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  providerType?: Prisma.SortOrder
   label?: Prisma.SortOrder
-  email?: Prisma.SortOrder
+  email?: Prisma.SortOrderInput | Prisma.SortOrder
   apiToken?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   zones?: Prisma.ZoneOrderByRelationAggregateInput
@@ -233,8 +242,9 @@ export type CloudflareAccountWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.CloudflareAccountWhereInput | Prisma.CloudflareAccountWhereInput[]
   OR?: Prisma.CloudflareAccountWhereInput[]
   NOT?: Prisma.CloudflareAccountWhereInput | Prisma.CloudflareAccountWhereInput[]
+  providerType?: Prisma.StringFilter<"CloudflareAccount"> | string
   label?: Prisma.StringFilter<"CloudflareAccount"> | string
-  email?: Prisma.StringFilter<"CloudflareAccount"> | string
+  email?: Prisma.StringNullableFilter<"CloudflareAccount"> | string | null
   apiToken?: Prisma.StringFilter<"CloudflareAccount"> | string
   createdAt?: Prisma.DateTimeFilter<"CloudflareAccount"> | Date | string
   zones?: Prisma.ZoneListRelationFilter
@@ -242,8 +252,9 @@ export type CloudflareAccountWhereUniqueInput = Prisma.AtLeast<{
 
 export type CloudflareAccountOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  providerType?: Prisma.SortOrder
   label?: Prisma.SortOrder
-  email?: Prisma.SortOrder
+  email?: Prisma.SortOrderInput | Prisma.SortOrder
   apiToken?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.CloudflareAccountCountOrderByAggregateInput
@@ -258,15 +269,17 @@ export type CloudflareAccountScalarWhereWithAggregatesInput = {
   OR?: Prisma.CloudflareAccountScalarWhereWithAggregatesInput[]
   NOT?: Prisma.CloudflareAccountScalarWhereWithAggregatesInput | Prisma.CloudflareAccountScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"CloudflareAccount"> | number
+  providerType?: Prisma.StringWithAggregatesFilter<"CloudflareAccount"> | string
   label?: Prisma.StringWithAggregatesFilter<"CloudflareAccount"> | string
-  email?: Prisma.StringWithAggregatesFilter<"CloudflareAccount"> | string
+  email?: Prisma.StringNullableWithAggregatesFilter<"CloudflareAccount"> | string | null
   apiToken?: Prisma.StringWithAggregatesFilter<"CloudflareAccount"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"CloudflareAccount"> | Date | string
 }
 
 export type CloudflareAccountCreateInput = {
+  providerType?: string
   label: string
-  email: string
+  email?: string | null
   apiToken: string
   createdAt?: Date | string
   zones?: Prisma.ZoneCreateNestedManyWithoutAccountInput
@@ -274,16 +287,18 @@ export type CloudflareAccountCreateInput = {
 
 export type CloudflareAccountUncheckedCreateInput = {
   id?: number
+  providerType?: string
   label: string
-  email: string
+  email?: string | null
   apiToken: string
   createdAt?: Date | string
   zones?: Prisma.ZoneUncheckedCreateNestedManyWithoutAccountInput
 }
 
 export type CloudflareAccountUpdateInput = {
+  providerType?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apiToken?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   zones?: Prisma.ZoneUpdateManyWithoutAccountNestedInput
@@ -291,8 +306,9 @@ export type CloudflareAccountUpdateInput = {
 
 export type CloudflareAccountUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  providerType?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apiToken?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   zones?: Prisma.ZoneUncheckedUpdateManyWithoutAccountNestedInput
@@ -300,29 +316,33 @@ export type CloudflareAccountUncheckedUpdateInput = {
 
 export type CloudflareAccountCreateManyInput = {
   id?: number
+  providerType?: string
   label: string
-  email: string
+  email?: string | null
   apiToken: string
   createdAt?: Date | string
 }
 
 export type CloudflareAccountUpdateManyMutationInput = {
+  providerType?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apiToken?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CloudflareAccountUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  providerType?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apiToken?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CloudflareAccountCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  providerType?: Prisma.SortOrder
   label?: Prisma.SortOrder
   email?: Prisma.SortOrder
   apiToken?: Prisma.SortOrder
@@ -335,6 +355,7 @@ export type CloudflareAccountAvgOrderByAggregateInput = {
 
 export type CloudflareAccountMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  providerType?: Prisma.SortOrder
   label?: Prisma.SortOrder
   email?: Prisma.SortOrder
   apiToken?: Prisma.SortOrder
@@ -343,6 +364,7 @@ export type CloudflareAccountMaxOrderByAggregateInput = {
 
 export type CloudflareAccountMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  providerType?: Prisma.SortOrder
   label?: Prisma.SortOrder
   email?: Prisma.SortOrder
   apiToken?: Prisma.SortOrder
@@ -360,6 +382,10 @@ export type CloudflareAccountNullableScalarRelationFilter = {
 
 export type StringFieldUpdateOperationsInput = {
   set?: string
+}
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -391,16 +417,18 @@ export type CloudflareAccountUpdateOneWithoutZonesNestedInput = {
 }
 
 export type CloudflareAccountCreateWithoutZonesInput = {
+  providerType?: string
   label: string
-  email: string
+  email?: string | null
   apiToken: string
   createdAt?: Date | string
 }
 
 export type CloudflareAccountUncheckedCreateWithoutZonesInput = {
   id?: number
+  providerType?: string
   label: string
-  email: string
+  email?: string | null
   apiToken: string
   createdAt?: Date | string
 }
@@ -422,16 +450,18 @@ export type CloudflareAccountUpdateToOneWithWhereWithoutZonesInput = {
 }
 
 export type CloudflareAccountUpdateWithoutZonesInput = {
+  providerType?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apiToken?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CloudflareAccountUncheckedUpdateWithoutZonesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  providerType?: Prisma.StringFieldUpdateOperationsInput | string
   label?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apiToken?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -469,6 +499,7 @@ export type CloudflareAccountCountOutputTypeCountZonesArgs<ExtArgs extends runti
 
 export type CloudflareAccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  providerType?: boolean
   label?: boolean
   email?: boolean
   apiToken?: boolean
@@ -479,6 +510,7 @@ export type CloudflareAccountSelect<ExtArgs extends runtime.Types.Extensions.Int
 
 export type CloudflareAccountSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  providerType?: boolean
   label?: boolean
   email?: boolean
   apiToken?: boolean
@@ -487,6 +519,7 @@ export type CloudflareAccountSelectCreateManyAndReturn<ExtArgs extends runtime.T
 
 export type CloudflareAccountSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  providerType?: boolean
   label?: boolean
   email?: boolean
   apiToken?: boolean
@@ -495,13 +528,14 @@ export type CloudflareAccountSelectUpdateManyAndReturn<ExtArgs extends runtime.T
 
 export type CloudflareAccountSelectScalar = {
   id?: boolean
+  providerType?: boolean
   label?: boolean
   email?: boolean
   apiToken?: boolean
   createdAt?: boolean
 }
 
-export type CloudflareAccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "label" | "email" | "apiToken" | "createdAt", ExtArgs["result"]["cloudflareAccount"]>
+export type CloudflareAccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "providerType" | "label" | "email" | "apiToken" | "createdAt", ExtArgs["result"]["cloudflareAccount"]>
 export type CloudflareAccountInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   zones?: boolean | Prisma.CloudflareAccount$zonesArgs<ExtArgs>
   _count?: boolean | Prisma.CloudflareAccountCountOutputTypeDefaultArgs<ExtArgs>
@@ -516,8 +550,9 @@ export type $CloudflareAccountPayload<ExtArgs extends runtime.Types.Extensions.I
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
+    providerType: string
     label: string
-    email: string
+    email: string | null
     apiToken: string
     createdAt: Date
   }, ExtArgs["result"]["cloudflareAccount"]>
@@ -945,6 +980,7 @@ export interface Prisma__CloudflareAccountClient<T, Null = never, ExtArgs extend
  */
 export interface CloudflareAccountFieldRefs {
   readonly id: Prisma.FieldRef<"CloudflareAccount", 'Int'>
+  readonly providerType: Prisma.FieldRef<"CloudflareAccount", 'String'>
   readonly label: Prisma.FieldRef<"CloudflareAccount", 'String'>
   readonly email: Prisma.FieldRef<"CloudflareAccount", 'String'>
   readonly apiToken: Prisma.FieldRef<"CloudflareAccount", 'String'>

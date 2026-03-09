@@ -8,12 +8,13 @@ datasource db {
 }
 
 model CloudflareAccount {
-    id        Int      @id @default(autoincrement())
-    label     String
-    email     String
-    apiToken  String
-    zones     Zone[]
-    createdAt DateTime @default(now())
+    id           Int      @id @default(autoincrement())
+    providerType String   @default("cloudflare")
+    label        String
+    email        String?
+    apiToken     String
+    zones        Zone[]
+    createdAt    DateTime @default(now())
 }
 
 model Zone {
@@ -26,11 +27,24 @@ model Zone {
 }
 
 model User {
-    id        Int        @id @default(autoincrement())
-    username  String     @unique
-    password  String
-    auditLogs AuditLog[]
-    createdAt DateTime   @default(now())
+    id               Int        @id @default(autoincrement())
+    username         String     @unique
+    password         String
+    twoFactorSecret  String?
+    twoFactorEnabled Boolean    @default(false)
+    auditLogs        AuditLog[]
+    apiTokens        ApiToken[]
+    createdAt        DateTime   @default(now())
+}
+
+model ApiToken {
+    id         Int       @id @default(autoincrement())
+    name       String
+    tokenHash  String    @unique
+    userId     Int
+    user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    lastUsedAt DateTime?
+    createdAt  DateTime  @default(now())
 }
 
 model DnsRecord {
@@ -54,6 +68,7 @@ model UpdateLog {
     status    String
     recordId  Int
     record    DnsRecord @relation(fields: [recordId], references: [id])
+    message   String?
     createdAt DateTime  @default(now())
 }
 
@@ -80,4 +95,27 @@ model AuditLog {
     target    String
     details   String?
     createdAt DateTime @default(now())
+}
+
+model HealthCheck {
+    id          Int              @id @default(autoincrement())
+    name        String
+    type        String // PING, HTTP, HTTPS
+    target      String // IP or URL
+    interval    Int              @default(5) // minutes
+    lastStatus  String? // UP, DOWN
+    lastCheckAt DateTime?
+    isEnabled   Boolean          @default(true)
+    logs        HealthCheckLog[]
+    createdAt   DateTime         @default(now())
+}
+
+model HealthCheckLog {
+    id            Int         @id @default(autoincrement())
+    healthCheckId Int
+    healthCheck   HealthCheck @relation(fields: [healthCheckId], references: [id], onDelete: Cascade)
+    status        String // UP, DOWN
+    responseTime  Int? // ms
+    message       String?
+    createdAt     DateTime    @default(now())
 }

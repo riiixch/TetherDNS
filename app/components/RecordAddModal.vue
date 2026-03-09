@@ -60,7 +60,7 @@ const handleAdd = async () => {
     } catch (e: any) {
         toast.add({
             title: t('records.add_failed'),
-            description: e.data?.statusMessage || e.message || 'An error occurred',
+            description: e.data?.statusMessage || e.message || t('common.err_occurred'),
             color: 'error'
         })
     } finally {

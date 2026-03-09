@@ -1,6 +1,7 @@
 import { prisma } from '../utils/prisma'
 import { createCloudflareClient } from '../utils/cloudflare'
-import { sendNotifications } from '../utils/notify'
+import { sendNotifications } from '../utils/sendNotifications'
+import { getGlobalIp } from '../utils/getGlobalIp'
 
 export default defineNitroPlugin((nitroApp) => {
     let intervalId: NodeJS.Timeout
@@ -19,32 +20,13 @@ export default defineNitroPlugin((nitroApp) => {
         return 5 * 60 * 1000
     }
 
-    const fetchCurrentIpv4 = async (): Promise<string | null> => {
-        try {
-            const res = await fetch('https://api.ipify.org?format=json')
-            const data = await res.json()
-            return data.ip || null
-        } catch { return null }
-    }
-
-    const fetchCurrentIpv6 = async (): Promise<string | null> => {
-        try {
-            const res = await fetch('https://api64.ipify.org?format=json')
-            const data = await res.json()
-            const ip = data.ip || null
-            // Verify it's actually IPv6 (contains :)
-            if (ip && ip.includes(':')) return ip
-            return null
-        } catch { return null }
-    }
-
     const runDDNSCheck = async () => {
         try {
             console.log('[DDNS Cron] Checking for IP updates...')
 
             // 1. Fetch current IPs
-            const currentIpv4 = await fetchCurrentIpv4()
-            const currentIpv6 = await fetchCurrentIpv6()
+            const currentIpv4 = await getGlobalIp(false)
+            const currentIpv6 = await getGlobalIp(true)
 
             if (!currentIpv4 && !currentIpv6) {
                 console.error('[DDNS Cron] Failed to fetch any IP address.')

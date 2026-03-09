@@ -23,6 +23,24 @@ export default defineEventHandler(async (event) => {
             throw createError({ statusCode: 401, statusMessage: 'Invalid username or password' })
         }
 
+        // Check if 2FA is enabled
+        if (user.twoFactorEnabled) {
+            if (!body.totpCode) {
+                // Return a specific response indicating 2FA is required
+                return {
+                    success: false,
+                    requires2FA: true,
+                    message: '2FA code required'
+                }
+            } else {
+                const { verify } = await import('otplib')
+                const isValid = await verify({ token: body.totpCode, secret: user.twoFactorSecret! })
+                if (!isValid) {
+                    throw createError({ statusCode: 401, statusMessage: 'Invalid 2FA code' })
+                }
+            }
+        }
+
         // Set Nuxt Session Cookie
         const session = await useSession(event, {
             password: process.env.SESSION_PASSWORD || 'default_secure_session_password_change_me_in_production',

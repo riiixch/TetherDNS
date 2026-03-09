@@ -1,4 +1,5 @@
 import { prisma } from '../../utils/prisma'
+import { getGlobalIp } from '../../utils/getGlobalIp'
 
 export default defineEventHandler(async () => {
     try {
@@ -8,7 +9,9 @@ export default defineEventHandler(async () => {
             totalRecords,
             ddnsEnabledCount,
             lastLog,
-            recentLogs
+            recentLogs,
+            totalHealthChecks,
+            upHealthChecks
         ] = await Promise.all([
             prisma.cloudflareAccount.count(),
             prisma.zone.count(),
@@ -19,15 +22,16 @@ export default defineEventHandler(async () => {
                 take: 5,
                 orderBy: { createdAt: 'desc' },
                 select: { status: true }
-            })
+            }),
+            prisma.healthCheck.count(),
+            prisma.healthCheck.count({ where: { lastStatus: 'UP' } })
         ])
 
         // Fetch current IP
         let currentIp = 'N/A'
         try {
-            const res = await fetch('https://api.ipify.org?format=json')
-            const data = await res.json()
-            currentIp = data.ip || 'N/A'
+            const ip = await getGlobalIp(false)
+            if (ip) currentIp = ip
         } catch { /* ignore */ }
 
         return {
@@ -46,7 +50,11 @@ export default defineEventHandler(async () => {
                 } : null,
                 recentSuccessRate: recentLogs.length > 0
                     ? Math.round((recentLogs.filter(l => l.status === 'SUCCESS').length / recentLogs.length) * 100)
-                    : 100
+                    : 100,
+                healthStats: {
+                    total: totalHealthChecks || 0,
+                    up: upHealthChecks || 0
+                }
             }
         }
     } catch (error: any) {

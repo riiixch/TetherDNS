@@ -131,75 +131,82 @@ const exportJson = () => {
                     </UButton>
                 </div>
             </div>
-            <!-- Warning banner when no accounts exist -->
-            <div v-if="!hasAccounts" class="p-8 text-center text-gray-400">
-                <span>{{ $t('zones.no_accounts_warning') }}</span>
-            </div>
         </template>
 
-        <!-- Search -->
-        <div class="mb-4">
-            <UInput v-model="searchQuery" :placeholder="$t('common.search')" icon="i-heroicons-magnifying-glass"
-                class="max-w-sm" />
+        <!-- Warning banner when no accounts exist -->
+        <div v-if="!hasAccounts" class="p-8 text-center text-gray-400">
+            <span>{{ $t('zones.no_accounts_warning') }}</span>
         </div>
 
-        <UTable :data="filteredZones" :columns="columns" :loading="pending">
-            <template #accountLabel-cell="{ row }">
-                <UBadge color="neutral" variant="subtle">{{ row.original?.account?.label || 'N/A' }}</UBadge>
-            </template>
-            <template #records-cell="{ row }">
-                <UBadge color="secondary" variant="solid">{{ row.original?._count?.records || 0 }}</UBadge>
-            </template>
-            <template #actions-cell="{ row }">
-                <div class="flex justify-end gap-2">
-                    <UButton size="sm" color="secondary" variant="ghost" icon="i-heroicons-cog-8-tooth"
-                        :to="`/zones/${row.original.cfZoneId}`">
-                        {{ $t('common.edit') }}
-                    </UButton>
-                    <UButton size="sm" color="error" variant="ghost" icon="i-heroicons-trash"
-                        @click="openDeleteModal(row.original)" />
-                </div>
-            </template>
-        </UTable>
+        <div v-if="hasAccounts">
+            <!-- Search -->
+            <div class="mb-4">
+                <UInput v-model="searchQuery" :placeholder="$t('common.search')" icon="i-heroicons-magnifying-glass"
+                    class="max-w-sm" />
+            </div>
 
-        <ZoneAddModal v-if="isAddModalOpen" :accounts="accounts" @close="isAddModalOpen = false" @refresh="loadData" />
-
-        <!-- Delete Confirm Modal -->
-        <UModal v-model:open="deleteModalOpen" :title="$t('common.delete')"
-            :description="$t('zones.delete_modal_desc')">
-            <template #body>
-                <div class="space-y-4">
-                    <div class="rounded-md bg-red-500/10 border border-red-500/30 px-4 py-3 text-sm">
-                        <h3 class="font-medium">{{ $t('zones.delete_confirm', { name: deletingZone?.name }) }}</h3>
-                        <p class="text-gray-400 mt-1">{{ $t('zones.delete_modal_text') }}</p>
-                    </div>
-                    <div class="flex justify-end gap-3">
-                        <UButton color="neutral" variant="ghost" @click="deleteModalOpen = false">{{ $t('common.cancel')
-                            }}</UButton>
-                        <UButton color="error" :loading="deleteLoading" @click="executeDelete">{{ $t('common.delete') }}
+            <UTable :data="filteredZones" :columns="columns" :loading="pending">
+                <template #accountLabel-cell="{ row }">
+                    <UBadge color="neutral" variant="subtle">{{ row.original?.account?.label || 'N/A' }}</UBadge>
+                </template>
+                <template #records-cell="{ row }">
+                    <UBadge color="secondary" variant="solid">{{ row.original?._count?.records || 0 }}</UBadge>
+                </template>
+                <template #actions-cell="{ row }">
+                    <div class="flex justify-end gap-2">
+                        <UButton size="sm" color="secondary" variant="ghost" icon="i-heroicons-cog-8-tooth"
+                            :to="`/zones/${row.original.cfZoneId}`">
+                            {{ $t('common.edit') }}
                         </UButton>
+                        <UButton size="sm" color="error" variant="ghost" icon="i-heroicons-trash"
+                            @click="openDeleteModal(row.original)" />
                     </div>
-                </div>
-            </template>
-        </UModal>
+                </template>
+            </UTable>
 
-        <!-- Bulk Import Modal -->
-        <UModal v-model:open="isImportModalOpen" :title="$t('zones.import_modal_title')"
-            :description="$t('zones.import_modal_desc')">
-            <template #body>
-                <div class="space-y-4">
-                    <p class="text-sm text-gray-300">{{ $t('zones.import_info') }}</p>
-                    <UFormField :label="$t('zones.account_field')" name="account">
-                        <USelect v-model="importAccountId" :items="accountOptions" value-key="value" class="w-full" />
-                    </UFormField>
-                    <div class="flex justify-end gap-3">
-                        <UButton color="neutral" variant="ghost" @click="isImportModalOpen = false">{{
-                            $t('common.cancel') }}</UButton>
-                        <UButton color="primary" :loading="importLoading" @click="executeBulkImport">{{
-                            $t('common.import') }}</UButton>
+            <ZoneAddModal v-if="isAddModalOpen" :accounts="accounts" @close="isAddModalOpen = false"
+                @refresh="loadData" />
+
+            <!-- Delete Confirm Modal -->
+            <UModal v-model:open="deleteModalOpen" :title="$t('common.delete')"
+                :description="$t('zones.delete_modal_desc')">
+                <template #body>
+                    <div class="space-y-4">
+                        <div class="rounded-md bg-red-500/10 border border-red-500/30 px-4 py-3 text-sm">
+                            <h3 class="font-medium">{{ $t('zones.delete_confirm', { name: deletingZone?.name }) }}</h3>
+                            <p class="text-gray-400 mt-1">{{ $t('zones.delete_modal_text') }}</p>
+                        </div>
+                        <div class="flex justify-end gap-3">
+                            <UButton color="neutral" variant="ghost" @click="deleteModalOpen = false">{{
+                                $t('common.cancel')
+                                }}</UButton>
+                            <UButton color="error" :loading="deleteLoading" @click="executeDelete">{{
+                                $t('common.delete') }}
+                            </UButton>
+                        </div>
                     </div>
-                </div>
-            </template>
-        </UModal>
+                </template>
+            </UModal>
+
+            <!-- Bulk Import Modal -->
+            <UModal v-model:open="isImportModalOpen" :title="$t('zones.import_modal_title')"
+                :description="$t('zones.import_modal_desc')">
+                <template #body>
+                    <div class="space-y-4">
+                        <p class="text-sm text-gray-300">{{ $t('zones.import_info') }}</p>
+                        <UFormField :label="$t('zones.account_field')" name="account">
+                            <USelect v-model="importAccountId" :items="accountOptions" value-key="value"
+                                class="w-full" />
+                        </UFormField>
+                        <div class="flex justify-end gap-3">
+                            <UButton color="neutral" variant="ghost" @click="isImportModalOpen = false">{{
+                                $t('common.cancel') }}</UButton>
+                            <UButton color="primary" :loading="importLoading" @click="executeBulkImport">{{
+                                $t('common.import') }}</UButton>
+                        </div>
+                    </div>
+                </template>
+            </UModal>
+        </div>
     </UCard>
 </template>

@@ -32,7 +32,7 @@ const showProxied = computed(() => ['A', 'AAAA', 'CNAME'].includes(recordType.va
 
 const handleSave = async () => {
     if (!recordName.value || !recordContent.value) {
-        toast.add({ title: 'Error', description: 'Name and Content are required', color: 'error' })
+        toast.add({ title: t('common.failed'), description: t('records.err_required'), color: 'error' })
         return
     }
 
@@ -44,14 +44,14 @@ const handleSave = async () => {
             content: recordContent.value,
             proxied: showProxied.value ? proxied.value : false,
         })
-        toast.add({ title: 'Success', description: `Record ${recordName.value} updated successfully.`, color: 'success' })
+        toast.add({ title: t('common.success'), description: t('records.add_success', { name: recordName.value }), color: 'success' })
         isOpen.value = false
         emit('refresh')
         emit('close')
     } catch (e: any) {
         toast.add({
-            title: 'Failed to update record',
-            description: e.data?.statusMessage || e.message || 'An error occurred',
+            title: t('common.failed'),
+            description: e.data?.statusMessage || e.message || t('common.err_occurred'),
             color: 'error'
         })
     } finally {
@@ -64,10 +64,10 @@ const generateToken = async () => {
     try {
         const res = await $fetch<{ token: string }>(`/api/records/${props.record.id}/token`, { method: 'POST' })
         updateToken.value = res.token
-        toast.add({ title: 'Token Generated', description: 'DDNS update URL is now available.', color: 'success' })
+        toast.add({ title: t('common.success'), description: t('records.api_desc'), color: 'success' })
         emit('refresh') // So the parent updates its local state too
     } catch (e: any) {
-        toast.add({ title: 'Error', description: e.data?.statusMessage || e.message, color: 'error' })
+        toast.add({ title: t('common.failed'), description: e.data?.statusMessage || e.message, color: 'error' })
     } finally {
         isTokenLoading.value = false
     }
@@ -119,7 +119,7 @@ watch(isOpen, (val) => { if (!val) emit('close') })
                     <UInput v-model="recordContent" class="w-full" />
                 </UFormField>
 
-                <UFormField v-if="showProxied" label="Proxied" name="proxied">
+                <UFormField v-if="showProxied" :label="$t('records.proxy_field')" name="proxied">
                     <USwitch v-model="proxied" color="warning" />
                 </UFormField>
 

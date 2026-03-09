@@ -96,16 +96,17 @@ const onFilterChange = () => {
         </UTable>
 
         <!-- Empty State -->
-        <div v-if="!pending && logs.length === 0" class="py-8 text-center text-gray-400">
+        <!-- <div v-if="!pending && logs.length === 0" class="py-8 text-center text-gray-400">
             <p>{{ $t('logs.no_logs') }}</p>
-        </div>
+        </div> -->
 
         <!-- Pagination -->
         <div v-if="pagination.totalPages > 1" class="flex items-center justify-between pt-4 px-2">
             <span class="text-sm text-gray-400">
                 {{ $t('logs.pagination', {
                     page: pagination.page, totalPages: pagination.totalPages, total:
-                pagination.total })
+                        pagination.total
+                })
                 }}
             </span>
             <div class="flex gap-1">

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 const { user, logout } = useAuth()
+
+const isOpenMenu = ref(false);
 </script>
 
 <template>
@@ -10,7 +12,7 @@ const { user, logout } = useAuth()
             <div
                 class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[64px] py-2 flex items-center justify-between flex-wrap gap-4">
                 <div class="flex items-center gap-2">
-                    <UIcon name="i-heroicons-cloud" class="w-6 h-6 text-primary-500" />
+                    <img src="/assets/images/tetherdns_logo.png" alt="TetherDNS" class="w-10 h-10" />
                     <span class="font-bold text-lg">TetherDNS</span>
                 </div>
 
@@ -22,6 +24,10 @@ const { user, logout } = useAuth()
                     <NuxtLink v-if="user" to="/audit"
                         class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
                         {{ $t('nav.audit') }}
+                    </NuxtLink>
+                    <NuxtLink v-if="user" to="/monitoring"
+                        class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
+                        {{ $t('nav.monitoring') }}
                     </NuxtLink>
                     <NuxtLink v-if="user" to="/settings"
                         class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
@@ -56,7 +62,8 @@ const { user, logout } = useAuth()
                         </template>
                     </ClientOnly>
                     <ClientOnly>
-                        <USlideover title="TetherDNS" side="right">
+                        <USlideover title="TetherDNS" description="Navigation Menu" side="right"
+                            v-model:open="isOpenMenu">
                             <UButton icon="i-heroicons-bars-3" color="neutral" variant="ghost" />
 
                             <template #body>
@@ -66,15 +73,19 @@ const { user, logout } = useAuth()
                                             {{ user.username }}
                                         </strong>
                                     </span>
-                                    <NuxtLink v-if="user" to="/"
+                                    <NuxtLink v-if="user" to="/" @click="isOpenMenu = false"
                                         class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
                                         {{ $t('nav.dashboard') }}
                                     </NuxtLink>
-                                    <NuxtLink v-if="user" to="/audit"
+                                    <NuxtLink v-if="user" to="/audit" @click="isOpenMenu = false"
                                         class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
                                         {{ $t('nav.audit') }}
                                     </NuxtLink>
-                                    <NuxtLink v-if="user" to="/settings"
+                                    <NuxtLink v-if="user" to="/monitoring" @click="isOpenMenu = false"
+                                        class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
+                                        {{ $t('nav.monitoring') }}
+                                    </NuxtLink>
+                                    <NuxtLink v-if="user" to="/settings" @click="isOpenMenu = false"
                                         class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
                                         {{ $t('nav.settings') }}
                                     </NuxtLink>

@@ -1,5 +1,5 @@
 import { prisma } from '../../../utils/prisma'
-import { decrypt } from '../../../utils/crypto'
+import { decrypt } from '../../../utils/decrypt'
 
 export default defineEventHandler(async (event) => {
     const id = getRouterParam(event, 'id')

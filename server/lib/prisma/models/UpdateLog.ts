@@ -42,6 +42,7 @@ export type UpdateLogMinAggregateOutputType = {
   newIp: string | null
   status: string | null
   recordId: number | null
+  message: string | null
   createdAt: Date | null
 }
 
@@ -51,6 +52,7 @@ export type UpdateLogMaxAggregateOutputType = {
   newIp: string | null
   status: string | null
   recordId: number | null
+  message: string | null
   createdAt: Date | null
 }
 
@@ -60,6 +62,7 @@ export type UpdateLogCountAggregateOutputType = {
   newIp: number
   status: number
   recordId: number
+  message: number
   createdAt: number
   _all: number
 }
@@ -81,6 +84,7 @@ export type UpdateLogMinAggregateInputType = {
   newIp?: true
   status?: true
   recordId?: true
+  message?: true
   createdAt?: true
 }
 
@@ -90,6 +94,7 @@ export type UpdateLogMaxAggregateInputType = {
   newIp?: true
   status?: true
   recordId?: true
+  message?: true
   createdAt?: true
 }
 
@@ -99,6 +104,7 @@ export type UpdateLogCountAggregateInputType = {
   newIp?: true
   status?: true
   recordId?: true
+  message?: true
   createdAt?: true
   _all?: true
 }
@@ -195,6 +201,7 @@ export type UpdateLogGroupByOutputType = {
   newIp: string
   status: string
   recordId: number
+  message: string | null
   createdAt: Date
   _count: UpdateLogCountAggregateOutputType | null
   _avg: UpdateLogAvgAggregateOutputType | null
@@ -227,6 +234,7 @@ export type UpdateLogWhereInput = {
   newIp?: Prisma.StringFilter<"UpdateLog"> | string
   status?: Prisma.StringFilter<"UpdateLog"> | string
   recordId?: Prisma.IntFilter<"UpdateLog"> | number
+  message?: Prisma.StringNullableFilter<"UpdateLog"> | string | null
   createdAt?: Prisma.DateTimeFilter<"UpdateLog"> | Date | string
   record?: Prisma.XOR<Prisma.DnsRecordScalarRelationFilter, Prisma.DnsRecordWhereInput>
 }
@@ -237,6 +245,7 @@ export type UpdateLogOrderByWithRelationInput = {
   newIp?: Prisma.SortOrder
   status?: Prisma.SortOrder
   recordId?: Prisma.SortOrder
+  message?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   record?: Prisma.DnsRecordOrderByWithRelationInput
 }
@@ -250,6 +259,7 @@ export type UpdateLogWhereUniqueInput = Prisma.AtLeast<{
   newIp?: Prisma.StringFilter<"UpdateLog"> | string
   status?: Prisma.StringFilter<"UpdateLog"> | string
   recordId?: Prisma.IntFilter<"UpdateLog"> | number
+  message?: Prisma.StringNullableFilter<"UpdateLog"> | string | null
   createdAt?: Prisma.DateTimeFilter<"UpdateLog"> | Date | string
   record?: Prisma.XOR<Prisma.DnsRecordScalarRelationFilter, Prisma.DnsRecordWhereInput>
 }, "id">
@@ -260,6 +270,7 @@ export type UpdateLogOrderByWithAggregationInput = {
   newIp?: Prisma.SortOrder
   status?: Prisma.SortOrder
   recordId?: Prisma.SortOrder
+  message?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.UpdateLogCountOrderByAggregateInput
   _avg?: Prisma.UpdateLogAvgOrderByAggregateInput
@@ -277,6 +288,7 @@ export type UpdateLogScalarWhereWithAggregatesInput = {
   newIp?: Prisma.StringWithAggregatesFilter<"UpdateLog"> | string
   status?: Prisma.StringWithAggregatesFilter<"UpdateLog"> | string
   recordId?: Prisma.IntWithAggregatesFilter<"UpdateLog"> | number
+  message?: Prisma.StringNullableWithAggregatesFilter<"UpdateLog"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"UpdateLog"> | Date | string
 }
 
@@ -284,6 +296,7 @@ export type UpdateLogCreateInput = {
   oldIp?: string | null
   newIp: string
   status: string
+  message?: string | null
   createdAt?: Date | string
   record: Prisma.DnsRecordCreateNestedOneWithoutUpdateLogsInput
 }
@@ -294,6 +307,7 @@ export type UpdateLogUncheckedCreateInput = {
   newIp: string
   status: string
   recordId: number
+  message?: string | null
   createdAt?: Date | string
 }
 
@@ -301,6 +315,7 @@ export type UpdateLogUpdateInput = {
   oldIp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   newIp?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   record?: Prisma.DnsRecordUpdateOneRequiredWithoutUpdateLogsNestedInput
 }
@@ -311,6 +326,7 @@ export type UpdateLogUncheckedUpdateInput = {
   newIp?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   recordId?: Prisma.IntFieldUpdateOperationsInput | number
+  message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -320,6 +336,7 @@ export type UpdateLogCreateManyInput = {
   newIp: string
   status: string
   recordId: number
+  message?: string | null
   createdAt?: Date | string
 }
 
@@ -327,6 +344,7 @@ export type UpdateLogUpdateManyMutationInput = {
   oldIp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   newIp?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -336,6 +354,7 @@ export type UpdateLogUncheckedUpdateManyInput = {
   newIp?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   recordId?: Prisma.IntFieldUpdateOperationsInput | number
+  message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -355,6 +374,7 @@ export type UpdateLogCountOrderByAggregateInput = {
   newIp?: Prisma.SortOrder
   status?: Prisma.SortOrder
   recordId?: Prisma.SortOrder
+  message?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -369,6 +389,7 @@ export type UpdateLogMaxOrderByAggregateInput = {
   newIp?: Prisma.SortOrder
   status?: Prisma.SortOrder
   recordId?: Prisma.SortOrder
+  message?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -378,6 +399,7 @@ export type UpdateLogMinOrderByAggregateInput = {
   newIp?: Prisma.SortOrder
   status?: Prisma.SortOrder
   recordId?: Prisma.SortOrder
+  message?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -432,6 +454,7 @@ export type UpdateLogCreateWithoutRecordInput = {
   oldIp?: string | null
   newIp: string
   status: string
+  message?: string | null
   createdAt?: Date | string
 }
 
@@ -440,6 +463,7 @@ export type UpdateLogUncheckedCreateWithoutRecordInput = {
   oldIp?: string | null
   newIp: string
   status: string
+  message?: string | null
   createdAt?: Date | string
 }
 
@@ -477,6 +501,7 @@ export type UpdateLogScalarWhereInput = {
   newIp?: Prisma.StringFilter<"UpdateLog"> | string
   status?: Prisma.StringFilter<"UpdateLog"> | string
   recordId?: Prisma.IntFilter<"UpdateLog"> | number
+  message?: Prisma.StringNullableFilter<"UpdateLog"> | string | null
   createdAt?: Prisma.DateTimeFilter<"UpdateLog"> | Date | string
 }
 
@@ -485,6 +510,7 @@ export type UpdateLogCreateManyRecordInput = {
   oldIp?: string | null
   newIp: string
   status: string
+  message?: string | null
   createdAt?: Date | string
 }
 
@@ -492,6 +518,7 @@ export type UpdateLogUpdateWithoutRecordInput = {
   oldIp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   newIp?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -500,6 +527,7 @@ export type UpdateLogUncheckedUpdateWithoutRecordInput = {
   oldIp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   newIp?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -508,6 +536,7 @@ export type UpdateLogUncheckedUpdateManyWithoutRecordInput = {
   oldIp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   newIp?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -519,6 +548,7 @@ export type UpdateLogSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   newIp?: boolean
   status?: boolean
   recordId?: boolean
+  message?: boolean
   createdAt?: boolean
   record?: boolean | Prisma.DnsRecordDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["updateLog"]>
@@ -529,6 +559,7 @@ export type UpdateLogSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   newIp?: boolean
   status?: boolean
   recordId?: boolean
+  message?: boolean
   createdAt?: boolean
   record?: boolean | Prisma.DnsRecordDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["updateLog"]>
@@ -539,6 +570,7 @@ export type UpdateLogSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   newIp?: boolean
   status?: boolean
   recordId?: boolean
+  message?: boolean
   createdAt?: boolean
   record?: boolean | Prisma.DnsRecordDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["updateLog"]>
@@ -549,10 +581,11 @@ export type UpdateLogSelectScalar = {
   newIp?: boolean
   status?: boolean
   recordId?: boolean
+  message?: boolean
   createdAt?: boolean
 }
 
-export type UpdateLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "oldIp" | "newIp" | "status" | "recordId" | "createdAt", ExtArgs["result"]["updateLog"]>
+export type UpdateLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "oldIp" | "newIp" | "status" | "recordId" | "message" | "createdAt", ExtArgs["result"]["updateLog"]>
 export type UpdateLogInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   record?: boolean | Prisma.DnsRecordDefaultArgs<ExtArgs>
 }
@@ -574,6 +607,7 @@ export type $UpdateLogPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     newIp: string
     status: string
     recordId: number
+    message: string | null
     createdAt: Date
   }, ExtArgs["result"]["updateLog"]>
   composites: {}
@@ -1004,6 +1038,7 @@ export interface UpdateLogFieldRefs {
   readonly newIp: Prisma.FieldRef<"UpdateLog", 'String'>
   readonly status: Prisma.FieldRef<"UpdateLog", 'String'>
   readonly recordId: Prisma.FieldRef<"UpdateLog", 'Int'>
+  readonly message: Prisma.FieldRef<"UpdateLog", 'String'>
   readonly createdAt: Prisma.FieldRef<"UpdateLog", 'DateTime'>
 }
     

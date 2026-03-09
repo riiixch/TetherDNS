@@ -1,5 +1,5 @@
 import { prisma } from '../../utils/prisma'
-import { encrypt } from '../../utils/crypto'
+import { encrypt } from '../../utils/encrypt'
 
 export default defineEventHandler(async (event) => {
     const body = await readBody(event)
@@ -8,8 +8,8 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 400, statusMessage: 'type, label, and config are required' })
     }
 
-    if (!['discord', 'line'].includes(body.type)) {
-        throw createError({ statusCode: 400, statusMessage: 'type must be "discord" or "line"' })
+    if (!['discord', 'line', 'webhook'].includes(body.type)) {
+        throw createError({ statusCode: 400, statusMessage: 'type must be discord, line, or webhook' })
     }
 
     try {

@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue'
 import DdnsSettings from '../components/settings/DdnsSettings.vue'
 import NotificationSettings from '../components/settings/NotificationSettings.vue'
 import UserSettings from '../components/settings/UserSettings.vue'
+import SecuritySettings from '../components/settings/SecuritySettings.vue'
+import ApiTokenSettings from '../components/settings/ApiTokenSettings.vue'
 
 definePageMeta({ layout: 'default' })
 
@@ -59,16 +61,16 @@ const loadChannels = async () => {
 
 const addChannel = async (payload: any) => {
     if (!payload.label) {
-        toast.add({ title: t('common.failed'), description: 'Label is required', color: 'error' })
+        toast.add({ title: t('common.failed'), description: t('settings.err_label'), color: 'error' })
         return
     }
 
     const config: any = {}
-    if (payload.type === 'discord') {
-        if (!payload.webhookUrl) { toast.add({ title: t('common.failed'), description: 'Webhook URL is required', color: 'error' }); throw new Error() }
+    if (payload.type === 'discord' || payload.type === 'webhook') {
+        if (!payload.webhookUrl) { toast.add({ title: t('common.failed'), description: t('settings.err_webhook'), color: 'error' }); throw new Error() }
         config.webhookUrl = payload.webhookUrl
     } else if (payload.type === 'line') {
-        if (!payload.lineToken) { toast.add({ title: t('common.failed'), description: 'LINE Token is required', color: 'error' }); throw new Error() }
+        if (!payload.lineToken) { toast.add({ title: t('common.failed'), description: t('settings.err_line'), color: 'error' }); throw new Error() }
         config.token = payload.lineToken
     }
 
@@ -113,7 +115,7 @@ const loadUsers = async () => {
 
 const addUser = async (payload: any) => {
     if (!payload.username || !payload.password) {
-        toast.add({ title: t('common.failed'), description: 'Username and password are required', color: 'error' })
+        toast.add({ title: t('common.failed'), description: t('settings.err_user_pass'), color: 'error' })
         throw new Error()
     }
 
@@ -152,6 +154,10 @@ onMounted(() => {
         </div>
 
         <DdnsSettings :ddns-interval="ddnsInterval" :loading="settingsLoading" @save="saveSettings" />
+
+        <SecuritySettings />
+
+        <ApiTokenSettings />
 
         <NotificationSettings :channels="channels" :loading="notifPending" @add="addChannel" @delete="deleteChannel"
             @test="testChannel" />

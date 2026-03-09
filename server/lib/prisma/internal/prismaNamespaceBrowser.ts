@@ -54,11 +54,14 @@ export const ModelName = {
   CloudflareAccount: 'CloudflareAccount',
   Zone: 'Zone',
   User: 'User',
+  ApiToken: 'ApiToken',
   DnsRecord: 'DnsRecord',
   UpdateLog: 'UpdateLog',
   Settings: 'Settings',
   NotificationChannel: 'NotificationChannel',
-  AuditLog: 'AuditLog'
+  AuditLog: 'AuditLog',
+  HealthCheck: 'HealthCheck',
+  HealthCheckLog: 'HealthCheckLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -76,6 +79,7 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const CloudflareAccountScalarFieldEnum = {
   id: 'id',
+  providerType: 'providerType',
   label: 'label',
   email: 'email',
   apiToken: 'apiToken',
@@ -99,10 +103,24 @@ export const UserScalarFieldEnum = {
   id: 'id',
   username: 'username',
   password: 'password',
+  twoFactorSecret: 'twoFactorSecret',
+  twoFactorEnabled: 'twoFactorEnabled',
   createdAt: 'createdAt'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const ApiTokenScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  tokenHash: 'tokenHash',
+  userId: 'userId',
+  lastUsedAt: 'lastUsedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type ApiTokenScalarFieldEnum = (typeof ApiTokenScalarFieldEnum)[keyof typeof ApiTokenScalarFieldEnum]
 
 
 export const DnsRecordScalarFieldEnum = {
@@ -126,6 +144,7 @@ export const UpdateLogScalarFieldEnum = {
   newIp: 'newIp',
   status: 'status',
   recordId: 'recordId',
+  message: 'message',
   createdAt: 'createdAt'
 } as const
 
@@ -163,6 +182,33 @@ export const AuditLogScalarFieldEnum = {
 } as const
 
 export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
+
+
+export const HealthCheckScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  type: 'type',
+  target: 'target',
+  interval: 'interval',
+  lastStatus: 'lastStatus',
+  lastCheckAt: 'lastCheckAt',
+  isEnabled: 'isEnabled',
+  createdAt: 'createdAt'
+} as const
+
+export type HealthCheckScalarFieldEnum = (typeof HealthCheckScalarFieldEnum)[keyof typeof HealthCheckScalarFieldEnum]
+
+
+export const HealthCheckLogScalarFieldEnum = {
+  id: 'id',
+  healthCheckId: 'healthCheckId',
+  status: 'status',
+  responseTime: 'responseTime',
+  message: 'message',
+  createdAt: 'createdAt'
+} as const
+
+export type HealthCheckLogScalarFieldEnum = (typeof HealthCheckLogScalarFieldEnum)[keyof typeof HealthCheckLogScalarFieldEnum]
 
 
 export const SortOrder = {

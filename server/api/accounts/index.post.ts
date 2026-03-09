@@ -1,5 +1,5 @@
 import { prisma } from '../../utils/prisma'
-import { encrypt } from '../../utils/crypto'
+import { encrypt } from '../../utils/encrypt'
 import Cloudflare from 'cloudflare'
 
 export default defineEventHandler(async (event) => {
