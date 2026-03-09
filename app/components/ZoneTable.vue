@@ -32,7 +32,7 @@ const { t } = useI18n()
 
 const columns = computed(() => [
     { accessorKey: 'name', header: t('zones.col_name') },
-    { accessorKey: 'cfZoneId', header: 'Zone ID' },
+    { accessorKey: 'cfZoneId', header: t('zones.col_id') },
     { id: 'accountLabel', header: t('zones.col_account') },
     { id: 'records', header: t('zones.col_records') },
     { id: 'actions', header: t('zones.col_actions') }
@@ -45,7 +45,7 @@ const loadData = async () => {
         zones.value = z
         accounts.value = a
     } catch (e: any) {
-        toast.add({ title: 'Error loading data', description: e.message, color: 'error' })
+        toast.add({ title: t('zones.load_error'), description: e.message, color: 'error' })
     } finally {
         pending.value = false
     }
@@ -65,10 +65,10 @@ const executeDelete = async () => {
     deleteLoading.value = true
     try {
         await deleteZone(deletingZone.value.cfZoneId)
-        toast.add({ title: 'Deleted', description: `${deletingZone.value.name} removed successfully.`, color: 'success' })
+        toast.add({ title: t('common.success'), description: t('zones.delete_success', { name: deletingZone.value.name }), color: 'success' })
         loadData()
     } catch (e: any) {
-        toast.add({ title: 'Delete Failed', description: e.data?.statusMessage || e.message, color: 'error' })
+        toast.add({ title: t('zones.delete_failed'), description: e.data?.statusMessage || e.message, color: 'error' })
     } finally {
         deleteLoading.value = false
         deleteModalOpen.value = false
@@ -89,11 +89,11 @@ const executeBulkImport = async () => {
             method: 'POST',
             body: { accountId: importAccountId.value }
         })
-        toast.add({ title: 'Import Complete', description: res.message, color: 'success' })
+        toast.add({ title: t('zones.import_success'), description: res.message, color: 'success' })
         isImportModalOpen.value = false
         loadData()
     } catch (e: any) {
-        toast.add({ title: 'Import Failed', description: e.data?.statusMessage || e.message, color: 'error' })
+        toast.add({ title: t('zones.import_failed'), description: e.data?.statusMessage || e.message, color: 'error' })
     } finally {
         importLoading.value = false
     }
@@ -165,7 +165,8 @@ const exportJson = () => {
         <ZoneAddModal v-if="isAddModalOpen" :accounts="accounts" @close="isAddModalOpen = false" @refresh="loadData" />
 
         <!-- Delete Confirm Modal -->
-        <UModal v-model:open="deleteModalOpen" :title="$t('common.delete')" description="Confirm zone deletion">
+        <UModal v-model:open="deleteModalOpen" :title="$t('common.delete')"
+            :description="$t('zones.delete_modal_desc')">
             <template #body>
                 <div class="space-y-4">
                     <div class="rounded-md bg-red-500/10 border border-red-500/30 px-4 py-3 text-sm">
@@ -174,7 +175,7 @@ const exportJson = () => {
                     </div>
                     <div class="flex justify-end gap-3">
                         <UButton color="neutral" variant="ghost" @click="deleteModalOpen = false">{{ $t('common.cancel')
-                        }}</UButton>
+                            }}</UButton>
                         <UButton color="error" :loading="deleteLoading" @click="executeDelete">{{ $t('common.delete') }}
                         </UButton>
                     </div>

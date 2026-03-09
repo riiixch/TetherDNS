@@ -25,11 +25,11 @@ const columns = computed(() => [
 
 const actionTypes = computed(() => [
     { label: t('audit.filter_actions'), value: 'ALL' },
-    { label: 'Create Record', value: 'CREATE_RECORD' },
-    { label: 'Update Record', value: 'UPDATE_RECORD' },
-    { label: 'Delete Record', value: 'DELETE_RECORD' },
-    { label: 'Add Zone', value: 'ADD_ZONE' },
-    { label: 'Delete Zone', value: 'DELETE_ZONE' },
+    { label: t('audit.action_create_record'), value: 'CREATE_RECORD' },
+    { label: t('audit.action_update_record'), value: 'UPDATE_RECORD' },
+    { label: t('audit.action_delete_record'), value: 'DELETE_RECORD' },
+    { label: t('audit.action_add_zone'), value: 'ADD_ZONE' },
+    { label: t('audit.action_delete_zone'), value: 'DELETE_ZONE' },
 ])
 
 const loadLogs = async () => {
@@ -42,7 +42,7 @@ const loadLogs = async () => {
         logs.value = res.data
         total.value = res.pagination.total
     } catch (e: any) {
-        toast.add({ title: 'Error loading audit logs', description: e.message, color: 'error' })
+        toast.add({ title: t('audit.load_error'), description: e.message, color: 'error' })
     } finally {
         pending.value = false
     }
@@ -77,7 +77,7 @@ const getActionColor = (action: string) => {
             <template #header>
                 <div class="flex justify-between items-center">
                     <h2 class="text-lg font-semibold">{{ $t('audit.title') }}</h2>
-                    <div class="w-64">
+                    <div class="">
                         <USelect v-model="actionFilter" :items="actionTypes" value-key="value"
                             :placeholder="$t('audit.filter_actions')" />
                     </div>
@@ -108,9 +108,11 @@ const getActionColor = (action: string) => {
             </UTable>
 
             <div v-if="total > limit" class="mt-4 flex justify-between items-center">
-                <span class="text-sm text-gray-400">Showing {{ (page - 1) * limit + 1 }} - {{ Math.min(page * limit,
-                    total) }} of {{
-                        total }}</span>
+                <span class="text-sm text-gray-400">{{ $t('common.showing_results', {
+                    start: (page - 1) * limit + 1,
+                    end:
+                        Math.min(page * limit, total), total: total
+                }) }}</span>
                 <UPagination v-model:page="page" :total="total" :items-per-page="limit" show-edges />
             </div>
         </UCard>

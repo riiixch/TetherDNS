@@ -4,12 +4,13 @@ definePageMeta({
 })
 
 const { user } = useAuth()
+const { t } = useI18n()
 
-const items = [
-    { label: 'DNS Zones', icon: 'i-heroicons-globe-alt' },
-    { label: 'Accounts', icon: 'i-heroicons-user-group' },
-    { label: 'Update Logs', icon: 'i-heroicons-clock' }
-]
+const items = computed(() => [
+    { label: t('dashboard.tab_zones'), icon: 'i-heroicons-globe-alt' },
+    { label: t('dashboard.tab_accounts'), icon: 'i-heroicons-user-group' },
+    { label: t('dashboard.tab_logs'), icon: 'i-heroicons-clock' }
+])
 </script>
 
 <template>

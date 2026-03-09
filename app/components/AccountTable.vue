@@ -20,7 +20,7 @@ const columns = computed(() => [
     { accessorKey: 'label', header: t('accounts.col_label') },
     { accessorKey: 'email', header: t('accounts.col_email') },
     { id: 'zones', header: t('accounts.col_zones') },
-    { id: 'createdAt', header: 'Created' },
+    { id: 'createdAt', header: t('accounts.col_created') },
     { id: 'actions', header: t('accounts.col_actions') }
 ])
 
@@ -29,7 +29,7 @@ const loadData = async () => {
     try {
         accounts.value = await fetchAccounts()
     } catch (e: any) {
-        toast.add({ title: 'Error loading accounts', description: e.message, color: 'error' })
+        toast.add({ title: t('accounts.load_error'), description: e.message, color: 'error' })
     } finally {
         pending.value = false
     }
@@ -47,10 +47,10 @@ const executeDelete = async () => {
     deleteLoading.value = true
     try {
         await deleteAccount(deletingAccount.value.id)
-        toast.add({ title: 'Deleted', description: `Account "${deletingAccount.value.label}" removed successfully.`, color: 'success' })
+        toast.add({ title: t('common.success'), description: t('accounts.delete_success', { label: deletingAccount.value.label }), color: 'success' })
         loadData()
     } catch (e: any) {
-        toast.add({ title: 'Delete Failed', description: e.data?.statusMessage || e.message, color: 'error' })
+        toast.add({ title: t('accounts.delete_failed'), description: e.data?.statusMessage || e.message, color: 'error' })
     } finally {
         deleteLoading.value = false
         deleteModalOpen.value = false
@@ -61,9 +61,9 @@ const executeDelete = async () => {
 const testConnection = async (account: any) => {
     try {
         const res = await $fetch<{ message: string }>(`/api/accounts/${account.id}/test`, { method: 'POST' })
-        toast.add({ title: 'Connection OK ✅', description: res.message, color: 'success' })
+        toast.add({ title: t('accounts.conn_ok'), description: res.message, color: 'success' })
     } catch (e: any) {
-        toast.add({ title: 'Connection Failed ❌', description: e.data?.statusMessage || e.message, color: 'error' })
+        toast.add({ title: t('accounts.conn_failed'), description: e.data?.statusMessage || e.message, color: 'error' })
     }
 }
 
@@ -108,20 +108,20 @@ const formatDate = (dateStr: string) => {
         <AccountAddModal v-if="isAddModalOpen" @close="isAddModalOpen = false" @refresh="loadData" />
 
         <!-- Delete Confirm Modal -->
-        <UModal v-model:open="deleteModalOpen" :title="$t('common.delete')" description="Confirm account deletion">
+        <UModal v-model:open="deleteModalOpen" :title="$t('common.delete')" :description="$t('common.are_you_sure')">
             <template #body>
                 <div class="space-y-4">
                     <div class="rounded-md bg-red-500/10 border border-red-500/30 px-4 py-3 text-sm">
                         <p class="font-semibold text-red-400 mb-2">{{ $t('common.are_you_sure') }}</p>
                         <p class="text-gray-300">
                             {{ $t('common.delete') }} Account <strong class="text-white">"{{ deletingAccount?.label
-                            }}"</strong>?
+                                }}"</strong>?
                         </p>
-                        <p class="text-gray-400 mt-1">Zone ที่ผูกกับ Account นี้ต้องถูกลบก่อน</p>
+                        <p class="text-gray-400 mt-1">{{ $t('accounts.delete_warning') }}</p>
                     </div>
                     <div class="flex justify-end gap-3">
                         <UButton color="neutral" variant="ghost" @click="deleteModalOpen = false">{{ $t('common.cancel')
-                        }}</UButton>
+                            }}</UButton>
                         <UButton color="error" :loading="deleteLoading" @click="executeDelete">{{ $t('common.delete') }}
                         </UButton>
                     </div>

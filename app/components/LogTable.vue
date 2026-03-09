@@ -16,8 +16,8 @@ const columns = computed(() => [
     { id: 'time', header: t('logs.col_time') },
     { id: 'record', header: t('logs.col_record') },
     { id: 'zone', header: t('logs.col_zone') },
-    { accessorKey: 'oldIp', header: 'Old IP' },
-    { accessorKey: 'newIp', header: 'New IP' },
+    { accessorKey: 'oldIp', header: t('logs.col_old_ip') },
+    { accessorKey: 'newIp', header: t('logs.col_new_ip') },
     { id: 'status', header: t('logs.col_status') },
 ])
 
@@ -32,7 +32,7 @@ const loadData = async () => {
         logs.value = res.data
         pagination.value = res.pagination
     } catch (e: any) {
-        toast.add({ title: 'Error loading logs', description: e.message, color: 'error' })
+        toast.add({ title: t('logs.load_error'), description: e.message, color: 'error' })
     } finally {
         pending.value = false
     }
@@ -103,16 +103,19 @@ const onFilterChange = () => {
         <!-- Pagination -->
         <div v-if="pagination.totalPages > 1" class="flex items-center justify-between pt-4 px-2">
             <span class="text-sm text-gray-400">
-                Page {{ pagination.page }} of {{ pagination.totalPages }} ({{ pagination.total }} total)
+                {{ $t('logs.pagination', {
+                    page: pagination.page, totalPages: pagination.totalPages, total:
+                pagination.total })
+                }}
             </span>
             <div class="flex gap-1">
                 <UButton size="sm" color="neutral" variant="ghost" :disabled="pagination.page <= 1"
                     @click="goPage(pagination.page - 1)">
-                    Prev
+                    {{ $t('common.prev') }}
                 </UButton>
                 <UButton size="sm" color="neutral" variant="ghost" :disabled="pagination.page >= pagination.totalPages"
                     @click="goPage(pagination.page + 1)">
-                    Next
+                    {{ $t('common.next') }}
                 </UButton>
             </div>
         </div>

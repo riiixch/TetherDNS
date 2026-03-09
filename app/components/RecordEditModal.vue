@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch, computed } from 'vue'
 
+const { t } = useI18n()
 const props = defineProps<{ record: any }>()
 const emit = defineEmits(['close', 'refresh'])
 const { updateRecord } = useRecords()
@@ -14,6 +15,7 @@ const proxied = ref(props.record.proxied)
 const updateToken = ref(props.record.updateToken)
 const isLoading = ref(false)
 const isTokenLoading = ref(false)
+const isConfirmRevokeOpen = ref(false)
 
 const typeOptions = [
     { label: 'A', value: 'A' },
@@ -72,16 +74,15 @@ const generateToken = async () => {
 }
 
 const revokeToken = async () => {
-    if (!confirm('Are you sure you want to revoke this token? Existing scripts using this URL will stop working.')) return
-
     isTokenLoading.value = true
     try {
         await $fetch<any>(`/api/records/${props.record.id}/token`, { method: 'DELETE' as const })
         updateToken.value = null
-        toast.add({ title: 'Token Revoked', description: 'The DDNS update URL is no longer functional.', color: 'success' })
+        toast.add({ title: t('common.success'), color: 'success' })
         emit('refresh')
+        isConfirmRevokeOpen.value = false
     } catch (e: any) {
-        toast.add({ title: 'Error', description: e.data?.statusMessage || e.message, color: 'error' })
+        toast.add({ title: t('common.failed'), description: e.data?.statusMessage || e.message, color: 'error' })
     } finally {
         isTokenLoading.value = false
     }
@@ -90,7 +91,7 @@ const revokeToken = async () => {
 
 const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
-    toast.add({ title: 'Copied!', description: 'URL copied to clipboard', color: 'success' })
+    toast.add({ title: t('common.success'), color: 'success' })
 }
 
 const ddnsUrl = computed(() => {
@@ -133,7 +134,7 @@ watch(isOpen, (val) => { if (!val) emit('close') })
                                 @click="copyToClipboard(ddnsUrl)" />
                         </div>
                         <UButton color="error" variant="soft" size="xs" icon="i-heroicons-trash"
-                            :loading="isTokenLoading" @click="revokeToken">
+                            :loading="isTokenLoading" @click="isConfirmRevokeOpen = true">
                             {{ $t('records.revoke_token') }}
                         </UButton>
                     </div>
@@ -148,6 +149,25 @@ watch(isOpen, (val) => { if (!val) emit('close') })
                     <UButton type="submit" color="primary" :loading="isLoading">{{ $t('common.save') }}</UButton>
                 </div>
             </form>
+        </template>
+    </UModal>
+
+    <!-- Revoke Confirmation Modal -->
+    <UModal v-model:open="isConfirmRevokeOpen" :title="$t('records.revoke_token')">
+        <template #body>
+            <div class="space-y-4">
+                <p class="text-gray-300">
+                    {{ $t('records.revoke_warning') }}
+                </p>
+                <div class="flex justify-end gap-3 pt-2">
+                    <UButton color="neutral" variant="ghost" @click="isConfirmRevokeOpen = false">{{ $t('common.cancel')
+                        }}
+                    </UButton>
+                    <UButton color="error" :loading="isTokenLoading" @click="revokeToken">{{ $t('records.revoke_token')
+                        }}
+                    </UButton>
+                </div>
+            </div>
         </template>
     </UModal>
 </template>

@@ -7,6 +7,7 @@ definePageMeta({
 
 const { login } = useAuth()
 const toast = useToast()
+const { t } = useI18n()
 
 const username = ref('')
 const password = ref('')
@@ -16,8 +17,8 @@ const handleLogin = async () => {
 
     if (!username.value || !password.value) {
         toast.add({
-            title: 'Login Failed!',
-            description: 'Please fill out all fields.',
+            title: t('auth.login_failed'),
+            description: t('auth.err_required'),
             color: 'error'
         })
         return
@@ -30,8 +31,8 @@ const handleLogin = async () => {
         navigateTo('/')
     } catch (e: any) {
         toast.add({
-            title: 'Login Failed!',
-            description: e.data?.statusMessage || e.message || 'Invalid username or password.',
+            title: t('auth.login_failed'),
+            description: e.data?.statusMessage || e.message || t('auth.err_invalid'),
             color: 'error'
         })
     } finally {
@@ -49,7 +50,7 @@ const handleLogin = async () => {
 
         <form @submit.prevent="handleLogin" class="space-y-4">
             <UFormField :label="$t('auth.username_field')" name="username">
-                <UInput v-model="username" placeholder="admin" autofocus class="w-full" />
+                <UInput v-model="username" :placeholder="$t('auth.username_placeholder')" autofocus class="w-full" />
             </UFormField>
 
             <UFormField :label="$t('auth.password_field')" name="password">

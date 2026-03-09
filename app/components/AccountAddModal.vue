@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
+const { t } = useI18n()
 const emit = defineEmits(['close', 'refresh'])
 const { addAccount } = useAccounts()
 const toast = useToast()
@@ -13,21 +14,21 @@ const isLoading = ref(false)
 
 const handleAdd = async () => {
     if (!label.value || !email.value || !apiToken.value) {
-        toast.add({ title: 'Error', description: 'All fields are required', color: 'error' })
+        toast.add({ title: t('common.failed'), description: t('accounts.err_all_fields'), color: 'error' })
         return
     }
 
     isLoading.value = true
     try {
         await addAccount(label.value, email.value, apiToken.value)
-        toast.add({ title: 'Success', description: `Account "${label.value}" added successfully.`, color: 'success' })
+        toast.add({ title: t('common.success'), description: t('accounts.add_success', { label: label.value }), color: 'success' })
         isOpen.value = false
         emit('refresh')
         emit('close')
     } catch (e: any) {
         toast.add({
-            title: 'Failed to add Account',
-            description: e.data?.statusMessage || e.message || 'An error occurred',
+            title: t('accounts.add_failed'),
+            description: e.data?.statusMessage || e.message || t('accounts.err_occurred'),
             color: 'error'
         })
     } finally {
@@ -41,27 +42,29 @@ watch(isOpen, (val) => {
 </script>
 
 <template>
-    <UModal v-model:open="isOpen" title="Add TetherDNS Account"
-        description="Enter your Cloudflare API credentials below">
+    <UModal v-model:open="isOpen" :title="$t('accounts.add_modal_title')" :description="$t('accounts.add_modal_desc')">
         <template #body>
             <form @submit.prevent="handleAdd" class="space-y-4">
-                <UFormField label="Label" name="label">
-                    <UInput v-model="label" placeholder="e.g. Main Account" class="w-full" autofocus />
-                    <p class="text-xs text-gray-400 mt-1">A friendly name to identify this account.</p>
+                <UFormField :label="$t('accounts.label_field')" name="label">
+                    <UInput v-model="label" :placeholder="$t('accounts.label_placeholder')" class="w-full" autofocus />
+                    <p class="text-xs text-gray-400 mt-1">{{ $t('accounts.label_hint') }}</p>
                 </UFormField>
 
-                <UFormField label="Account Email" name="email">
-                    <UInput v-model="email" type="email" placeholder="admin@example.com" class="w-full" />
+                <UFormField :label="$t('accounts.email_field')" name="email">
+                    <UInput v-model="email" type="email" :placeholder="$t('accounts.email_placeholder')"
+                        class="w-full" />
                 </UFormField>
 
-                <UFormField label="API Token" name="apiToken">
-                    <UInput v-model="apiToken" type="password" placeholder="Your Cloudflare API Token" class="w-full" />
-                    <p class="text-xs text-gray-400 mt-1">Token จะถูกเข้ารหัสก่อนเก็บลง Database</p>
+                <UFormField :label="$t('accounts.token_field')" name="apiToken">
+                    <UInput v-model="apiToken" type="password" :placeholder="$t('accounts.token_placeholder')"
+                        class="w-full" />
+                    <p class="text-xs text-gray-400 mt-1">{{ $t('accounts.token_hint') }}</p>
                 </UFormField>
 
                 <div class="flex justify-end gap-3 pt-2">
-                    <UButton color="neutral" variant="ghost" @click="isOpen = false">Cancel</UButton>
-                    <UButton type="submit" color="primary" :loading="isLoading">Add Account</UButton>
+                    <UButton color="neutral" variant="ghost" @click="isOpen = false">{{ $t('common.cancel') }}</UButton>
+                    <UButton type="submit" color="primary" :loading="isLoading">{{ $t('accounts.add_account') }}
+                    </UButton>
                 </div>
             </form>
         </template>
