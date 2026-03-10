@@ -107,7 +107,7 @@ Deploy to production in seconds with zero manual configuration:
 
 ```bash
 # 1. Clone the repository
-git clone [https://github.com/riiixch/TetherDNS.git](https://github.com/riiixch/TetherDNS.git)
+git clone https://github.com/riiixch/TetherDNS
 cd TetherDNS
 
 # 2. Configure environment variables
