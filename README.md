@@ -1,126 +1,164 @@
 <div align="center">
-<h1>🌐 TetherDNS</h1>
-<p><strong>Cloudflare DDNS Manager:</strong> A simple, powerful Dynamic DNS management system for Cloudflare.</p>
+
+<img src="public/logo.png" alt="TetherDNS Logo" width="180">
+
+# **TetherDNS**
+
+### _Precision Cloudflare DNS & Dynamic IP Orchestrator_
+
+<p align="center">
+  <a href="https://nuxt.com/">
+    <img src="https://img.shields.io/badge/Nuxt_4-00C58E?style=for-the-badge&logo=nuxt.js&logoColor=white" alt="Nuxt 4">
+  </a>
+  <a href="https://vuejs.org/">
+    <img src="https://img.shields.io/badge/Vue_3-35495E?style=for-the-badge&logo=vue.js&logoColor=4FC08D" alt="Vue 3">
+  </a>
+  <a href="https://tailwindcss.com/">
+    <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS">
+  </a>
+  <a href="https://prisma.io/">
+    <img src="https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white" alt="Prisma">
+  </a>
+  <a href="https://www.docker.com/">
+    <img src="https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
+  </a>
+</p>
+
+**TetherDNS** is a high-performance, enterprise-ready web suite designed for elite DNS management. It bridges the gap between complex network configurations and effortless control, all wrapped in a premium **Ocean Deep Tech** user experience.
+
+[English](README.md) • [ภาษาไทย](README-TH.md)
 
 </div>
 
-## 📖 Introduction
+---
 
-**TetherDNS** (formerly Cloudflare DDNS Manager) is a web application developed to seamlessly integrate with the Cloudflare API for automated IP address management (Dynamic DNS) through a beautiful, easy-to-use Web UI. It is ideal for users running home servers, CCTV systems, or any services where the Internet Service Provider (ISP) frequently changes the IP address.
+## 💎 Modern DNS Management, Reimagined
 
-## ✨ Features
+More than just a utility, TetherDNS is an orchestration suite designed to respect your time and workflow.
 
-- 🔒 **Cloudflare Account Management:** Supports adding multiple accounts via API Tokens.
-- 🌍 **Zone & DNS Record Management:** View and directly edit DNS records for your domains on Cloudflare.
-- 🔄 **Auto IP Update (DDNS):** Generate specific URLs (Update Tokens) to use with Cronjobs, Routers, or Scripts to automatically link new IPs to your domains.
-- 📜 **Update Logs:** Keep detailed records of IP address changes.
-- 🔔 **Notifications:** Receive alerts for IP changes via Discord, LINE Notify, and Email.
-- 👀 **Audit Logs:** Track system activities and user actions.
-- 🌐 **Bilingual Support (i18n):** Available in both English and Thai.
-- 🎨 **Beautiful UI:** Designed with Nuxt UI, ensuring a seamless user experience on both desktop and mobile devices.
+### 🌌 The "Ocean Deep" Experience
 
-## 🛠️ Tech Stack
+Experience a custom-crafted UI designed for long-term management sessions:
 
-- **Frontend:** Nuxt 4, Vue 3, Nuxt UI, TailwindCSS, @nuxtjs/i18n
-- **Backend:** Nuxt Nitro
-- **Database:** LibSQL (SQLite) + Prisma ORM
-- **Deployment:** Docker & Docker Compose
-
-## 🚀 Installation & Setup
-
-### Method 1: Docker Installation (Recommended)
-
-1. Clone the repository to your local machine:
-
-```bash
-git clone https://github.com/yourusername/tetherdns.git
-cd tetherdns
-
-```
-
-2. Create and configure the `.env` file:
-
-```bash
-cp .env.example .env
-
-```
-
-Open the `.env` file and edit `SESSION_PASSWORD` (enter a long, secure, and random password).
-
-3. Run Docker Compose:
-
-```bash
-docker-compose up -d
-
-```
-
-TetherDNS will be available at `http://localhost:3000`.
+- **Glassmorphism:** Elegant, semi-transparent layers for a focused, distraction-free workflow.
+- **Deep Indigo Syntax:** Custom color theory tailored to reduce eye strain during late-night deployments.
+- **Responsive Fluidity:** Flawlessly manage your entire infrastructure from a 4K desktop down to your mobile device.
 
 ---
 
-### Method 2: Manual Installation (Node.js)
+## 🚀 Feature Galaxy
 
-**Prerequisites:**
+### 🔐 Core Security
 
-- Node.js (version 18 or higher) or Bun
+- **Multi-Account Vault:** Securely organize and manage multiple Cloudflare accounts from a single dashboard.
+- **TOTP 2FA Protection:** Enterprise-grade Two-Factor Authentication securing your administrative console.
+- **Encrypted Sessions:** Industrial-strength, HTTP-only cookie security with strict, configurable policies.
 
-1. Clone the repository:
+### 🌍 Zone Mastery
 
-```bash
-git clone https://github.com/yourusername/tetherdns.git
-cd tetherdns
+- **Intelligent Explorer:** Instant search, filtering, and pagination across hundreds of managed domains.
+- **Precision Record CRUD:** Add, edit, and remove `A`, `AAAA`, `CNAME`, `TXT`, `MX`, and `SRV` records with real-time validation.
+- **Proxy Orchestration:** Seamlessly toggle Cloudflare's proxy (Orange Cloud) and adjust TTL settings on the fly.
+
+### 🔄 Automation & Intelligence
+
+- **Webhook API Generation:** Generate unique, secure URL endpoints to automate Dynamic IP (DDNS) updates from any router or script.
+- **IP Analytics Engine:** Interactive visualizations tracking your IP mutations and stability over time.
+- **Real-Time Audit Trail:** Immutable logging for every login, configuration change, and automated update ensuring total transparency.
+
+---
+
+## 🏗️ Technical Blueprint
+
+```mermaid
+graph LR
+    subgraph "Elite Frontend"
+        UI[Nuxt 4 / Vue 3]
+        Theme[Ocean Deep Theme]
+    end
+
+    subgraph "High-Performance API"
+        Nitro[Nitro Server Engine]
+        Middle[Auth Middleware]
+        Utility[Session & CF Utils]
+    end
+
+    subgraph "Data Persistence"
+        Prisma[Prisma ORM]
+        DB[(SQLite / LibSQL)]
+    end
+
+    UI <--> Nitro
+    Nitro <--> Middle
+    Nitro <--> Utility
+    Utility <--> CF[Cloudflare API]
+    Utility <--> Prisma
+    Prisma <--> DB
 
 ```
 
-2. Install dependencies:
+---
+
+## 📦 Quick Start
+
+### 🐳 The Docker Way (Recommended)
+
+Deploy to production in seconds with zero manual configuration:
 
 ```bash
-npm install
-# or bun install
+# 1. Clone the repository
+git clone [https://github.com/riiixch/TetherDNS.git](https://github.com/riiixch/TetherDNS.git)
+cd TetherDNS
 
-```
-
-3. Copy and configure the `.env` file:
-
-```bash
+# 2. Configure environment variables
 cp .env.example .env
 
-```
-
-4. Set up the database (Prisma):
-
-```bash
-npm run prisma:push
-npm run prisma:gen
+# 3. Boot the engine
+docker-compose up -d --build
 
 ```
 
-5. Run the development server:
+### 💻 Developer Track
+
+For developers who wish to extend, customize, or contribute:
 
 ```bash
+# Install dependencies
+npm install
+
+# Initialize and push the elite database schema
+npx prisma db push
+
+# Launch the development server
 npm run dev
 
 ```
 
-The application will be running at `http://localhost:3000`.
+---
 
-For production deployment:
+## ⚙️ The Control Panel (.env)
 
-```bash
-npm run build
-npm start
+Configure your instance by adjusting the parameters in your `.env` file:
 
-```
+| Scope           | Variable           | Significance                                                                |
+| --------------- | ------------------ | --------------------------------------------------------------------------- |
+| **Persistence** | `DATABASE_URL`     | Absolute path to the SQLite database (e.g., `file:/app/data/tetherdns.db`). |
+| **Security**    | `SESSION_PASSWORD` | A highly secure, 32+ character encryption key for managing user sessions.   |
+| **Network**     | `SESSION_SECURE`   | Set to `true` to enforce strict HTTPS transport security for cookies.       |
+| **Locale**      | `TZ`               | System-wide timezone for accurate logging (e.g., `Asia/Bangkok`).           |
 
-## ⚙️ Environment Variables
-
-The `.env` file requires the following configurations:
-
-| Variable           | Description                                                                          |
-| ------------------ | ------------------------------------------------------------------------------------ |
-| `DATABASE_URL`     | Database file path, e.g., `file:./tetherdns.db` or any preferred path.               |
-| `SESSION_PASSWORD` | Password for Session encryption (must be a random string of at least 32 characters). |
+---
 
 ## 📜 License
 
-This project is licensed under the [MIT License](https://www.google.com/search?q=LICENSE) (add a https://www.google.com/search?q=LICENSE file if available).
+Proudly distributed under the **MIT License**. We believe in open, high-quality software. See [LICENSE](https://www.google.com/search?q=LICENSE) for more details.
+
+---
+
+<div align="center">
+
+### 🌊 Master Your Network. Master the Deep.
+
+**Built with uncompromising passion by [RIIIXCH](https://github.com/riiixch)**
+
+</div>

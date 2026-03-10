@@ -1,124 +1,164 @@
 <div align="center">
-  <h1>🌐 TetherDNS</h1>
-  <p><strong>Cloudflare DDNS Manager</strong> ระบบจัดการ Dynamic DNS บน Cloudflare ที่ใช้งานง่ายและทรงพลัง</p>
 
-[![Nuxt](https://img.shields.io/badge/Nuxt-00C58E?style=for-the-badge&logo=nuxt.js&logoColor=white)](https://nuxt.com/)
-[![Vue.js](https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vue.js&logoColor=4FC08D)](https://vuejs.org/)
-[![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white)](https://prisma.io/)
-[![Docker](https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+<img src="public/logo.png" alt="TetherDNS Logo" width="180">
+
+# **TetherDNS**
+
+### _Precision Cloudflare DNS & Dynamic IP Orchestrator_
+
+<p align="center">
+  <a href="https://nuxt.com/">
+    <img src="https://img.shields.io/badge/Nuxt_4-00C58E?style=for-the-badge&logo=nuxt.js&logoColor=white" alt="Nuxt 4">
+  </a>
+  <a href="https://vuejs.org/">
+    <img src="https://img.shields.io/badge/Vue_3-35495E?style=for-the-badge&logo=vue.js&logoColor=4FC08D" alt="Vue 3">
+  </a>
+  <a href="https://tailwindcss.com/">
+    <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS">
+  </a>
+  <a href="https://prisma.io/">
+    <img src="https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white" alt="Prisma">
+  </a>
+  <a href="https://www.docker.com/">
+    <img src="https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
+  </a>
+</p>
+
+**TetherDNS** คือเว็บแอปพลิเคชันประสิทธิภาพสูงระดับองค์กร (Enterprise-ready) ที่ออกแบบมาเพื่อการจัดการ DNS ขั้นสูง เป็นตัวกลางที่เชื่อมเปลี่ยนการตั้งค่าเครือข่ายที่ซับซ้อนให้กลายเป็นการควบคุมที่ง่ายดาย ภายใต้ประสบการณ์การใช้งานระดับพรีเมียมในธีม **Ocean Deep Tech**
+
+[English](README.md) • [ภาษาไทย](README-TH.md)
 
 </div>
 
-<br>
+---
 
-## 📖 บทนำ (Introduction)
+## 💎 นิยามใหม่ของการจัดการ DNS
 
-**TetherDNS** (เดิมชื่อ Cloudflare DDNS Manager) เป็น Web Application ที่ถูกพัฒนาขึ้นเพื่อช่วยผสานการทำงานกับ Cloudflare API สำหรับจัดการ IP Address โดยอัตโนมัติ (Dynamic DNS) ผ่านหน้า Web UI ที่สวยงามและใช้งานง่าย เหมาะสำหรับผู้ที่รันเซิร์ฟเวอร์ที่บ้าน (Home Server), กล้องวงจรปิด, หรือบริการต่างๆ ที่ IP ของผู้ให้บริการอินเทอร์เน็ต (ISP) มีการเปลี่ยนแปลงตลอดเวลา
+มากกว่าแค่เครื่องมือทั่วไป TetherDNS คือระบบจัดการแบบครบวงจร (Orchestration suite) ที่ออกแบบมาเพื่อเคารพเวลาและเวิร์กโฟลว์ของคุณ
 
-## ✨ คุณสมบัติหลัก (Features)
+### 🌌 ประสบการณ์แบบ "Ocean Deep"
 
-- 🔒 **จัดการ Cloudflare Accounts:** รองรับการเพิ่มหลายบัญชีผ่าน API Token
-- 🌍 **จัดการ Zones และ DNS Records:** ดูและแก้ไขข้อมูล DNS Record ของโดเมนใน Cloudflare ได้โดยตรง
-- 🔄 **อัปเดต IP อัตโนมัติ (DDNS):** สร้าง URL เฉพาะ (Update Token) สำหรับนำไปใช้กับ Cronjob, Router หรือ Script เพื่อเชื่อมโยง IP ใหม่เข้ากับโดเมนอัตโนมัติ
-- 📜 **ประวัติการอัปเดต (Update Logs):** บันทึกประวัติการเปลี่ยนแปลง IP อย่างละเอียด
-- 🔔 **รองรับการแจ้งเตือน (Notifications):** แจ้งเตือนเมื่อมีการเปลี่ยน IP ผ่าน Discord, LINE Notify และ Email
-- 👀 **Audit Logs:** ติดตามการกระทำต่างๆ ในระบบ
-- 🌐 **รองรับสองภาษา (i18n):** รองรับภาษาไทยและภาษาอังกฤษ
-- 🎨 **UI สวยงาม:** ออกแบบด้วย Nuxt UI ใช้งานง่ายทั้งในคอมพิวเตอร์และมือถือ
+สัมผัสกับ UI ที่ถูกคราฟต์มาเป็นพิเศษสำหรับการนั่งจัดการระบบเป็นเวลานาน:
 
-## 🛠️ เทคโนโลยีที่ใช้ (Tech Stack)
-
-- **Frontend:** Nuxt 4, Vue 3, Nuxt UI, TailwindCSS, @nuxtjs/i18n
-- **Backend:** Nuxt Nitro
-- **Database:** LibSQL (SQLite) + Prisma ORM
-- **Deployment:** Docker & Docker Compose
-
-## 🚀 การติดตั้งและการใช้งาน (Installation & Setup)
-
-### วิธีที่ 1: ติดตั้งผ่าน Docker (แนะนำ)
-
-1. Clone โปรเจคลงมายังเครื่องของคุณ
-
-```bash
-git clone https://github.com/yourusername/tetherdns.git
-cd tetherdns
-```
-
-2. สร้างและตั้งค่าไฟล์ `.env`
-
-```bash
-cp .env.example .env
-```
-
-เปิดไฟล์ `.env` และแก้ไข `SESSION_PASSWORD` (ใส่รหัสผ่านแบบสุ่มที่มีความยาวและความปลอดภัย)
-
-3. รัน Docker Compose
-
-```bash
-docker-compose up -d
-```
-
-TetherDNS จะพร้อมใช้งานที่พอร์ต `http://localhost:3000`
+- **Glassmorphism:** เลเยอร์กึ่งโปร่งใสที่ดูหรูหรา ช่วยให้คุณโฟกัสกับงานโดยไม่มีสิ่งรบกวน
+- **Deep Indigo Syntax:** ทฤษฎีสีที่ออกแบบมาเฉพาะเพื่อลดอาการล้าของดวงตา ระหว่างการทำงานกลางดึก
+- **Responsive Fluidity:** จัดการโครงสร้างพื้นฐาน (Infrastructure) ทั้งหมดของคุณได้อย่างไร้รอยต่อ ตั้งแต่หน้าจอ Desktop 4K ไปจนถึงหน้าจอมือถือ
 
 ---
 
-### วิธีที่ 2: ติดตั้งแบบ Manual (Node.js)
+## 🚀 ฟีเจอร์ระดับจักรวาล (Feature Galaxy)
 
-**สิ่งที่ต้องมี:**
+### 🔐 ความปลอดภัยแกนหลัก (Core Security)
 
-- Node.js (เวอร์ชัน 18 ขึ้นไป) หรือ Bun
+- **Multi-Account Vault:** จัดเก็บและจัดการบัญชี Cloudflare หลายบัญชีอย่างปลอดภัยจากแดชบอร์ดเดียว
+- **TOTP 2FA Protection:** ปกป้องหน้า Admin Console ด้วยการยืนยันตัวตนแบบสองขั้นตอน (2FA) ระดับองค์กร
+- **Encrypted Sessions:** รักษาความปลอดภัยของ Cookie ระดับอุตสาหกรรม (HTTP-only) พร้อมนโยบายที่เข้มงวดและปรับแต่งได้
 
-1. Clone โปรเจค
+### 🌍 การจัดการโซนแบบเบ็ดเสร็จ (Zone Mastery)
 
-```bash
-git clone https://github.com/yourusername/tetherdns.git
-cd tetherdns
+- **Intelligent Explorer:** ค้นหา กรอง และแบ่งหน้า (Pagination) ได้ทันทีแม้มีโดเมนภายใต้การจัดการนับร้อย
+- **Precision Record CRUD:** เพิ่ม, แก้ไข และลบเรคคอร์ด `A`, `AAAA`, `CNAME`, `TXT`, `MX`, และ `SRV` พร้อมการตรวจสอบความถูกต้อง (Validation) แบบเรียลไทม์
+- **Proxy Orchestration:** เปิด/ปิด Cloudflare Proxy (เมฆสีส้ม) และปรับตั้งค่า TTL ได้อย่างราบรื่นและรวดเร็ว
+
+### 🔄 ระบบอัตโนมัติและความอัจฉริยะ (Automation & Intelligence)
+
+- **Webhook API Generation:** สร้าง URL Endpoint ที่มีความปลอดภัยเฉพาะตัว เพื่อรับการอัปเดต Dynamic IP (DDNS) อัตโนมัติจากเราเตอร์หรือสคริปต์ต่างๆ
+- **IP Analytics Engine:** กราฟแสดงผลแบบ Interactive เพื่อติดตามการเปลี่ยนแปลง (Mutations) และความเสถียรของ IP ตลอดช่วงเวลาที่ผ่านมา
+- **Real-Time Audit Trail:** บันทึก Log ที่ไม่สามารถแก้ไขได้ (Immutable) สำหรับทุกการล็อกอิน, การเปลี่ยนคอนฟิก, และการอัปเดตอัตโนมัติ เพื่อความโปร่งใสสูงสุดของระบบ
+
+---
+
+## 🏗️ สถาปัตยกรรมทางเทคนิค
+
+```mermaid
+graph LR
+    subgraph "Elite Frontend"
+        UI[Nuxt 4 / Vue 3]
+        Theme[Ocean Deep Theme]
+    end
+
+    subgraph "High-Performance API"
+        Nitro[Nitro Server Engine]
+        Middle[Auth Middleware]
+        Utility[Session & CF Utils]
+    end
+
+    subgraph "Data Persistence"
+        Prisma[Prisma ORM]
+        DB[(SQLite / LibSQL)]
+    end
+
+    UI <--> Nitro
+    Nitro <--> Middle
+    Nitro <--> Utility
+    Utility <--> CF[Cloudflare API]
+    Utility <--> Prisma
+    Prisma <--> DB
+
 ```
 
-2. ติดตั้ง Dependencies
+---
+
+## 📦 เริ่มต้นใช้งานอย่างรวดเร็ว
+
+### 🐳 วิธีใช้งานผ่าน Docker (แนะนำ)
+
+Deploy ขึ้น Production ได้ในไม่กี่วินาที โดยไม่ต้องตั้งค่าด้วยตัวเองให้วุ่นวาย:
 
 ```bash
-npm install
-# หรือ bun install
-```
+# 1. โคลน Repository
+git clone [https://github.com/riiixch/TetherDNS.git](https://github.com/riiixch/TetherDNS.git)
+cd TetherDNS
 
-3. คัดลอกและตั้งค่า `.env`
-
-```bash
+# 2. คัดลอกและตั้งค่า Environment Variables
 cp .env.example .env
+
+# 3. สตาร์ทระบบ
+docker-compose up -d --build
+
 ```
 
-4. สร้าง Database (Prisma)
+### 💻 สำหรับนักพัฒนา (Developer Track)
+
+สำหรับนักพัฒนาที่ต้องการต่อยอด ปรับแต่ง หรือร่วมพัฒนา (Contribute):
 
 ```bash
-npm run prisma:push
-npm run prisma:gen
-```
+# ติดตั้ง Dependencies ทั้งหมด
+npm install
 
-5. รัน Development Server
+# สร้างและพุชโครงสร้างฐานข้อมูล (Schema) ลง SQLite
+npx prisma db push
 
-```bash
+# รันเซิร์ฟเวอร์สำหรับโหมดนักพัฒนา
 npm run dev
+
 ```
 
-แอปพลิเคชันจะรันอยู่ที่ `http://localhost:3000`
+---
 
-สำหรับการรันบน Production:
+## ⚙️ แผงควบคุมระบบ (.env)
 
-```bash
-npm run build
-npm start
-```
+คุณสามารถปรับแต่ง Instance ของคุณผ่านตัวแปรในไฟล์ `.env`:
 
-## ⚙️ ตัวแปรสภาพแวดล้อม (Environment Variables)
+| ขอบเขต (Scope)  | ตัวแปร (Variable)  | ความสำคัญ (Significance)                                                           |
+| --------------- | ------------------ | ---------------------------------------------------------------------------------- |
+| **ฐานข้อมูล**   | `DATABASE_URL`     | Path แบบ Absolute ที่ชี้ไปยังฐานข้อมูล SQLite (เช่น `file:/app/data/tetherdns.db`) |
+| **ความปลอดภัย** | `SESSION_PASSWORD` | รหัสผ่านเข้ารหัสความปลอดภัยสูง (ยาว 32+ ตัวอักษร) สำหรับจัดการ User Session        |
+| **เครือข่าย**   | `SESSION_SECURE`   | ตั้งค่าเป็น `true` เพื่อบังคับใช้ HTTPS (Strict Transport Security) สำหรับ Cookies |
+| **ระบบเวลา**    | `TZ`               | Timezone ของระบบเพื่อให้การบันทึก Log แม่นยำ (เช่น `Asia/Bangkok`)                 |
 
-ไฟล์ `.env` มีค่าที่จำเป็นต้องตั้งค่าดังนี้:
+---
 
-| ตัวแปร             | รายละเอียด                                                                               |
-| ------------------ | ---------------------------------------------------------------------------------------- |
-| `DATABASE_URL`     | เส้นทางไฟล์ฐานข้อมูล เช่น `file:./tetherdns.db` หรือเส้นทางอื่น                          |
-| `SESSION_PASSWORD` | รหัสผ่านสำหรับการเข้ารหัส Session (ต้องเป็นข้อความสุ่มที่มีความยาวอย่างน้อย 32 ตัวอักษร) |
+## 📜 ลิขสิทธิ์ (License)
 
-## 📜 สัญญาอนุญาต (License)
+ภูมิใจเผยแพร่ภายใต้ **MIT License** เราเชื่อมั่นในซอฟต์แวร์แบบเปิด (Open-source) ที่มีคุณภาพสูง ดูรายละเอียดเพิ่มเติมได้ที่ [LICENSE](https://www.google.com/search?q=LICENSE)
 
-โปรเจคนี้อยู่ภายใต้สัญญาอนุญาต [MIT License](LICENSE) (เพิ่มไฟล์ LICENSE หากมี)
+---
+
+<div align="center">
+
+### 🌊 Master Your Network. Master the Deep.
+
+**สร้างสรรค์ด้วยความหลงใหลอย่างไม่มีที่สิ้นสุด โดย [RIIIXCH](https://github.com/riiixch)**
+
+</div>
