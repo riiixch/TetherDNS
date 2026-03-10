@@ -1,8 +1,8 @@
-<script setup lang="ts">
-useHead({ title: 'Accounts' })
+const toast = useToast()
+const { t } = useI18n()
+useHead({ title: t('accounts.title') })
 
 definePageMeta({ layout: 'default' })
-</script>
 
 <template>
     <div class="space-y-6 lg:space-y-8 flex flex-col h-full pb-10">
@@ -17,7 +17,7 @@ definePageMeta({ layout: 'default' })
                     {{ $t('dashboard.tab_accounts') }}
                 </h1>
                 <p class="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-2 font-medium">
-                    Manage your connected Cloudflare API accounts.
+                    {{ $t('accounts.subtitle') }}
                 </p>
             </div>
         </div>

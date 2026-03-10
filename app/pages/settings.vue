@@ -6,11 +6,8 @@ import UserSettings from '../components/settings/UserSettings.vue'
 import SecuritySettings from '../components/settings/SecuritySettings.vue'
 import ApiTokenSettings from '../components/settings/ApiTokenSettings.vue'
 
-useHead({ title: 'Settings' })
-
-definePageMeta({ layout: 'default' })
-
 const { t } = useI18n()
+useHead({ title: t('settings.title') })
 const toast = useToast()
 
 const selectedTab = ref('general')
@@ -168,10 +165,10 @@ onMounted(() => {
                         <UIcon name="i-heroicons-cog-6-tooth-solid"
                             class="w-6 h-6 sm:w-8 sm:h-8 text-slate-700 dark:text-slate-300" />
                     </div>
-                    {{ $t('settings.title', 'Settings') }}
+                    {{ $t('settings.title') }}
                 </h1>
                 <p class="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-2 font-medium">
-                    Configure your system preferences and manage access.
+                    {{ $t('settings.subtitle_desc') }}
                 </p>
             </div>
         </div>
@@ -195,7 +192,8 @@ onMounted(() => {
                 </div>
 
                 <div class="px-4 py-2">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">TetherDNS Core</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">{{
+                        $t('settings.core_brand') }}</p>
                 </div>
             </aside>
 

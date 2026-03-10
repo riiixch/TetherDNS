@@ -66,8 +66,10 @@ const testConnection = async (account: any) => {
     }
 }
 
+const { locale } = useI18n()
+
 const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' })
+    return new Date(dateStr).toLocaleDateString(locale.value === 'th' ? 'th-TH' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric' })
 }
 
 onMounted(() => loadData())
@@ -142,7 +144,7 @@ onMounted(() => loadData())
                     <template #header>
                         <div class="flex items-center justify-between">
                             <h3 class="text-base font-bold text-slate-900 dark:text-white">{{ $t('common.delete') }}
-                                Account</h3>
+                                {{ $t('accounts.label_field') }}</h3>
                             <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark" class="-my-1"
                                 @click="deleteModalOpen = false" />
                         </div>

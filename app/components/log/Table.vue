@@ -45,8 +45,10 @@ const loadData = async () => {
     }
 }
 
+const { locale } = useI18n()
+
 const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleString('th-TH', {
+    return new Date(dateStr).toLocaleString(locale.value === 'th' ? 'th-TH' : 'en-US', {
         year: 'numeric', month: 'short', day: 'numeric',
         hour: '2-digit', minute: '2-digit', second: '2-digit'
     })
@@ -99,7 +101,7 @@ onMounted(() => loadData())
 
                 <template #record-cell="{ row }">
                     <span class="font-semibold text-slate-900 dark:text-white">{{ row.original.record?.name || 'N/A'
-                    }}</span>
+                        }}</span>
                 </template>
 
                 <template #zone-cell="{ row }">

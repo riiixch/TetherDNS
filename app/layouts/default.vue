@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { useRoute } from '#app'
 import type { DropdownMenuItem } from '@nuxt/ui'
 
+const { t } = useI18n()
 const { user, logout } = useAuth()
 const route = useRoute()
 
@@ -25,17 +26,17 @@ const isActive = (path: string) => route.path === path
 // ตั้งค่า Dropdown สำหรับ User Profile (Desktop)
 const userMenuItems = ref<DropdownMenuItem[]>([
     [{
-        label: user.value?.username.toUpperCase() || 'User',
+        label: user.value?.username.toUpperCase() || t('nav.user_profile'),
         slot: 'account',
         disabled: true
     }],
     [{
-        label: 'Settings',
+        label: t('nav.settings'),
         icon: 'i-heroicons-cog-8-tooth',
         to: '/settings'
     }],
     [{
-        label: 'Logout',
+        label: t('nav.logout'),
         icon: 'i-heroicons-arrow-right-on-rectangle',
         color: "error",
         onSelect: logout
@@ -125,8 +126,8 @@ const userMenuItems = ref<DropdownMenuItem[]>([
 
                         <div class="xl:hidden">
                             <ClientOnly>
-                                <USlideover title="TetherDNS" description="Navigation Menu" side="right"
-                                    v-model:open="isOpenMenu">
+                                <USlideover :title="$t('nav.menu')" :description="$t('nav.navigation_menu')"
+                                    side="right" v-model:open="isOpenMenu">
                                     <UButton icon="i-heroicons-bars-3" color="neutral" variant="ghost"
                                         class="rounded-lg" />
 
@@ -136,8 +137,8 @@ const userMenuItems = ref<DropdownMenuItem[]>([
                                                 <div class="flex items-center gap-2">
                                                     <img src="~/assets/images/tetherdns_logo.png" alt="Logo"
                                                         class="w-10 h-10" />
-                                                    <span
-                                                        class="text-xl font-bold text-slate-900 dark:text-white">Menu</span>
+                                                    <span class="text-xl font-bold text-slate-900 dark:text-white">{{
+                                                        $t('nav.menu') }}</span>
                                                 </div>
                                                 <UButton icon="i-heroicons-x-mark" color="neutral" variant="ghost"
                                                     @click="isOpenMenu = false" />
@@ -293,8 +294,8 @@ const userMenuItems = ref<DropdownMenuItem[]>([
 
                 <div
                     class="mt-10 pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div class="text-xs font-medium text-slate-400 dark:text-slate-500">
-                        &copy; {{ currentYear }} TetherDNS. All rights reserved.
+                    <div class="text-xs font-medium text-slate-400 dark:text-slate-50">
+                        {{ $t('footer.copyright', { year: currentYear }) }}
                     </div>
                 </div>
             </div>

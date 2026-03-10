@@ -1,7 +1,7 @@
+import { getUserSession } from '../../utils/session'
+
 export default defineEventHandler(async (event) => {
-    const session = await useSession(event, {
-        password: process.env.SESSION_PASSWORD || 'default_secure_session_password_change_me_in_production'
-    })
+    const session = await getUserSession(event)
 
     await session.clear()
 

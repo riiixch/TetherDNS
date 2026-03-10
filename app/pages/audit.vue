@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from 'vue'
 
-useHead({ title: 'Audit Logs' })
+const { t } = useI18n()
+useHead({ title: t('audit.title') })
 
 definePageMeta({ layout: 'default' })
 
 const toast = useToast()
-const { t } = useI18n()
 
 // State
 const logs = ref<any[]>([])
@@ -65,8 +65,10 @@ watch(page, () => {
 onMounted(() => loadLogs())
 
 // Helpers
+const { locale } = useI18n()
+
 const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleString('th-TH', {
+    return new Date(dateStr).toLocaleString(locale.value === 'th' ? 'th-TH' : 'en-US', {
         year: 'numeric', month: 'short', day: 'numeric',
         hour: '2-digit', minute: '2-digit', second: '2-digit'
     })
@@ -112,8 +114,9 @@ const formatActionText = (action: string) => {
                         <div class="flex flex-col">
                             <h2 class="text-lg font-bold text-slate-900 dark:text-white tracking-tight">{{
                                 $t('audit.title') }}</h2>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">Track system
-                                changes and user activities</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+                                {{ $t('audit.subtitle') }}
+                            </p>
                         </div>
                         <div class="flex flex-row items-center gap-2.5 w-full md:w-auto justify-end">
                             <USelect v-model="actionFilter" :items="actionTypes" value-key="value"
@@ -174,7 +177,7 @@ const formatActionText = (action: string) => {
                             class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
                             <UIcon name="i-heroicons-document-magnifying-glass" class="w-8 h-8 text-slate-400" />
                         </div>
-                        <p class="text-sm font-medium text-slate-500">No audit logs found for the selected filter.</p>
+                        <p class="text-sm font-medium text-slate-500">{{ $t('common.no_results') }}</p>
                     </div>
                 </div>
 

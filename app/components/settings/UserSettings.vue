@@ -32,8 +32,10 @@ const add = async () => {
     }
 }
 
+const { locale } = useI18n()
+
 const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('th-TH')
+    return new Date(dateStr).toLocaleDateString(locale.value, { year: 'numeric', month: 'short', day: 'numeric' })
 }
 </script>
 

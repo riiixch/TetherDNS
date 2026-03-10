@@ -68,7 +68,7 @@ const add = async () => {
         </template>
 
         <div class="overflow-x-auto">
-            <UTable :data="channels" :columns="columns" :loading="loading" :ui="{
+            <UTable v-if="!loading && channels.length > 0" :data="channels" :columns="columns" :loading="loading" :ui="{
                 th: 'bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold whitespace-nowrap py-3.5 border-b border-slate-200 dark:border-slate-800',
                 td: 'py-3 text-sm text-slate-600 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800/60',
                 tr: 'hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors'
@@ -85,7 +85,7 @@ const add = async () => {
                 <template #enabled-cell="{ row }">
                     <UBadge :color="row.original.enabled ? 'success' : 'neutral'" variant="soft" size="xs"
                         class="font-bold uppercase tracking-wider">
-                        {{ row.original.enabled ? 'Active' : 'Disabled' }}
+                        {{ row.original.enabled ? $t('common.active') : $t('common.disabled') }}
                     </UBadge>
                 </template>
                 <template #actions-cell="{ row }">
@@ -108,7 +108,7 @@ const add = async () => {
                     class="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-3">
                     <UIcon name="i-heroicons-bell-slash" class="w-6 h-6 text-slate-400" />
                 </div>
-                <p class="text-sm font-medium text-slate-500">No notification channels added.</p>
+                <p class="text-sm font-medium text-slate-500">{{ $t('settings.no_notifs') }}</p>
             </div>
         </div>
 
@@ -127,8 +127,8 @@ const add = async () => {
                     <form @submit.prevent="add" class="space-y-5 py-2">
                         <UFormField :label="$t('settings.type')" name="type">
                             <USelect v-model="type" :items="[
-                                { label: 'Discord Webhook', value: 'discord' },
-                                { label: 'LINE Notify', value: 'line' }
+                                { label: $t('settings.discord_webhook'), value: 'discord' },
+                                { label: $t('settings.line_notify'), value: 'line' }
                             ]" value-key="value" class="w-full" :ui="{ base: 'rounded-xl' }" />
                         </UFormField>
 

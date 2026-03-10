@@ -1,3 +1,5 @@
+import { getUserSession } from '../utils/session'
+
 export default defineEventHandler(async (event) => {
     // Get the generic requested path
     const url = getRequestURL(event)
@@ -8,9 +10,7 @@ export default defineEventHandler(async (event) => {
     // Allow unrestricted access to the authentication endpoints
     if (url.pathname.startsWith('/api/auth/')) return
 
-    const session = await useSession(event, {
-        password: process.env.SESSION_PASSWORD || 'default_secure_session_password_change_me_in_production'
-    })
+    const session = await getUserSession(event)
 
     // If there's no userId in session, the user is unauthenticated
     if (!session.data.userId) {

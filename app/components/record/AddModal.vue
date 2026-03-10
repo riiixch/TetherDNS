@@ -12,9 +12,16 @@ const recordType = ref('A')
 const recordName = ref('')
 const recordContent = ref('')
 const proxied = ref(false)
-const ttl = ref(1)
+const ttl = ref(1) // Auto
 const priority = ref(10)
 const isLoading = ref(false)
+
+const ttlOptions = computed(() => [
+    { label: t('records.ttl_auto'), value: 1 },
+    { label: t('times.minutes', { n: 1 }), value: 60 },
+    { label: t('times.minutes', { n: 5 }), value: 300 },
+    { label: t('times.hours', { n: 1 }), value: 3600 }
+])
 
 const typeOptions = [
     { label: 'A', value: 'A' },
@@ -29,14 +36,14 @@ const typeOptions = [
 
 const contentPlaceholder = computed(() => {
     switch (recordType.value) {
-        case 'A': return '192.168.1.1'
-        case 'AAAA': return '2001:db8::1'
-        case 'CNAME': return 'target.example.com'
-        case 'MX': return 'mail.example.com'
-        case 'TXT': return 'v=spf1 include:_spf.google.com ~all'
-        case 'NS': return 'ns1.example.com'
-        case 'CAA': return '0 issue "letsencrypt.org"'
-        case 'SRV': return '0 5 5060 sipserver.example.com'
+        case 'A': return t('records.placeholder_a')
+        case 'AAAA': return t('records.placeholder_aaaa')
+        case 'CNAME': return t('records.placeholder_cname')
+        case 'MX': return t('records.placeholder_mx')
+        case 'TXT': return t('records.placeholder_txt')
+        case 'NS': return t('records.placeholder_ns')
+        case 'CAA': return t('records.placeholder_caa')
+        case 'SRV': return t('records.placeholder_srv')
         default: return ''
     }
 })
@@ -114,9 +121,8 @@ watch(isOpen, (val) => { if (!val) emit('close') })
 
                         <UFormField :label="$t('records.ttl_field')" name="ttl"
                             :class="!showPriority ? 'col-span-1' : ''">
-                            <USelect v-model="ttl"
-                                :items="[{ label: 'Auto', value: 1 }, { label: '1 min', value: 60 }, { label: '5 min', value: 300 }, { label: '1 hour', value: 3600 }]"
-                                value-key="value" class="w-full" :ui="{ base: 'rounded-xl h-10' }" />
+                            <USelect v-model="ttl" :items="ttlOptions" value-key="value" class="w-full"
+                                :ui="{ base: 'rounded-xl h-10' }" />
                         </UFormField>
                     </div>
 

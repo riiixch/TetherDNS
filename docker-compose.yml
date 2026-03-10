@@ -9,7 +9,8 @@ services:
       - ./data:/app/data
     environment:
       - DATABASE_URL=file:/app/data/tetherdns.db
-      - SESSION_PASSWORD=
+      - SESSION_PASSWORD=tetherdns
+      - SESSION_SECURE=false
       - NODE_ENV=production
       - TZ=Asia/Bangkok
     logging:

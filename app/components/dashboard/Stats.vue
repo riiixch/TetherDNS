@@ -16,8 +16,10 @@ const loadStats = async () => {
 
 onMounted(() => loadStats())
 
+const { locale } = useI18n()
+
 const formatTime = (dateStr: string) => {
-    return new Date(dateStr).toLocaleString('th-TH', {
+    return new Date(dateStr).toLocaleString(locale.value === 'th' ? 'th-TH' : 'en-US', {
         month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
     })
 }

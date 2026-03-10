@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
-useHead({ title: `Dashboard` })
+const { t } = useI18n()
+useHead({ title: t('dashboard.title') })
 
 definePageMeta({ layout: 'default' })
 
@@ -24,16 +25,16 @@ const loadRecentLogs = async () => {
 const timeAgo = (dateStr: string) => {
     const seconds = Math.floor((new Date().getTime() - new Date(dateStr).getTime()) / 1000)
     let interval = seconds / 31536000
-    if (interval > 1) return Math.floor(interval) + ' years ago'
+    if (interval > 1) return Math.floor(interval) + ' ' + t('times.years_ago')
     interval = seconds / 2592000
-    if (interval > 1) return Math.floor(interval) + ' months ago'
+    if (interval > 1) return Math.floor(interval) + ' ' + t('times.months_ago')
     interval = seconds / 86400
-    if (interval > 1) return Math.floor(interval) + ' days ago'
+    if (interval > 1) return Math.floor(interval) + ' ' + t('times.days_ago')
     interval = seconds / 3600
-    if (interval > 1) return Math.floor(interval) + ' hours ago'
+    if (interval > 1) return Math.floor(interval) + ' ' + t('times.hours_ago')
     interval = seconds / 60
-    if (interval > 1) return Math.floor(interval) + ' mins ago'
-    return Math.floor(seconds) + ' seconds ago'
+    if (interval > 1) return Math.floor(interval) + ' ' + t('times.mins_ago')
+    return Math.floor(seconds) + ' ' + t('times.seconds_ago')
 }
 
 onMounted(() => {
@@ -78,11 +79,11 @@ onMounted(() => {
                         <h3
                             class="text-xs font-bold uppercase tracking-[0.15em] text-slate-500 dark:text-slate-400 flex items-center gap-2">
                             <UIcon name="i-heroicons-clock" class="w-4 h-4 text-slate-400" />
-                            Recent Updates
+                            {{ $t('dashboard.recent_updates') }}
                         </h3>
                         <UButton to="/logs" color="neutral" variant="ghost" size="xs"
                             class="text-primary-500 hover:bg-primary-50 dark:hover:bg-primary-500/10">
-                            View All
+                            {{ $t('dashboard.view_all') }}
                         </UButton>
                     </div>
 
@@ -121,7 +122,7 @@ onMounted(() => {
                                             {{ log.record?.name || 'Unknown' }}</p>
                                         <p
                                             class="text-xs text-red-500 dark:text-red-400 mt-1.5 font-medium line-clamp-1 py-[2px]">
-                                            {{ log.message || 'Update Failed' }}</p>
+                                            {{ log.message || $t('logs.update_failed') }}</p>
                                     </div>
                                     <span class="text-[10px] text-slate-400 whitespace-nowrap mt-0.5">{{
                                         timeAgo(log.createdAt) }}</span>

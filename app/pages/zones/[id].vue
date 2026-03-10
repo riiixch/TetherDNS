@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 
-useHead({ title: `DNS Zones` })
+const { t } = useI18n()
+useHead({ title: t('records.title') })
 
 definePageMeta({ layout: 'default' })
 
 const route = useRoute()
 const cfZoneId = route.params.id as string
 const toast = useToast()
-const { t } = useI18n()
 const { fetchRecords, toggleAutoUpdate, updateRecord, deleteRecord } = useRecords()
 
 // State
@@ -74,7 +74,7 @@ const loadData = async () => {
             useHead({ title: `${zoneName.value} Zones` })
         }
     } catch (e: any) {
-        toast.add({ title: 'Error loading records', description: e.message, color: 'error' })
+        toast.add({ title: t('zones.load_error'), description: e.message, color: 'error' })
     } finally {
         pending.value = false
     }
@@ -102,7 +102,7 @@ const doToggle = async (record: any, newValue: boolean) => {
             color: 'success'
         })
     } catch (e: any) {
-        toast.add({ title: 'Toggle failed', description: e.message, color: 'error' })
+        toast.add({ title: t('common.failed'), description: e.message, color: 'error' })
     }
 }
 
@@ -114,7 +114,7 @@ const confirmDdnsWarning = async () => {
         const currentIp = ipRes?.ip
 
         if (!currentIp) {
-            toast.add({ title: 'Error', description: 'Failed to fetch current IP address.', color: 'error' })
+            toast.add({ title: t('common.failed'), description: t('accounts.conn_failed'), color: 'error' })
             return
         }
 
@@ -154,7 +154,7 @@ const executeDeleteRecord = async () => {
     deleteRecordLoading.value = true
     try {
         await deleteRecord(deletingRecord.value.id)
-        toast.add({ title: 'Deleted', description: `Record ${deletingRecord.value.name} deleted.`, color: 'success' })
+        toast.add({ title: t('common.success'), description: t('records.delete_success', { name: deletingRecord.value.name }), color: 'success' })
         loadData()
     } catch (e: any) {
         toast.add({ title: 'Delete Failed', description: e.data?.statusMessage || e.message, color: 'error' })
@@ -284,7 +284,7 @@ onMounted(() => loadData())
                     </template>
                     <template #proxied-cell="{ row }">
                         <UBadge :color="row.original.proxied ? 'warning' : 'neutral'" variant="subtle" size="xs">
-                            {{ row.original.proxied ? 'Proxied' : 'DNS Only' }}
+                            {{ row.original.proxied ? $t('records.proxied') : $t('records.dns_only') }}
                         </UBadge>
                     </template>
                     <template #autoUpdate-cell="{ row }">
@@ -317,7 +317,7 @@ onMounted(() => loadData())
                         class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
                         <UIcon name="i-heroicons-list-bullet" class="w-8 h-8 text-slate-400" />
                     </div>
-                    <p class="text-sm font-medium text-slate-500">No A, AAAA, or CNAME records found for this zone.</p>
+                    <p class="text-sm font-medium text-slate-500">{{ $t('common.no_results') }}</p>
                 </div>
             </div>
         </UCard>
@@ -437,7 +437,7 @@ onMounted(() => loadData())
                                                 :class="res.propagated ? 'text-emerald-500' : 'text-red-500'" />
                                             <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">{{
                                                 res.resolver
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                         <div class="text-right flex flex-col items-end">
                                             <span class="text-xs font-mono font-medium"
@@ -478,7 +478,7 @@ onMounted(() => loadData())
                     <template #header>
                         <div class="flex items-center justify-between">
                             <h3 class="text-base font-bold text-slate-900 dark:text-white">{{ $t('ddns_warning.title')
-                                }}</h3>
+                            }}</h3>
                             <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark" class="-my-1"
                                 @click="cancelDdnsWarning" />
                         </div>

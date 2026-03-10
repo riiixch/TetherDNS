@@ -63,8 +63,10 @@ const deleteToken = async (id: number) => {
     }
 }
 
+const { locale } = useI18n()
+
 const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString()
+    return new Date(dateStr).toLocaleDateString(locale.value === 'th' ? 'th-TH' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric' })
 }
 
 onMounted(() => loadTokens())
@@ -94,7 +96,7 @@ onMounted(() => loadTokens())
         </template>
 
         <div class="overflow-x-auto">
-            <UTable :data="tokens" :columns="columns" :loading="loading" :ui="{
+            <UTable v-if="!loading && tokens.length > 0" :data="tokens" :columns="columns" :loading="loading" :ui="{
                 th: 'bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold whitespace-nowrap py-3.5 border-b border-slate-200 dark:border-slate-800',
                 td: 'py-3 text-sm text-slate-600 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800/60',
                 tr: 'hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors'
@@ -121,7 +123,7 @@ onMounted(() => loadTokens())
                     class="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-3">
                     <UIcon name="i-heroicons-key" class="w-6 h-6 text-slate-400" />
                 </div>
-                <p class="text-sm font-medium text-slate-500">No API Tokens generated yet.</p>
+                <p class="text-sm font-medium text-slate-500">{{ $t('api_tokens.no_tokens') }}</p>
             </div>
         </div>
 

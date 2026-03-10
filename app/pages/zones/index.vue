@@ -1,5 +1,6 @@
 <script setup lang="ts">
-useHead({ title: 'Zones' })
+const { t } = useI18n()
+useHead({ title: t('zones.title') })
 
 definePageMeta({ layout: 'default' })
 </script>
@@ -17,7 +18,7 @@ definePageMeta({ layout: 'default' })
                     {{ $t('dashboard.tab_zones') }}
                 </h1>
                 <p class="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-2 font-medium">
-                    Manage your active Cloudflare zones and DNS records.
+                    {{ $t('zones.subtitle') }}
                 </p>
             </div>
         </div>

@@ -28,7 +28,7 @@ const save = () => {
                     <UIcon name="i-heroicons-arrow-path" class="w-5 h-5 text-primary-500" />
                 </div>
                 <h2 class="text-lg font-bold text-slate-900 dark:text-white tracking-tight">{{ $t('settings.ddns_title')
-                }}</h2>
+                    }}</h2>
             </div>
         </template>
 
@@ -36,12 +36,12 @@ const save = () => {
             <UFormField :label="$t('settings.ddns_interval')" name="interval"
                 help-class="text-slate-500 dark:text-slate-400 mt-2">
                 <USelect v-model="localInterval" :items="[
-                    { label: '1 minute', value: '1' },
-                    { label: '5 minutes', value: '5' },
-                    { label: '10 minutes', value: '10' },
-                    { label: '15 minutes', value: '15' },
-                    { label: '30 minutes', value: '30' },
-                    { label: '60 minutes', value: '60' }
+                    { label: $t('times.minutes', { n: 1 }), value: '1' },
+                    { label: $t('times.minutes', { n: 5 }), value: '5' },
+                    { label: $t('times.minutes', { n: 10 }), value: '10' },
+                    { label: $t('times.minutes', { n: 15 }), value: '15' },
+                    { label: $t('times.minutes', { n: 30 }), value: '30' },
+                    { label: $t('times.minutes', { n: 60 }), value: '60' }
                 ]" value-key="value" class="w-full max-w-xs" :ui="{ base: 'rounded-xl' }" />
                 <template #help>
                     <p class="text-xs">{{ $t('settings.ddns_interval_hint') }}</p>

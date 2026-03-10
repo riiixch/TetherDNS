@@ -1,4 +1,5 @@
 import { prisma } from '../../utils/prisma'
+import { getUserSession } from '../../utils/session'
 import bcrypt from 'bcryptjs'
 
 export default defineEventHandler(async (event) => {
@@ -42,10 +43,8 @@ export default defineEventHandler(async (event) => {
         }
 
         // Set Nuxt Session Cookie
-        const session = await useSession(event, {
-            password: process.env.SESSION_PASSWORD || 'default_secure_session_password_change_me_in_production',
-            maxAge: 60 * 60 * 24 * 30 // 30 days
-        })
+        const session = await getUserSession(event)
+
 
         await session.update({
             userId: user.id,
