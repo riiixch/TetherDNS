@@ -14,6 +14,30 @@ export default defineNuxtConfig({
         defaultLocale: 'en',
         strategy: 'no_prefix',
         restructureDir: 'app',
-        langDir: 'locales'
+        langDir: 'locales/',
+        compilation: {
+            strictMessage: false,
+        }
+    },
+    sourcemap: {
+        server: false,
+        client: false
+    },
+    vite: {
+        build: {
+            chunkSizeWarningLimit: 1000,
+        },
+        optimizeDeps: {
+            exclude: ['@prisma/client'],
+        }
+    },
+    nitro: {
+        sourceMap: false,
+        externals: {
+            external: [
+                '@prisma/client',
+                '@prisma/adapter-libsql',
+            ],
+        },
     }
 })

@@ -57,7 +57,7 @@ const userMenuItems = ref<DropdownMenuItem[]>([
                             class="flex items-center gap-3 group outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded-lg">
                             <div
                                 class="relative w-10 h-10 flex items-center justify-center bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 transition-transform group-hover:scale-105 group-hover:shadow-md">
-                                <img src="/assets/images/tetherdns_logo.png" alt="TetherDNS"
+                                <img src="~/assets/images/tetherdns_logo.png" alt="TetherDNS"
                                     class="w-8 h-8 object-contain" />
                             </div>
                             <div class="flex flex-col justify-center">
@@ -134,7 +134,7 @@ const userMenuItems = ref<DropdownMenuItem[]>([
                                         <div class="flex flex-col w-full bg-white dark:bg-slate-900">
                                             <div class="flex items-center justify-between">
                                                 <div class="flex items-center gap-2">
-                                                    <img src="/assets/images/tetherdns_logo.png" alt="Logo"
+                                                    <img src="~/assets/images/tetherdns_logo.png" alt="Logo"
                                                         class="w-10 h-10" />
                                                     <span
                                                         class="text-xl font-bold text-slate-900 dark:text-white">Menu</span>
@@ -219,7 +219,7 @@ const userMenuItems = ref<DropdownMenuItem[]>([
                         <div class="flex items-center gap-3">
                             <div
                                 class="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center border border-slate-200 dark:border-slate-700">
-                                <img src="/assets/images/tetherdns_logo.png" alt="TetherDNS"
+                                <img src="~/assets/images/tetherdns_logo.png" alt="TetherDNS"
                                     class="w-8 h-8 opacity-80" />
                             </div>
                             <span
@@ -276,7 +276,7 @@ const userMenuItems = ref<DropdownMenuItem[]>([
                                 </div>
                                 <span class="text-xs font-bold text-slate-700 dark:text-slate-300">{{
                                     $t('footer.powered_by')
-                                }}</span>
+                                    }}</span>
                             </div>
                             <div
                                 class="flex items-center gap-2 text-[11px] font-medium text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 w-fit">

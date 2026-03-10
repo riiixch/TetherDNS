@@ -18,7 +18,7 @@
           <div
             class="absolute inset-0 rounded-2xl border-2 border-primary-500/50 opacity-0 group-hover:opacity-100 transition-opacity scale-105 pointer-events-none">
           </div>
-          <img src="/assets/images/tetherdns_logo.png" alt="TetherDNS Logo" class="w-full h-full object-contain" />
+          <img src="~/assets/images/tetherdns_logo.png" alt="TetherDNS Logo" class="w-full h-full object-contain" />
         </div>
 
         <h1 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white leading-none">

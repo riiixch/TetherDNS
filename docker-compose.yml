@@ -1,14 +1,19 @@
-version: '3.8'
-
 services:
-  cloudflare-ddns-manager:
-    build: .
+  tetherdns:
+    image: tetherdns:latest
+    container_name: tetherdns
     restart: always
     ports:
       - "3000:3000"
     volumes:
-      - ./data:/app/prisma/data
+      - ./data:/app/data
     environment:
-      - DATABASE_URL=file:/app/prisma/data/cloudflare-ddns-manager.db
-      - SESSION_PASSWORD=change_this_to_a_secure_long_random_string_for_production_use
+      - DATABASE_URL=file:/app/data/tetherdns.db
+      - SESSION_PASSWORD=
       - NODE_ENV=production
+      - TZ=Asia/Bangkok
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

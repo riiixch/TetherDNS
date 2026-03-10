@@ -21,6 +21,7 @@
     "apexcharts": "^5.10.3",
     "bcryptjs": "^3.0.3",
     "cloudflare": "^5.2.0",
+    "dotenv": "^17.3.1",
     "nuxt": "^4.3.1",
     "otplib": "^13.3.0",
     "qrcode": "^1.5.4",

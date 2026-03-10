@@ -26,3 +26,7 @@ logs
 # Database files
 *.db
 *.sqlite
+
+# Docker data
+data
+*.tar
