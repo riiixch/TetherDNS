@@ -2,14 +2,16 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
-:root {
-    font-family: "Kanit", sans-serif;
-}
-
 .debug {
     border: 1px solid red;
 }
 
 ::-webkit-scrollbar {
     width: 0px;
+}
+
+body,
+html,
+* {
+    font-family: 'Kanit', sans-serif !important;
 }

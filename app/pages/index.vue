@@ -1,131 +1,157 @@
 <script setup lang="ts">
-definePageMeta({
-    layout: 'default',
-})
+import { ref, onMounted } from 'vue'
 
-const { user } = useAuth()
-const { t } = useI18n()
+useHead({ title: `Dashboard` })
+
+definePageMeta({ layout: 'default' })
+
+const { fetchLogs } = useLogs()
+const recentLogs = ref<any[]>([])
+const pendingLogs = ref(true)
+
+const loadRecentLogs = async () => {
+    pendingLogs.value = true
+    try {
+        const res = await fetchLogs({ page: 1, limit: 5 })
+        recentLogs.value = res.data
+    } catch (e) {
+        console.error('Failed to load recent logs', e)
+    } finally {
+        pendingLogs.value = false
+    }
+}
+
+const timeAgo = (dateStr: string) => {
+    const seconds = Math.floor((new Date().getTime() - new Date(dateStr).getTime()) / 1000)
+    let interval = seconds / 31536000
+    if (interval > 1) return Math.floor(interval) + ' years ago'
+    interval = seconds / 2592000
+    if (interval > 1) return Math.floor(interval) + ' months ago'
+    interval = seconds / 86400
+    if (interval > 1) return Math.floor(interval) + ' days ago'
+    interval = seconds / 3600
+    if (interval > 1) return Math.floor(interval) + ' hours ago'
+    interval = seconds / 60
+    if (interval > 1) return Math.floor(interval) + ' mins ago'
+    return Math.floor(seconds) + ' seconds ago'
+}
+
+onMounted(() => {
+    loadRecentLogs()
+})
 </script>
 
 <template>
-    <div class="space-y-8 flex flex-col h-full pb-10">
-        <!-- Header Section -->
+    <div class="space-y-6 lg:space-y-8 flex flex-col h-full pb-10">
+
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
-                <h1 class="text-3xl font-black tracking-tight text-white flex items-center gap-3 font-sans">
-                    <UIcon name="i-heroicons-squares-2x2-solid" class="w-8 h-8 text-primary-500" />
+                <h1
+                    class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-3">
+                    <div class="p-2 bg-primary-50 dark:bg-primary-500/10 rounded-xl">
+                        <UIcon name="i-heroicons-squares-2x2-solid" class="w-6 h-6 sm:w-8 sm:h-8 text-primary-500" />
+                    </div>
                     {{ $t('dashboard.title') }}
                 </h1>
-                <p class="text-slate-400 mt-1 font-medium font-sans">{{ $t('dashboard.subtitle') }}</p>
+                <p class="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-2 font-medium">
+                    {{ $t('dashboard.subtitle') }}
+                </p>
             </div>
         </div>
 
-        <!-- Main Dashboard Grid -->
+        <ClientOnly>
+            <DashboardStats />
+        </ClientOnly>
+
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <!-- Left Column: Primary Analytics & Activity -->
-            <div class="col-span-12 lg:col-span-8 space-y-6">
-                <!-- Chart Area -->
-                <UCard
-                    class="bg-slate-900/40 backdrop-blur-xl border-slate-800/50 shadow-2xl relative overflow-hidden group min-h-[400px]">
-                    <!-- <div
-                        class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none">
-                        <UIcon name="i-heroicons-presentation-chart-line" class="w-32 h-32 text-primary-500" />
-                    </div> -->
-                    <div class="relative z-10">
-                        <div class="flex items-center justify-between mb-6 border-b border-slate-800/50 pb-4">
-                            <h3
-                                class="text-xs font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2 font-sans">
-                                <div class="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></div>
-                                {{ $t('analytics.ip_changes') }}
-                            </h3>
-                            <UBadge variant="subtle" color="primary" class="font-sans">24H Activity</UBadge>
-                        </div>
-                        <ClientOnly>
-                            <AnalyticsIpChangeChart />
-                        </ClientOnly>
-                    </div>
-                </UCard>
+
+            <div class="col-span-1 lg:col-span-8 flex flex-col h-full">
+                <ClientOnly>
+                    <AnalyticsIpChangeChart class="h-full min-h-[400px]" />
+                </ClientOnly>
             </div>
 
-            <!-- Right Column: Infrastructure Sidebar -->
-            <div class="col-span-12 lg:col-span-4 space-y-6 flex flex-col">
-                <!-- System Pulse / Quick Info -->
-                <UCard class="bg-slate-900/60 backdrop-blur-xl border-slate-800/50 overflow-hidden shadow-xl">
-                    <div class="p-1">
-                        <h3 class="text-xs font-black uppercase tracking-[0.2em] text-slate-500 mb-4 px-2 font-sans">
-                            {{ $t('dashboard.pulse_title') }}
-                        </h3>
-                        <div class="space-y-3">
-                            <div
-                                class="flex items-center justify-between p-3 rounded-xl bg-slate-800/30 border border-slate-700/30 group hover:border-emerald-500/30 transition-colors">
-                                <div class="flex items-center gap-3">
-                                    <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-500 shadow-inner">
-                                        <UIcon name="i-heroicons-shield-check" class="w-5 h-5" />
-                                    </div>
-                                    <div>
-                                        <p class="text-[13px] font-bold text-white font-sans">{{
-                                            $t('dashboard.pulse_security') }}</p>
-                                        <p class="text-[10px] text-slate-500 font-sans line-clamp-1">{{
-                                            $t('dashboard.pulse_security_desc') }}</p>
-                                    </div>
-                                </div>
-                                <UBadge color="success" variant="subtle" size="xs"
-                                    class="font-sans font-black tracking-tighter">{{ $t('dashboard.pulse_secure') }}
-                                </UBadge>
-                            </div>
+            <div class="col-span-1 lg:col-span-4 space-y-6 flex flex-col h-full">
 
-                            <div
-                                class="flex items-center justify-between p-3 rounded-xl bg-slate-800/30 border border-slate-700/30 group hover:border-blue-500/30 transition-colors">
-                                <div class="flex items-center gap-3">
-                                    <div class="p-2 rounded-lg bg-blue-500/10 text-blue-500 shadow-inner">
-                                        <UIcon name="i-heroicons-cloud-arrow-up" class="w-5 h-5" />
-                                    </div>
-                                    <div>
-                                        <p class="text-[13px] font-bold text-white font-sans">{{
-                                            $t('dashboard.pulse_sync') }}</p>
-                                        <p class="text-[10px] text-slate-500 font-sans line-clamp-1">{{
-                                            $t('dashboard.pulse_sync_desc') }}</p>
-                                    </div>
+                <UCard class="bg-white dark:bg-slate-900 ring-1 ring-slate-200 dark:ring-slate-800 shadow-sm flex-1">
+                    <div class="mb-5 flex items-center justify-between">
+                        <h3
+                            class="text-xs font-bold uppercase tracking-[0.15em] text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                            <UIcon name="i-heroicons-clock" class="w-4 h-4 text-slate-400" />
+                            Recent Updates
+                        </h3>
+                        <UButton to="/logs" color="neutral" variant="ghost" size="xs"
+                            class="text-primary-500 hover:bg-primary-50 dark:hover:bg-primary-500/10">
+                            View All
+                        </UButton>
+                    </div>
+
+                    <div class="space-y-4">
+                        <template v-if="pendingLogs">
+                            <div class="flex justify-center p-4">
+                                <UIcon name="i-heroicons-arrow-path" class="w-5 h-5 animate-spin text-slate-400" />
+                            </div>
+                        </template>
+                        <template v-else-if="recentLogs.length === 0">
+                            <div class="text-center p-4">
+                                <p class="text-sm font-medium text-slate-500">{{ $t('logs.no_logs') }}</p>
+                            </div>
+                        </template>
+                        <template v-else>
+                            <div v-for="log in recentLogs" :key="log.id" class="relative pl-4 border-l-2"
+                                :class="log.status === 'SUCCESS' ? 'border-emerald-500/30' : 'border-red-500/30'">
+                                <div class="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full ring-4 ring-white dark:ring-slate-900"
+                                    :class="log.status === 'SUCCESS' ? 'bg-emerald-500' : 'bg-red-500'">
                                 </div>
-                                <div
-                                    class="flex items-center gap-2 bg-blue-500/10 px-2 py-0.5 rounded-full border border-blue-500/20">
-                                    <div class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping"></div>
-                                    <span class="text-[10px] font-black text-blue-400 font-sans tracking-tight">{{
-                                        $t('dashboard.pulse_live') }}</span>
+                                <div class="flex items-start justify-between gap-2">
+                                    <div v-if="log.status === 'SUCCESS'">
+                                        <p class="text-sm font-semibold text-slate-900 dark:text-white leading-none">
+                                            {{ log.record?.name || 'Unknown' }}</p>
+                                        <div class="flex items-center gap-1.5 mt-1.5">
+                                            <span class="text-[11px] font-mono text-slate-400 line-through">{{ log.oldIp
+                                                || '-' }}</span>
+                                            <UIcon name="i-heroicons-arrow-right" class="w-3 h-3 text-slate-300" />
+                                            <span
+                                                class="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400">{{
+                                                    log.newIp || '-' }}</span>
+                                        </div>
+                                    </div>
+                                    <div v-else>
+                                        <p class="text-sm font-semibold text-slate-900 dark:text-white leading-none">
+                                            {{ log.record?.name || 'Unknown' }}</p>
+                                        <p
+                                            class="text-xs text-red-500 dark:text-red-400 mt-1.5 font-medium line-clamp-1 py-[2px]">
+                                            {{ log.message || 'Update Failed' }}</p>
+                                    </div>
+                                    <span class="text-[10px] text-slate-400 whitespace-nowrap mt-0.5">{{
+                                        timeAgo(log.createdAt) }}</span>
                                 </div>
                             </div>
-                        </div>
+                        </template>
                     </div>
                 </UCard>
 
-                <!-- Resource Promotion Card -->
-                <UCard
-                    class="bg-linear-to-br from-primary-600 to-blue-800 border-none relative overflow-hidden group shadow-2xl mt-auto">
+                <div
+                    class="relative overflow-hidden rounded-2xl bg-linear-to-br from-primary-600 to-blue-700 p-6 sm:p-8 shadow-lg shadow-primary-500/20 group border border-primary-500/20 shrink-0">
                     <div
-                        class="absolute -right-4 -bottom-4 opacity-20 group-hover:scale-125 group-hover:rotate-12 transition-all duration-700 pointer-events-none">
-                        <UIcon name="i-heroicons-rocket-launch" class="w-40 h-40 text-white" />
+                        class="absolute -right-6 -bottom-6 opacity-10 group-hover:scale-110 group-hover:-rotate-12 transition-transform duration-700 pointer-events-none">
+                        <UIcon name="i-heroicons-rocket-launch-solid" class="w-48 h-48 text-white" />
                     </div>
-                    <div class="relative z-10 p-2">
-                        <h3 class="text-xl font-black text-white mb-2 font-sans">{{ $t('dashboard.scale_title') }}</h3>
-                        <p class="text-xs text-primary-50/70 mb-6 leading-relaxed font-sans font-medium">
+                    <div class="relative z-10">
+                        <h3 class="text-xl font-bold text-white mb-2 tracking-tight">{{ $t('dashboard.scale_title') }}
+                        </h3>
+                        <p class="text-sm text-primary-100 mb-6 leading-relaxed max-w-[90%]">
                             {{ $t('dashboard.scale_desc') }}
                         </p>
-                        <div class="flex flex-col gap-2">
-                            <UButton color="neutral" variant="solid" size="md" block
-                                class="rounded-xl font-black text-primary-700 hover:bg-slate-100 transition-colors shadow-lg font-sans"
-                                @click="$router.push('/settings')">
-                                <UIcon name="i-heroicons-cog-6-tooth" class="w-4.5 h-4.5 mr-2" />
-                                {{ $t('dashboard.btn_global_settings') }}
-                            </UButton>
-                        </div>
+                        <UButton color="neutral" variant="solid" size="md" block
+                            class="bg-white rounded-xl font-bold text-primary-700 hover:bg-slate-50 transition-colors shadow-sm"
+                            @click="$router.push('/settings')">
+                            <UIcon name="i-heroicons-cog-6-tooth" class="w-5 h-5 mr-1" />
+                            {{ $t('dashboard.btn_global_settings') }}
+                        </UButton>
                     </div>
-                </UCard>
-            </div>
+                </div>
 
-            <div class="col-span-12">
-                <ClientOnly>
-                    <DashboardStats />
-                </ClientOnly>
             </div>
         </div>
     </div>

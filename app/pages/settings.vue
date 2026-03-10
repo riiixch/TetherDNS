@@ -6,6 +6,8 @@ import UserSettings from '../components/settings/UserSettings.vue'
 import SecuritySettings from '../components/settings/SecuritySettings.vue'
 import ApiTokenSettings from '../components/settings/ApiTokenSettings.vue'
 
+useHead({ title: 'Settings' })
+
 definePageMeta({ layout: 'default' })
 
 const { t } = useI18n()
@@ -156,48 +158,47 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="space-y-6">
-        <div>
-            <h1 class="text-3xl font-black tracking-tight text-black dark:text-white flex items-center gap-3 font-sans">
-                <UIcon name="i-heroicons-clipboard-document-list" class="w-8 h-8 text-indigo-500" />
-                {{ $t('audit.title') }}
-            </h1>
-            <p class="text-slate-400 mt-1 font-medium font-sans">{{ $t('audit.subtitle') }}</p>
+    <div class="space-y-6 lg:space-y-8 flex flex-col h-full pb-10">
+
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+                <h1
+                    class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-3">
+                    <div class="p-2 bg-slate-100 dark:bg-slate-800 rounded-xl">
+                        <UIcon name="i-heroicons-cog-6-tooth-solid"
+                            class="w-6 h-6 sm:w-8 sm:h-8 text-slate-700 dark:text-slate-300" />
+                    </div>
+                    {{ $t('settings.title', 'Settings') }}
+                </h1>
+                <p class="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-2 font-medium">
+                    Configure your system preferences and manage access.
+                </p>
+            </div>
         </div>
 
-        <div class="flex flex-col lg:flex-row gap-8 items-start">
-            <!-- Sidebar Navigation -->
-            <aside class="w-full lg:w-72 lg:sticky lg:top-24 shrink-0 space-y-4">
+        <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
+            <aside class="w-full lg:w-64 lg:sticky lg:top-24 shrink-0 space-y-4">
                 <div
-                    class="bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-slate-800/50 rounded-3xl p-4 shadow-xl ring-1 ring-slate-200 dark:ring-slate-800/50">
-                    <div class="px-3 py-2 mb-2">
-                        <h2
-                            class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 font-sans">
-                            {{ $t('settings.title') }}</h2>
-                    </div>
-
+                    class="bg-white dark:bg-slate-900 rounded-2xl p-3 shadow-sm ring-1 ring-slate-200 dark:ring-slate-800">
                     <nav class="space-y-1">
                         <button v-for="tab in tabs" :key="tab.value" @click="selectedTab = tab.value" :class="[
-                            'w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-300 font-sans group',
+                            'w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 group',
                             selectedTab === tab.value
-                                ? 'bg-primary-500/10 text-primary-500 shadow-sm ring-1 ring-primary-500/20'
-                                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200'
+                                ? 'bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400'
+                                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200'
                         ]">
                             <UIcon :name="tab.icon"
-                                :class="['w-5 h-5 transition-transform duration-300 group-hover:scale-110', selectedTab === tab.value ? 'text-primary-500' : 'text-slate-400']" />
+                                :class="['w-5 h-5 transition-transform duration-300 group-hover:scale-110', selectedTab === tab.value ? 'text-primary-500 dark:text-primary-400' : 'text-slate-400 dark:text-slate-500']" />
                             {{ tab.label }}
                         </button>
                     </nav>
                 </div>
 
-                <!-- Footer-like credit in sidebar -->
-                <div class="px-6 py-2">
-                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-sans">TetherDNS
-                    </p>
+                <div class="px-4 py-2">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">TetherDNS Core</p>
                 </div>
             </aside>
 
-            <!-- Main Content Area -->
             <main class="flex-1 w-full min-w-0">
                 <div class="relative min-h-[500px]">
                     <Transition mode="out-in"
@@ -205,18 +206,15 @@ onMounted(() => {
                         enter-from-class="opacity-0 translate-y-2" enter-to-class="opacity-100 translate-y-0"
                         leave-active-class="transition duration-200 ease-[cubic-bezier(0.4,0,1,1)]"
                         leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 -translate-y-2">
+
                         <div :key="selectedTab" class="w-full">
                             <DdnsSettings v-if="selectedTab === 'general'" :ddns-interval="ddnsInterval"
                                 :loading="settingsLoading" @save="saveSettings" />
-
-                            <SecuritySettings v-if="selectedTab === 'security'" />
-
-                            <ApiTokenSettings v-if="selectedTab === 'api'" />
-
-                            <NotificationSettings v-if="selectedTab === 'notifications'" :channels="channels"
+                            <SecuritySettings v-else-if="selectedTab === 'security'" />
+                            <ApiTokenSettings v-else-if="selectedTab === 'api'" />
+                            <NotificationSettings v-else-if="selectedTab === 'notifications'" :channels="channels"
                                 :loading="notifPending" @add="addChannel" @delete="deleteChannel" @test="testChannel" />
-
-                            <UserSettings v-if="selectedTab === 'users'" :users="users" :loading="usersPending"
+                            <UserSettings v-else-if="selectedTab === 'users'" :users="users" :loading="usersPending"
                                 :current-user="currentUser" @add="addUser" @delete="deleteUser" />
                         </div>
                     </Transition>

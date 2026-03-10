@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-definePageMeta({
-    layout: 'auth',
-})
+definePageMeta({ layout: 'auth' })
 
 const { setup } = useAuth()
 const toast = useToast()
@@ -16,33 +14,19 @@ const isLoading = ref(false)
 
 const handleSetup = async () => {
     if (!username.value || !password.value) {
-        toast.add({
-            title: t('setup.failed'),
-            description: t('setup.err_fields'),
-            color: 'error'
-        })
+        toast.add({ title: t('setup.failed'), description: t('setup.err_fields'), color: 'error' })
         return
     }
 
     if (password.value !== confirmPassword.value) {
-        toast.add({
-            title: t('setup.failed'),
-            description: t('setup.err_match'),
-            color: 'error'
-        })
+        toast.add({ title: t('setup.failed'), description: t('setup.err_match'), color: 'error' })
         return
     }
 
     isLoading.value = true
     try {
         await setup(username.value, password.value)
-
-        toast.add({
-            title: t('setup.success'),
-            description: t('setup.created'),
-            color: 'success'
-        })
-
+        toast.add({ title: t('setup.success'), description: t('setup.created'), color: 'success' })
         navigateTo('/')
     } catch (e: any) {
         toast.add({
@@ -57,28 +41,42 @@ const handleSetup = async () => {
 </script>
 
 <template>
-    <UCard class="w-full">
+    <UCard :ui="{ header: 'px-6 py-6 border-none', body: 'px-6 pb-8 pt-0' }"
+        class="w-full bg-white/70 dark:bg-slate-900/60 backdrop-blur-2xl border-slate-200/50 dark:border-slate-800/50 shadow-2xl rounded-3xl ring-1 ring-slate-200/50 dark:ring-slate-800/50">
         <template #header>
-            <h2 class="text-xl font-semibold text-center mt-2">{{ $t('setup.title') }}</h2>
-            <p class="text-sm text-gray-400 text-center mt-1">{{ $t('setup.subtitle') }}</p>
+            <div class="flex items-center justify-center gap-2 mb-2">
+                <UIcon name="i-heroicons-sparkles-solid" class="w-5 h-5 text-amber-500" />
+                <h2 class="text-xl font-bold text-center text-slate-900 dark:text-white tracking-tight">{{
+                    $t('setup.title') }}</h2>
+            </div>
+            <p class="text-xs text-slate-500 text-center font-medium">{{ $t('setup.subtitle') }}</p>
         </template>
 
-        <form @submit.prevent="handleSetup" class="space-y-4">
+        <form @submit.prevent="handleSetup" class="space-y-5">
             <UFormField :label="$t('auth.username_field')" name="username">
-                <UInput v-model="username" placeholder="admin" autofocus class="w-full" />
+                <UInput v-model="username" placeholder="admin" autofocus class="w-full"
+                    :ui="{ root: 'rounded-xl h-11' }" />
             </UFormField>
 
             <UFormField :label="$t('auth.password_field')" name="password">
-                <UInput v-model="password" type="password" placeholder="••••••••" class="w-full" />
+                <UInput v-model="password" type="password" placeholder="••••••••" class="w-full tracking-wider"
+                    :ui="{ root: 'rounded-xl h-11' }" />
             </UFormField>
 
             <UFormField :label="$t('setup.confirm_password')" name="confirmPassword">
-                <UInput v-model="confirmPassword" type="password" placeholder="••••••••" class="w-full" />
+                <UInput v-model="confirmPassword" type="password" placeholder="••••••••" class="w-full tracking-wider"
+                    :ui="{ root: 'rounded-xl h-11' }" />
             </UFormField>
 
-            <UButton type="submit" color="primary" block :loading="isLoading" class="mt-4">
-                {{ $t('setup.save_continue') }}
-            </UButton>
+            <div class="pt-2">
+                <UButton type="submit" color="primary" block :loading="isLoading"
+                    class="h-11 rounded-xl font-bold shadow-md shadow-primary-500/20">
+                    {{ $t('setup.save_continue') }}
+                    <template #trailing>
+                        <UIcon name="i-heroicons-arrow-right" class="w-4 h-4 ml-1" />
+                    </template>
+                </UButton>
+            </div>
         </form>
     </UCard>
 </template>

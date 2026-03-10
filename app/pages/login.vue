@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-definePageMeta({
-    layout: 'auth',
-})
+definePageMeta({ layout: 'auth' })
 
 const { login } = useAuth()
 const toast = useToast()
@@ -16,22 +14,13 @@ const isLoading = ref(false)
 const show2FA = ref(false)
 
 const handleLogin = async () => {
-
     if (!show2FA.value && (!username.value || !password.value)) {
-        toast.add({
-            title: t('auth.login_failed'),
-            description: t('auth.err_required'),
-            color: 'error'
-        })
+        toast.add({ title: t('auth.login_failed'), description: t('auth.err_required'), color: 'error' })
         return
     }
 
     if (show2FA.value && !totpCode.value) {
-        toast.add({
-            title: t('auth.login_failed'),
-            description: t('auth.err_2fa_required'),
-            color: 'error'
-        })
+        toast.add({ title: t('auth.login_failed'), description: t('auth.err_2fa_required'), color: 'error' })
         return
     }
 
@@ -44,7 +33,6 @@ const handleLogin = async () => {
             return
         }
 
-        // After successful login, redirect to dashboard
         navigateTo('/')
     } catch (e: any) {
         toast.add({
@@ -59,42 +47,49 @@ const handleLogin = async () => {
 </script>
 
 <template>
-    <UCard class="w-full">
+    <UCard :ui="{ header: 'px-6 py-6 border-none', body: 'px-6 pb-8 pt-0' }"
+        class="w-full bg-white/70 dark:bg-slate-900/60 backdrop-blur-2xl border-slate-200/50 dark:border-slate-800/50 shadow-2xl rounded-3xl ring-1 ring-slate-200/50 dark:ring-slate-800/50">
         <template #header>
-            <h2 class="text-xl font-semibold text-center mt-2">{{ $t('auth.login_title') }}</h2>
-            <p class="text-sm text-gray-400 text-center mt-1">{{ $t('auth.login_subtitle') }}</p>
+            <h2 class="text-xl font-bold text-center text-slate-900 dark:text-white tracking-tight">
+                {{ show2FA ? $t('auth.2fa_notice') : $t('auth.login_title') }}
+            </h2>
+            <p class="text-xs text-slate-500 text-center mt-1.5 font-medium">
+                {{ show2FA ? $t('auth.code_placeholder') : $t('auth.login_subtitle') }}
+            </p>
         </template>
 
-        <form @submit.prevent="handleLogin" class="space-y-4">
+        <form @submit.prevent="handleLogin" class="space-y-5">
             <template v-if="!show2FA">
                 <UFormField :label="$t('auth.username_field')" name="username">
-                    <UInput v-model="username" :placeholder="$t('auth.username_placeholder')" autofocus
-                        class="w-full" />
+                    <UInput v-model="username" :placeholder="$t('auth.username_placeholder')" autofocus class="w-full"
+                        :ui="{ root: 'rounded-xl h-11' }" />
                 </UFormField>
 
                 <UFormField :label="$t('auth.password_field')" name="password">
-                    <UInput v-model="password" type="password" placeholder="••••••••" class="w-full" />
+                    <UInput v-model="password" type="password" placeholder="••••••••" class="w-full tracking-wider"
+                        :ui="{ root: 'rounded-xl h-11' }" />
                 </UFormField>
             </template>
 
             <template v-else>
-                <div class="text-sm font-medium text-gray-400 text-center mb-4">
-                    {{ $t('auth.2fa_notice') }}
-                </div>
-                <UFormField :label="$t('auth.auth_code')" name="totpCode">
-                    <UInput v-model="totpCode" :placeholder="$t('auth.code_placeholder')" autofocus
-                        class="w-full text-center tracking-widest text-lg" />
+                <UFormField name="totpCode">
+                    <UInput v-model="totpCode" placeholder="000000" autofocus
+                        class="w-full text-center tracking-[0.4em] text-2xl font-bold font-mono"
+                        :ui="{ root: 'rounded-2xl h-14' }" />
                 </UFormField>
             </template>
 
-            <UButton type="submit" color="primary" block :loading="isLoading" class="mt-4">
-                {{ show2FA ? $t('auth.verify_code') : $t('auth.login_button') }}
-            </UButton>
+            <div class="pt-2">
+                <UButton type="submit" color="primary" block :loading="isLoading"
+                    class="h-11 rounded-xl font-bold shadow-md shadow-primary-500/20">
+                    {{ show2FA ? $t('auth.verify_code') : $t('auth.login_button') }}
+                </UButton>
 
-            <UButton v-if="show2FA" type="button" variant="ghost" color="neutral" block @click="show2FA = false"
-                class="mt-2 text-gray-400">
-                {{ $t('auth.back_to_login') }}
-            </UButton>
+                <UButton v-if="show2FA" type="button" variant="ghost" color="neutral" block @click="show2FA = false"
+                    class="mt-3 rounded-xl font-medium">
+                    {{ $t('auth.back_to_login') }}
+                </UButton>
+            </div>
         </form>
     </UCard>
 </template>

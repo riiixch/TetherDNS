@@ -65,7 +65,7 @@ const generateToken = async () => {
         const res = await $fetch<{ token: string }>(`/api/records/${props.record.id}/token`, { method: 'POST' })
         updateToken.value = res.token
         toast.add({ title: t('common.success'), description: t('records.api_desc'), color: 'success' })
-        emit('refresh') // So the parent updates its local state too
+        emit('refresh')
     } catch (e: any) {
         toast.add({ title: t('common.failed'), description: e.data?.statusMessage || e.message, color: 'error' })
     } finally {
@@ -88,7 +88,6 @@ const revokeToken = async () => {
     }
 }
 
-
 const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
     toast.add({ title: t('common.success'), color: 'success' })
@@ -104,84 +103,114 @@ watch(isOpen, (val) => { if (!val) emit('close') })
 </script>
 
 <template>
-    <UModal v-model:open="isOpen" :title="$t('records.edit_modal_title')" :description="$t('records.edit_modal_desc')"
-        :ui="{
-            content: 'dark:bg-slate-900/90 backdrop-blur-2xl border-slate-800/50 rounded-3xl',
-            header: 'font-black tracking-tight text-xl font-sans'
-        }">
-        <template #body>
-            <form @submit.prevent="handleSave" class="space-y-6">
-                <UFormField :label="$t('records.type_field')" name="type">
-                    <USelect v-model="recordType" :items="typeOptions" value-key="value" class="w-full"
-                        :ui="{ base: 'rounded-xl h-12 font-sans font-bold' }" />
-                </UFormField>
-
-                <UFormField :label="$t('records.name_field')" name="name">
-                    <UInput v-model="recordName" class="w-full"
-                        :ui="{ base: 'rounded-xl h-12 font-sans tracking-wide' }" />
-                </UFormField>
-
-                <UFormField :label="$t('records.content_field')" name="content">
-                    <UInput v-model="recordContent" class="w-full font-mono" :ui="{ base: 'rounded-xl h-12' }" />
-                </UFormField>
-
-                <UFormField v-if="showProxied" :label="$t('records.proxy_field')" name="proxied">
-                    <USwitch v-model="proxied" color="warning" />
-                </UFormField>
-
-                <div v-if="recordType === 'A' || recordType === 'AAAA'"
-                    class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
-                    <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 font-sans mb-1">{{
-                        $t('records.api_url') }}</h3>
-                    <p class="text-xs text-slate-500 font-sans mb-4">{{ $t('records.api_desc') }}</p>
-
-                    <div v-if="updateToken" class="space-y-3">
-                        <div class="flex gap-2 items-center">
-                            <UInput :model-value="ddnsUrl" readonly class="flex-1 font-mono text-xs"
-                                :ui="{ base: 'rounded-xl' }" />
-                            <UButton color="neutral" variant="ghost" icon="i-heroicons-clipboard-document"
-                                class="rounded-xl" @click="copyToClipboard(ddnsUrl)" />
+    <UModal v-model:open="isOpen" :ui="{ content: 'sm:max-w-lg' }">
+        <template #content>
+            <UCard :ui="{ body: 'divide-y divide-slate-200 dark:divide-slate-800' }" class="ring-0">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900 dark:text-white">{{
+                                $t('records.edit_modal_title') }}</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">{{ $t('records.edit_modal_desc') }}</p>
                         </div>
-                        <UButton color="error" variant="soft" size="xs" icon="i-heroicons-trash"
-                            class="rounded-lg font-bold" :loading="isTokenLoading" @click="isConfirmRevokeOpen = true">
-                            {{ $t('records.revoke_token') }}
+                        <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark" class="-my-1"
+                            @click="isOpen = false" />
+                    </div>
+                </template>
+
+                <form @submit.prevent="handleSave" class="space-y-5 py-2">
+                    <UFormField :label="$t('records.type_field')" name="type">
+                        <USelect v-model="recordType" :items="typeOptions" value-key="value" class="w-full"
+                            :ui="{ base: 'rounded-xl h-10 font-bold' }" />
+                    </UFormField>
+
+                    <UFormField :label="$t('records.name_field')" name="name">
+                        <UInput v-model="recordName" class="w-full" :ui="{ base: 'rounded-xl h-10 tracking-wide' }" />
+                    </UFormField>
+
+                    <UFormField :label="$t('records.content_field')" name="content">
+                        <UInput v-model="recordContent" class="w-full font-mono text-sm"
+                            :ui="{ base: 'rounded-xl h-10' }" />
+                    </UFormField>
+
+                    <UFormField v-if="showProxied" :label="$t('records.proxy_field')" name="proxied" class="pt-1">
+                        <USwitch v-model="proxied" color="warning" />
+                    </UFormField>
+
+                    <div v-if="recordType === 'A' || recordType === 'AAAA'"
+                        class="mt-6 pt-5 border-t border-slate-200 dark:border-slate-800 border-dashed">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-900 dark:text-white">{{ $t('records.api_url') }}
+                                </h3>
+                                <p class="text-[11px] text-slate-500">{{ $t('records.api_desc') }}</p>
+                            </div>
+                        </div>
+
+                        <div v-if="updateToken" class="space-y-3">
+                            <div class="flex gap-2">
+                                <UInput :model-value="ddnsUrl" readonly
+                                    class="flex-1 font-mono text-[11px] sm:text-xs text-slate-600 dark:text-slate-300"
+                                    :ui="{ base: 'rounded-xl bg-slate-50 dark:bg-slate-900' }" />
+                                <UButton color="neutral" variant="soft" icon="i-heroicons-clipboard-document"
+                                    class="rounded-xl shadow-sm shrink-0" @click="copyToClipboard(ddnsUrl)" />
+                            </div>
+                            <div class="flex justify-end">
+                                <UButton color="error" variant="ghost" size="xs" icon="i-heroicons-trash"
+                                    class="rounded-lg font-semibold hover:bg-red-50 dark:hover:bg-red-500/10"
+                                    :loading="isTokenLoading" @click="isConfirmRevokeOpen = true">
+                                    {{ $t('records.revoke_token') }}
+                                </UButton>
+                            </div>
+                        </div>
+                        <UButton v-else color="neutral" variant="soft" icon="i-heroicons-key" :loading="isTokenLoading"
+                            class="rounded-xl font-bold w-full justify-center h-10 shadow-sm border border-slate-200 dark:border-slate-700"
+                            @click="generateToken">
+                            {{ $t('records.generate_url') }}
                         </UButton>
                     </div>
-                    <UButton v-else color="neutral" variant="soft" icon="i-heroicons-key" :loading="isTokenLoading"
-                        class="rounded-xl font-bold font-sans w-full justify-center h-10" @click="generateToken">
-                        {{ $t('records.generate_url') }}
-                    </UButton>
-                </div>
 
-                <div class="flex justify-end gap-3 pt-4 mt-2 lg:pt-4 border-t border-slate-200 dark:border-slate-800">
-                    <UButton color="neutral" variant="ghost" class="rounded-xl font-bold font-sans"
-                        @click="isOpen = false">{{ $t('common.cancel') }}</UButton>
-                    <UButton type="submit" color="primary" :loading="isLoading"
-                        class="rounded-xl font-bold font-sans px-8">{{ $t('common.save') }}</UButton>
-                </div>
-            </form>
+                    <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <UButton color="neutral" variant="ghost" class="rounded-xl font-bold" @click="isOpen = false">
+                            {{ $t('common.cancel') }}
+                        </UButton>
+                        <UButton type="submit" color="primary" :loading="isLoading"
+                            class="rounded-xl font-bold px-6 shadow-sm">
+                            {{ $t('common.save') }}
+                        </UButton>
+                    </div>
+                </form>
+            </UCard>
         </template>
     </UModal>
 
-    <!-- Revoke Confirmation Modal -->
-    <UModal v-model:open="isConfirmRevokeOpen" :title="$t('records.revoke_token')" :ui="{
-        content: 'dark:bg-slate-900/90 backdrop-blur-2xl border-slate-800/50 rounded-3xl',
-        header: 'font-black tracking-tight text-xl font-sans text-error-500'
-    }">
-        <template #body>
-            <div class="space-y-6">
-                <p class="text-slate-600 dark:text-slate-300 font-sans">
-                    {{ $t('records.revoke_warning') }}
-                </p>
-                <div class="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
-                    <UButton color="neutral" variant="ghost" class="rounded-xl font-bold font-sans"
-                        @click="isConfirmRevokeOpen = false">{{ $t('common.cancel') }}
-                    </UButton>
-                    <UButton color="error" :loading="isTokenLoading" class="rounded-xl font-bold font-sans px-8"
-                        @click="revokeToken">{{ $t('records.revoke_token') }}
-                    </UButton>
+    <UModal v-model:open="isConfirmRevokeOpen" :ui="{ content: 'sm:max-w-sm' }">
+        <template #content>
+            <UCard :ui="{ body: 'divide-y divide-slate-200 dark:divide-slate-800' }" class="ring-0">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-bold text-red-600 dark:text-red-400">{{ $t('records.revoke_token') }}
+                        </h3>
+                        <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark" class="-my-1"
+                            @click="isConfirmRevokeOpen = false" />
+                    </div>
+                </template>
+                <div class="py-2">
+                    <p class="text-sm text-slate-600 dark:text-slate-300">
+                        {{ $t('records.revoke_warning') }}
+                    </p>
+                    <div class="flex justify-end gap-3 pt-5 mt-4 border-t border-slate-100 dark:border-slate-800">
+                        <UButton color="neutral" variant="ghost" class="rounded-xl font-bold"
+                            @click="isConfirmRevokeOpen = false">
+                            {{ $t('common.cancel') }}
+                        </UButton>
+                        <UButton color="error" variant="solid" :loading="isTokenLoading"
+                            class="rounded-xl font-bold px-6 shadow-sm" @click="revokeToken">
+                            {{ $t('records.revoke_token') }}
+                        </UButton>
+                    </div>
                 </div>
-            </div>
+            </UCard>
         </template>
     </UModal>
 </template>

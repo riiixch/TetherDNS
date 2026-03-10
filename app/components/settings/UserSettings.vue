@@ -38,78 +38,94 @@ const formatDate = (dateStr: string) => {
 </script>
 
 <template>
-    <UCard
-        class="bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-slate-800/50 shadow-xl rounded-2xl ring-1 ring-slate-200 dark:ring-slate-800/50">
+    <UCard :ui="{ header: 'px-5 sm:px-6 py-5', body: 'p-0 sm:p-0' }"
+        class="bg-white dark:bg-slate-900 shadow-sm overflow-hidden ring-1 ring-slate-200 dark:ring-slate-800">
         <template #header>
-            <div class="flex items-center justify-between gap-4">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
-                    <UIcon name="i-heroicons-users" class="w-5 h-5 text-primary-500" />
+                    <div class="p-1.5 bg-primary-50 dark:bg-primary-500/10 rounded-lg">
+                        <UIcon name="i-heroicons-users-solid" class="w-5 h-5 text-primary-500" />
+                    </div>
                     <div>
-                        <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight font-sans">{{
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white tracking-tight">{{
                             $t('settings.users_title') }}</h2>
-                        <p class="text-sm text-slate-500 dark:text-slate-400 font-sans">{{ $t('settings.users_subtitle')
-                        }}</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ $t('settings.users_subtitle') }}
+                        </p>
                     </div>
                 </div>
-                <UButton icon="i-heroicons-plus" color="primary" class="rounded-xl font-bold font-sans px-4"
+                <UButton icon="i-heroicons-plus" color="primary"
+                    class="rounded-xl font-bold px-4 shadow-sm w-full md:w-auto justify-center"
                     @click="isAddOpen = true">
                     {{ $t('settings.add_user') }}
                 </UButton>
             </div>
         </template>
 
-        <UTable :data="users" :columns="columns" :loading="loading" :ui="{
-            th: 'bg-transparent text-slate-900 dark:text-slate-100 font-bold font-sans uppercase tracking-wider text-xs border-b border-slate-200 dark:border-slate-800/50',
-            td: 'py-4 font-sans'
-        }">
-            <template #username-cell="{ row }">
-                <div class="flex items-center gap-2">
-                    <span class="font-bold text-slate-900 dark:text-slate-200">{{ row.original.username }}</span>
-                    <UBadge v-if="currentUser?.id === row.original.id" color="primary" variant="soft" size="sm"
-                        class="rounded-lg font-black text-[10px] tracking-widest px-2 uppercase">
-                        {{ $t('settings.you') }}
-                    </UBadge>
-                </div>
-            </template>
-            <template #createdAt-cell="{ row }">
-                <span class="text-slate-500 dark:text-slate-400 text-sm italic">{{ formatDate(row.original.createdAt)
-                }}</span>
-            </template>
-            <template #actions-cell="{ row }">
-                <div class="flex justify-end">
-                    <UButton size="sm" color="error" variant="ghost" icon="i-heroicons-trash"
-                        class="rounded-lg hover:bg-error-50 dark:hover:bg-error-500/10 transition-colors"
-                        :disabled="currentUser?.id === row.original.id" @click="emit('delete', row.original.id)" />
-                </div>
-            </template>
-        </UTable>
-
-        <UModal v-model:open="isAddOpen" :title="$t('settings.add_user_modal')"
-            :description="$t('settings.add_user_overlay')" :ui="{
-                content: 'dark:bg-slate-900/90 backdrop-blur-2xl border-slate-800/50 rounded-3xl',
-                header: 'font-black tracking-tight text-xl font-sans'
+        <div class="overflow-x-auto">
+            <UTable :data="users" :columns="columns" :loading="loading" :ui="{
+                th: 'bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold whitespace-nowrap py-3.5 border-b border-slate-200 dark:border-slate-800',
+                td: 'py-3 text-sm text-slate-600 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800/60',
+                tr: 'hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors'
             }">
-            <template #body>
-                <form @submit.prevent="add" class="space-y-6">
-                    <UFormField :label="$t('settings.username')" name="username">
-                        <UInput v-model="newUserPayload.username" :placeholder="$t('settings.username')" class="w-full"
-                            :ui="{ base: 'rounded-xl h-12 font-sans' }" />
-                    </UFormField>
-
-                    <UFormField :label="$t('settings.password')" name="password">
-                        <UInput v-model="newUserPayload.password" type="password" :placeholder="$t('settings.password')"
-                            class="w-full" :ui="{ base: 'rounded-xl h-12 font-sans' }" />
-                    </UFormField>
-
-                    <div class="flex justify-end gap-3 pt-2">
-                        <UButton color="neutral" variant="ghost" class="rounded-xl font-bold"
-                            @click="isAddOpen = false">{{ $t('common.cancel') }}
-                        </UButton>
-                        <UButton type="submit" color="primary" :loading="isAdding" class="rounded-xl font-bold px-8">{{
-                            $t('settings.create_user') }}
-                        </UButton>
+                <template #username-cell="{ row }">
+                    <div class="flex items-center gap-2.5">
+                        <span class="font-semibold text-slate-900 dark:text-white">{{ row.original.username }}</span>
+                        <UBadge v-if="currentUser?.id === row.original.id" color="primary" variant="subtle" size="xs"
+                            class="font-bold uppercase tracking-widest">
+                            {{ $t('settings.you') }}
+                        </UBadge>
                     </div>
-                </form>
+                </template>
+                <template #createdAt-cell="{ row }">
+                    <span class="text-slate-500 dark:text-slate-400 text-xs font-medium">{{
+                        formatDate(row.original.createdAt) }}</span>
+                </template>
+                <template #actions-cell="{ row }">
+                    <div class="flex justify-end">
+                        <UButton size="xs" color="error" variant="ghost" icon="i-heroicons-trash"
+                            class="rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+                            :disabled="currentUser?.id === row.original.id" @click="emit('delete', row.original.id)" />
+                    </div>
+                </template>
+            </UTable>
+        </div>
+
+        <UModal v-model:open="isAddOpen" :ui="{ content: 'sm:max-w-md' }">
+            <template #content>
+                <UCard class="ring-0">
+                    <template #header>
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-base font-bold text-slate-900 dark:text-white">{{
+                                $t('settings.add_user_modal') }}</h3>
+                            <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark" class="-my-1"
+                                @click="isAddOpen = false" />
+                        </div>
+                    </template>
+
+                    <form @submit.prevent="add" class="space-y-5 py-2">
+                        <UFormField :label="$t('settings.username')" name="username">
+                            <UInput v-model="newUserPayload.username" :placeholder="$t('settings.username')"
+                                class="w-full" :ui="{ root: 'rounded-xl' }" autofocus />
+                        </UFormField>
+
+                        <UFormField :label="$t('settings.password')" name="password">
+                            <UInput v-model="newUserPayload.password" type="password"
+                                :placeholder="$t('settings.password')" class="w-full" :ui="{ root: 'rounded-xl' }" />
+                        </UFormField>
+
+                        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                            <UButton color="neutral" variant="ghost" class="rounded-xl font-bold"
+                                @click="isAddOpen = false">
+                                {{ $t('common.cancel') }}
+                            </UButton>
+                            <UButton type="submit" color="primary" :loading="isAdding"
+                                class="rounded-xl font-bold px-6 shadow-sm"
+                                :disabled="!newUserPayload.username || !newUserPayload.password">
+                                {{ $t('settings.create_user') }}
+                            </UButton>
+                        </div>
+                    </form>
+                </UCard>
             </template>
         </UModal>
     </UCard>

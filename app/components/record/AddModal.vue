@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 const props = defineProps<{ cfZoneId: string }>()
 const emit = defineEmits(['close', 'refresh'])
@@ -72,57 +72,69 @@ watch(isOpen, (val) => { if (!val) emit('close') })
 </script>
 
 <template>
-    <UModal v-model:open="isOpen" :title="$t('records.add_modal_title')" :description="$t('records.add_modal_desc')"
-        :ui="{
-            content: 'dark:bg-slate-900/90 backdrop-blur-2xl border-slate-800/50 rounded-3xl',
-            header: 'font-black tracking-tight text-xl font-sans'
-        }">
-        <template #body>
-            <form @submit.prevent="handleAdd" class="space-y-6">
-                <UFormField :label="$t('records.type_field')" name="type">
-                    <USelect v-model="recordType" :items="typeOptions" value-key="value" class="w-full"
-                        :ui="{ base: 'rounded-xl h-12 font-sans font-bold' }" />
-                </UFormField>
+    <UModal v-model:open="isOpen" :ui="{ content: 'sm:max-w-lg' }">
+        <template #content>
+            <UCard :ui="{ body: 'divide-y divide-slate-200 dark:divide-slate-800' }" class="ring-0">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900 dark:text-white">{{
+                                $t('records.add_modal_title') }}</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">{{ $t('records.add_modal_desc') }}</p>
+                        </div>
+                        <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark" class="-my-1"
+                            @click="isOpen = false" />
+                    </div>
+                </template>
 
-                <UFormField :label="$t('records.name_field')" name="name">
-                    <UInput v-model="recordName" :placeholder="$t('records.name_placeholder')" class="w-full"
-                        :ui="{ base: 'rounded-xl h-12 font-sans tracking-wide' }" />
-                    <template #help>
-                        <p class="text-xs text-slate-500 font-sans mt-1">{{ $t('records.name_hint') }}</p>
-                    </template>
-                </UFormField>
+                <form @submit.prevent="handleAdd" class="space-y-5 py-2">
+                    <UFormField :label="$t('records.type_field')" name="type">
+                        <USelect v-model="recordType" :items="typeOptions" value-key="value" class="w-full"
+                            :ui="{ base: 'rounded-xl h-10 font-bold' }" />
+                    </UFormField>
 
-                <UFormField :label="$t('records.content_field')" name="content">
-                    <UInput v-model="recordContent" :placeholder="contentPlaceholder" class="w-full font-mono"
-                        :ui="{ base: 'rounded-xl h-12' }" />
-                </UFormField>
+                    <UFormField :label="$t('records.name_field')" name="name">
+                        <UInput v-model="recordName" :placeholder="$t('records.name_placeholder')" class="w-full"
+                            :ui="{ base: 'rounded-xl h-10 tracking-wide' }" />
+                        <template #help>
+                            <p class="text-[11px] text-slate-500 mt-1">{{ $t('records.name_hint') }}</p>
+                        </template>
+                    </UFormField>
 
-                <UFormField v-if="showPriority" :label="$t('records.priority_field')" name="priority">
-                    <UInput v-model.number="priority" type="number" class="w-32"
-                        :ui="{ base: 'rounded-xl h-12 font-sans' }" />
-                </UFormField>
+                    <UFormField :label="$t('records.content_field')" name="content">
+                        <UInput v-model="recordContent" :placeholder="contentPlaceholder"
+                            class="w-full font-mono text-sm" :ui="{ base: 'rounded-xl h-10' }" />
+                    </UFormField>
 
-                <div class="flex items-center gap-6 pt-2">
-                    <UFormField v-if="showProxied" :label="$t('records.proxy_field')" name="proxied">
+                    <div class="grid grid-cols-2 gap-4">
+                        <UFormField v-if="showPriority" :label="$t('records.priority_field')" name="priority">
+                            <UInput v-model.number="priority" type="number" class="w-full"
+                                :ui="{ base: 'rounded-xl h-10' }" />
+                        </UFormField>
+
+                        <UFormField :label="$t('records.ttl_field')" name="ttl"
+                            :class="!showPriority ? 'col-span-1' : ''">
+                            <USelect v-model="ttl"
+                                :items="[{ label: 'Auto', value: 1 }, { label: '1 min', value: 60 }, { label: '5 min', value: 300 }, { label: '1 hour', value: 3600 }]"
+                                value-key="value" class="w-full" :ui="{ base: 'rounded-xl h-10' }" />
+                        </UFormField>
+                    </div>
+
+                    <UFormField v-if="showProxied" :label="$t('records.proxy_field')" name="proxied" class="pt-2">
                         <USwitch v-model="proxied" color="warning" />
                     </UFormField>
 
-                    <UFormField :label="$t('records.ttl_field')" name="ttl">
-                        <USelect v-model="ttl"
-                            :items="[{ label: 'Auto', value: 1 }, { label: '1 min', value: 60 }, { label: '5 min', value: 300 }, { label: '1 hour', value: 3600 }]"
-                            value-key="value" class="w-32" :ui="{ base: 'rounded-xl h-12 font-sans' }" />
-                    </UFormField>
-                </div>
-
-                <div class="flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
-                    <UButton color="neutral" variant="ghost" class="rounded-xl font-bold font-sans"
-                        @click="isOpen = false">{{
-                            $t('common.cancel') }}</UButton>
-                    <UButton type="submit" color="primary" :loading="isLoading"
-                        class="rounded-xl font-bold font-sans px-8">{{
-                            $t('records.add_record') }}</UButton>
-                </div>
-            </form>
+                    <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800 mt-6">
+                        <UButton color="neutral" variant="ghost" class="rounded-xl font-bold" @click="isOpen = false">
+                            {{ $t('common.cancel') }}
+                        </UButton>
+                        <UButton type="submit" color="primary" :loading="isLoading"
+                            class="rounded-xl font-bold px-6 shadow-sm">
+                            {{ $t('records.add_record') }}
+                        </UButton>
+                    </div>
+                </form>
+            </UCard>
         </template>
     </UModal>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 const props = defineProps<{
     accounts: any[]
@@ -53,38 +53,54 @@ watch(isOpen, (val) => {
 </script>
 
 <template>
-    <UModal v-model:open="isOpen" :title="$t('zones.add_modal_title')" :description="$t('zones.add_modal_desc')" :ui="{
-        content: 'dark:bg-slate-900/90 backdrop-blur-2xl border-slate-800/50 rounded-3xl',
-        header: 'font-black tracking-tight text-xl font-sans'
-    }">
-        <template #body>
-            <form @submit.prevent="handleAdd" class="space-y-6">
-                <UFormField :label="$t('zones.account_field')" name="account">
-                    <USelect v-model="selectedAccountId" :items="accountOptions" value-key="value"
-                        :placeholder="$t('zones.account_placeholder')" class="w-full"
-                        :ui="{ base: 'rounded-xl h-12 font-sans' }" />
-                    <template #help>
-                        <p class="text-xs text-slate-500 font-sans mt-1">{{ $t('zones.account_hint') }}</p>
-                    </template>
-                </UFormField>
+    <UModal v-model:open="isOpen" :ui="{ content: 'sm:max-w-md' }">
+        <template #content>
+            <UCard :ui="{ body: 'divide-y divide-slate-200 dark:divide-slate-800' }" class="ring-0">
 
-                <UFormField :label="$t('zones.domain_field')" name="domain">
-                    <UInput v-model="domainName" :placeholder="$t('zones.domain_placeholder')" class="w-full"
-                        :ui="{ base: 'rounded-xl h-12 font-sans' }" />
-                    <template #help>
-                        <p class="text-xs text-slate-500 font-sans mt-1">{{ $t('zones.domain_hint') }}</p>
-                    </template>
-                </UFormField>
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900 dark:text-white">{{
+                                $t('zones.add_modal_title') }}</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ $t('zones.add_modal_desc')
+                                }}</p>
+                        </div>
+                        <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark" class="-my-1"
+                            @click="isOpen = false" />
+                    </div>
+                </template>
 
-                <div class="flex justify-end gap-3 pt-2">
-                    <UButton color="neutral" variant="ghost" class="rounded-xl font-bold font-sans"
-                        @click="isOpen = false">{{
-                            $t('common.cancel') }}</UButton>
-                    <UButton type="submit" color="primary" :loading="isLoading"
-                        class="rounded-xl font-bold font-sans px-8">{{
-                            $t('zones.add_zone') }}</UButton>
-                </div>
-            </form>
+                <form @submit.prevent="handleAdd" class="space-y-5 py-2">
+
+                    <UFormField :label="$t('zones.account_field')" name="account">
+                        <USelect v-model="selectedAccountId" :items="accountOptions" value-key="value"
+                            :placeholder="$t('zones.account_placeholder')" class="w-full"
+                            :ui="{ base: 'rounded-xl h-10' }" />
+                        <template #help>
+                            <p class="text-[11px] text-slate-500 mt-1">{{ $t('zones.account_hint') }}</p>
+                        </template>
+                    </UFormField>
+
+                    <UFormField :label="$t('zones.domain_field')" name="domain">
+                        <UInput v-model="domainName" :placeholder="$t('zones.domain_placeholder')" class="w-full"
+                            :ui="{ root: 'rounded-xl h-10' }" autofocus />
+                        <template #help>
+                            <p class="text-[11px] text-slate-500 mt-1">{{ $t('zones.domain_hint') }}</p>
+                        </template>
+                    </UFormField>
+
+                    <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <UButton color="neutral" variant="ghost" class="rounded-xl font-bold" @click="isOpen = false">
+                            {{ $t('common.cancel') }}
+                        </UButton>
+                        <UButton type="submit" color="primary" :loading="isLoading"
+                            class="rounded-xl font-bold px-6 shadow-sm">
+                            {{ $t('zones.add_zone') }}
+                        </UButton>
+                    </div>
+
+                </form>
+            </UCard>
         </template>
     </UModal>
 </template>

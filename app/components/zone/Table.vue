@@ -1,19 +1,29 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 const { fetchZones, deleteZone } = useZones()
 const { fetchAccounts } = useAccounts()
 const toast = useToast()
+const { t } = useI18n()
 
+// State
 const zones = ref<any[]>([])
 const accounts = ref<any[]>([])
 const pending = ref(true)
 const isAddModalOpen = ref(false)
 const searchQuery = ref('')
+
+// Import Modal State
 const isImportModalOpen = ref(false)
 const importAccountId = ref<number | null>(null)
 const importLoading = ref(false)
 
+// Delete Confirm Modal State
+const deleteModalOpen = ref(false)
+const deletingZone = ref<any>(null)
+const deleteLoading = ref(false)
+
+// Computed
 const filteredZones = computed(() => {
     if (!searchQuery.value) return zones.value
     const q = searchQuery.value.toLowerCase()
@@ -22,13 +32,11 @@ const filteredZones = computed(() => {
     )
 })
 
-// Delete confirm modal
-const deleteModalOpen = ref(false)
-const deletingZone = ref<any>(null)
-const deleteLoading = ref(false)
+const hasAccounts = computed(() => accounts.value.length > 0)
 
-import { computed } from 'vue'
-const { t } = useI18n()
+const accountOptions = computed(() =>
+    accounts.value.map((a: any) => ({ label: `${a.label} (${a.email})`, value: a.id }))
+)
 
 const columns = computed(() => [
     { accessorKey: 'name', header: t('zones.col_name') },
@@ -38,6 +46,7 @@ const columns = computed(() => [
     { id: 'actions', header: t('zones.col_actions') }
 ])
 
+// Actions
 const loadData = async () => {
     pending.value = true
     try {
@@ -50,10 +59,6 @@ const loadData = async () => {
         pending.value = false
     }
 }
-
-onMounted(() => loadData())
-
-const hasAccounts = computed(() => accounts.value.length > 0)
 
 const openDeleteModal = (zone: any) => {
     deletingZone.value = zone
@@ -99,122 +104,196 @@ const executeBulkImport = async () => {
     }
 }
 
-const accountOptions = computed(() =>
-    accounts.value.map((a: any) => ({ label: `${a.label} (${a.email})`, value: a.id }))
-)
-
 const exportJson = () => {
     window.open('/api/records/export', '_blank')
 }
+
+onMounted(() => loadData())
 </script>
 
 <template>
-    <UCard
-        class="bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl border-slate-200 dark:border-slate-800/50 shadow-xl rounded-2xl ring-1 ring-slate-200 dark:ring-slate-800/50">
+    <UCard :ui="{ header: 'px-4 sm:px-6 py-5', body: 'p-0 sm:p-0' }"
+        class="bg-white dark:bg-slate-900 shadow-sm overflow-hidden ring-1 ring-slate-200 dark:ring-slate-800">
         <template #header>
-            <div class="flex flex-wrap items-center justify-between gap-4">
-                <div class="flex flex-col">
-                    <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight font-sans">{{
-                        $t('zones.title') }}</h2>
-                    <p class="text-sm text-slate-500 dark:text-slate-400 font-medium mt-1 font-sans">{{
-                        $t('zones.subtitle') }}</p>
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full md:w-auto">
+                    <div class="flex flex-col">
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white tracking-tight">{{ $t('zones.title')
+                        }}</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">{{ $t('zones.subtitle')
+                        }}</p>
+                    </div>
+
+                    <div v-if="hasAccounts" class="hidden sm:block w-px h-8 bg-slate-200 dark:bg-slate-700 mx-2"></div>
+
+                    <UInput v-if="hasAccounts" v-model="searchQuery" :placeholder="$t('common.search')"
+                        icon="i-heroicons-magnifying-glass" class="w-full sm:max-w-xs"
+                        :ui="{ root: 'rounded-xl transition-colors focus-within:ring-primary-500' }" />
                 </div>
-                <div class="flex flex-wrap items-center gap-2 lg:w-auto w-full justify-end">
+
+                <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto justify-end">
                     <UButton icon="i-heroicons-document-arrow-down" color="neutral" variant="soft"
-                        :disabled="!hasAccounts" class="rounded-xl font-semibold font-sans" @click="exportJson">
-                        {{ $t('zones.export_json') }}
+                        :disabled="!hasAccounts" class="rounded-xl font-semibold shadow-sm" @click="exportJson">
+                        <span class="hidden sm:inline">{{ $t('zones.export_json') }}</span>
+                        <span class="sm:hidden">Export</span>
                     </UButton>
+
                     <UButton icon="i-heroicons-arrow-down-tray" color="neutral" variant="soft" :disabled="!hasAccounts"
-                        class="rounded-xl font-semibold font-sans" @click="openImportModal">
-                        {{ $t('zones.import_all') }}
+                        class="rounded-xl font-semibold shadow-sm" @click="openImportModal">
+                        <span class="hidden sm:inline">{{ $t('zones.import_all') }}</span>
+                        <span class="sm:hidden">Import</span>
                     </UButton>
+
                     <UButton icon="i-heroicons-plus" color="primary" variant="solid" :disabled="!hasAccounts"
-                        class="rounded-xl font-bold font-sans shadow-lg shadow-primary-500/20"
-                        @click="isAddModalOpen = true">
+                        class="rounded-xl font-bold shadow-sm" @click="isAddModalOpen = true">
                         {{ $t('zones.add_zone') }}
                     </UButton>
                 </div>
             </div>
+
+            <div v-if="hasAccounts" class="sm:hidden mt-4">
+                <UInput v-model="searchQuery" :placeholder="$t('common.search')" icon="i-heroicons-magnifying-glass"
+                    class="w-full" :ui="{ root: 'rounded-xl' }" />
+            </div>
         </template>
 
-        <!-- Warning banner when no accounts exist -->
-        <div v-if="!hasAccounts" class="p-8 text-center text-gray-400">
-            <span>{{ $t('zones.no_accounts_warning') }}</span>
+        <div v-if="!hasAccounts && !pending" class="flex flex-col items-center justify-center p-12 text-center">
+            <div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
+                <UIcon name="i-heroicons-exclamation-triangle" class="w-8 h-8 text-slate-400" />
+            </div>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white mb-1">
+                {{ $t('zones.no_accounts_title') || 'No Accounts Found' }}</h3>
+            <p class="text-sm text-slate-500 max-w-sm">{{ $t('zones.no_accounts_warning') }}</p>
         </div>
 
-        <div v-if="hasAccounts">
-            <!-- Search -->
-            <div class="mb-6 flex items-center justify-between gap-4">
-                <UInput v-model="searchQuery" :placeholder="$t('common.search')" icon="i-heroicons-magnifying-glass"
-                    class="max-w-sm w-full" :ui="{ base: 'rounded-xl font-sans' }" />
-            </div>
-
+        <div v-if="hasAccounts || pending" class="overflow-x-auto">
             <UTable :data="filteredZones" :columns="columns" :loading="pending" :ui="{
-                th: 'bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-md text-slate-900 dark:text-slate-100 font-bold whitespace-nowrap'
+                th: 'bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold whitespace-nowrap py-3.5 border-b border-slate-200 dark:border-slate-800',
+                td: 'py-3 text-sm text-slate-600 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800/60',
+                tr: 'hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors'
             }">
+                <template #name-cell="{ row }">
+                    <span class="font-semibold text-slate-900 dark:text-white">{{ row.original.name }}</span>
+                </template>
+
+                <template #cfZoneId-cell="{ row }">
+                    <span class="font-mono text-xs">{{ row.original.cfZoneId }}</span>
+                </template>
+
                 <template #accountLabel-cell="{ row }">
-                    <UBadge color="neutral" variant="subtle">{{ row.original?.account?.label || 'N/A' }}</UBadge>
+                    <UBadge color="neutral" variant="soft" size="xs" class="font-medium">
+                        {{ row.original?.account?.label || 'N/A' }}
+                    </UBadge>
                 </template>
+
                 <template #records-cell="{ row }">
-                    <UBadge color="secondary" variant="solid">{{ row.original?._count?.records || 0 }}</UBadge>
+                    <UBadge color="info" variant="subtle" size="xs" class="font-bold">
+                        {{ row.original?._count?.records || 0 }}
+                    </UBadge>
                 </template>
+
                 <template #actions-cell="{ row }">
-                    <div class="flex justify-end gap-1">
-                        <UButton size="sm" color="neutral" variant="ghost" icon="i-heroicons-cog-8-tooth"
+                    <div class="flex justify-end gap-1.5">
+                        <UButton size="xs" color="neutral" variant="ghost" icon="i-heroicons-pencil-square"
                             class="rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                             :to="`/zones/${row.original.cfZoneId}`">
-                            {{ $t('common.edit') }}
+                            <span class="sr-only">{{ $t('common.edit') }}</span>
                         </UButton>
-                        <UButton size="sm" color="error" variant="ghost" icon="i-heroicons-trash"
-                            class="rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors"
-                            @click="openDeleteModal(row.original)" />
+                        <UButton size="xs" color="error" variant="ghost" icon="i-heroicons-trash"
+                            class="rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+                            @click="openDeleteModal(row.original)">
+                            <span class="sr-only">{{ $t('common.delete') }}</span>
+                        </UButton>
                     </div>
                 </template>
             </UTable>
+        </div>
 
-            <ZoneAddModal v-if="isAddModalOpen" :accounts="accounts" @close="isAddModalOpen = false"
-                @refresh="loadData" />
+        <ZoneAddModal v-if="isAddModalOpen" :accounts="accounts" @close="isAddModalOpen = false" @refresh="loadData" />
 
-            <!-- Delete Confirm Modal -->
-            <UModal v-model:open="deleteModalOpen" :title="$t('common.delete')"
-                :description="$t('zones.delete_modal_desc')">
-                <template #body>
-                    <div class="space-y-4">
-                        <div class="rounded-md bg-red-500/10 border border-red-500/30 px-4 py-3 text-sm">
-                            <h3 class="font-medium">{{ $t('zones.delete_confirm', { name: deletingZone?.name }) }}</h3>
-                            <p class="text-gray-400 mt-1">{{ $t('zones.delete_modal_text') }}</p>
+        <UModal v-model:open="deleteModalOpen" :ui="{ content: 'sm:max-w-md' }">
+            <template #content>
+                <UCard class="ring-0">
+                    <template #header>
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-base font-bold text-slate-900 dark:text-white">{{ $t('common.delete') }}
+                                Zone</h3>
+                            <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark" class="-my-1"
+                                @click="deleteModalOpen = false" />
                         </div>
+                    </template>
+
+                    <div class="py-2 space-y-4">
+                        <div
+                            class="rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 p-4">
+                            <div class="flex gap-3">
+                                <UIcon name="i-heroicons-exclamation-circle"
+                                    class="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                                <div>
+                                    <h4 class="text-sm font-bold text-red-800 dark:text-red-400">
+                                        {{ $t('zones.delete_confirm', { name: deletingZone?.name }) }}
+                                    </h4>
+                                    <p class="text-xs text-red-600 dark:text-red-300 mt-1 leading-relaxed">
+                                        {{ $t('zones.delete_modal_text') }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <template #footer>
                         <div class="flex justify-end gap-3">
-                            <UButton color="neutral" variant="ghost" @click="deleteModalOpen = false">{{
-                                $t('common.cancel')
-                                }}</UButton>
-                            <UButton color="error" :loading="deleteLoading" @click="executeDelete">{{
-                                $t('common.delete') }}
+                            <UButton color="neutral" variant="ghost" class="rounded-xl"
+                                @click="deleteModalOpen = false">
+                                {{ $t('common.cancel') }}
+                            </UButton>
+                            <UButton color="error" variant="solid" class="rounded-xl shadow-sm" :loading="deleteLoading"
+                                @click="executeDelete">
+                                {{ $t('common.delete') }}
                             </UButton>
                         </div>
-                    </div>
-                </template>
-            </UModal>
+                    </template>
+                </UCard>
+            </template>
+        </UModal>
 
-            <!-- Bulk Import Modal -->
-            <UModal v-model:open="isImportModalOpen" :title="$t('zones.import_modal_title')"
-                :description="$t('zones.import_modal_desc')">
-                <template #body>
-                    <div class="space-y-4">
-                        <p class="text-sm text-gray-300">{{ $t('zones.import_info') }}</p>
+        <UModal v-model:open="isImportModalOpen" :ui="{ content: 'sm:max-w-md' }">
+            <template #content>
+                <UCard class="ring-0">
+                    <template #header>
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-base font-bold text-slate-900 dark:text-white">{{
+                                $t('zones.import_modal_title') }}</h3>
+                            <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark" class="-my-1"
+                                @click="isImportModalOpen = false" />
+                        </div>
+                    </template>
+
+                    <div class="py-2 space-y-5">
+                        <p class="text-sm text-slate-500 dark:text-slate-400">{{ $t('zones.import_info') }}</p>
+
                         <UFormField :label="$t('zones.account_field')" name="account">
                             <USelect v-model="importAccountId" :items="accountOptions" value-key="value"
-                                class="w-full" />
+                                class="w-full rounded-xl" />
                         </UFormField>
-                        <div class="flex justify-end gap-3">
-                            <UButton color="neutral" variant="ghost" @click="isImportModalOpen = false">{{
-                                $t('common.cancel') }}</UButton>
-                            <UButton color="primary" :loading="importLoading" @click="executeBulkImport">{{
-                                $t('common.import') }}</UButton>
-                        </div>
                     </div>
-                </template>
-            </UModal>
-        </div>
+
+                    <template #footer>
+                        <div class="flex justify-end gap-3">
+                            <UButton color="neutral" variant="ghost" class="rounded-xl"
+                                @click="isImportModalOpen = false">
+                                {{ $t('common.cancel') }}
+                            </UButton>
+                            <UButton color="primary" variant="solid" class="rounded-xl shadow-sm"
+                                :loading="importLoading" @click="executeBulkImport">
+                                {{ $t('common.import') }}
+                            </UButton>
+                        </div>
+                    </template>
+                </UCard>
+            </template>
+        </UModal>
+
     </UCard>
 </template>
