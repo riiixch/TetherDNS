@@ -3,8 +3,6 @@ services:
     image: tetherdns:latest
     container_name: tetherdns
     restart: always
-    ports:
-      - "3000:3000"
     volumes:
       - ./data:/app/data
     environment:
@@ -13,8 +11,5 @@ services:
       - SESSION_SECURE=false
       - NODE_ENV=production
       - TZ=Asia/Bangkok
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
+    ports:
+      - "3000:3000"
