@@ -28,7 +28,14 @@ export default defineNuxtConfig({
             chunkSizeWarningLimit: 1000,
         },
         optimizeDeps: {
-            exclude: ['@prisma/client'],
+            include: [
+                '@vue/devtools-core',
+                '@vue/devtools-kit',
+                'vue3-apexcharts',
+            ],
+            exclude: [
+                '@prisma/client'
+            ],
         }
     },
     nitro: {

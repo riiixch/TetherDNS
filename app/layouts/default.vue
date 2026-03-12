@@ -245,13 +245,37 @@ const userMenuItems = ref<DropdownMenuItem[]>([
                             <li>
                                 <NuxtLink to="/"
                                     class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors inline-block">
-                                    {{ $t('footer.links.home') }}
+                                    {{ $t('footer.links.dashboard') }}
+                                </NuxtLink>
+                            </li>
+                            <li v-if="user">
+                                <NuxtLink to="/zones"
+                                    class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors inline-block">
+                                    {{ $t('footer.links.zones') }}
+                                </NuxtLink>
+                            </li>
+                            <li v-if="user">
+                                <NuxtLink to="/accounts"
+                                    class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors inline-block">
+                                    {{ $t('footer.links.accounts') }}
+                                </NuxtLink>
+                            </li>
+                            <li v-if="user">
+                                <NuxtLink to="/logs"
+                                    class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors inline-block">
+                                    {{ $t('footer.links.logs') }}
                                 </NuxtLink>
                             </li>
                             <li v-if="user">
                                 <NuxtLink to="/audit"
                                     class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors inline-block">
                                     {{ $t('footer.links.audit') }}
+                                </NuxtLink>
+                            </li>
+                            <li v-if="user">
+                                <NuxtLink to="/settings"
+                                    class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors inline-block">
+                                    {{ $t('footer.links.settings') }}
                                 </NuxtLink>
                             </li>
                             <li>

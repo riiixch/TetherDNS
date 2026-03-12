@@ -101,7 +101,7 @@ onMounted(() => loadData())
 
                 <template #record-cell="{ row }">
                     <span class="font-semibold text-slate-900 dark:text-white">{{ row.original.record?.name || 'N/A'
-                        }}</span>
+                    }}</span>
                 </template>
 
                 <template #zone-cell="{ row }">

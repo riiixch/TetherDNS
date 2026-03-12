@@ -1,39 +1,41 @@
 {
-  "name": "tetherdns",
-  "type": "module",
-  "private": true,
-  "scripts": {
-    "build": "nuxt build",
-    "dev": "nuxt dev",
-    "generate": "nuxt generate",
-    "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
-    "prisma:gen": "npx prisma generate",
-    "prisma:push": "npx prisma db push",
-    "prisma:reset": "npx prisma migrate reset"
-  },
-  "dependencies": {
-    "@libsql/client": "^0.17.0",
-    "@nuxt/ui": "^4.5.1",
-    "@nuxtjs/i18n": "^10.2.3",
-    "@prisma/adapter-libsql": "^7.4.2",
-    "@prisma/client": "^7.4.2",
-    "apexcharts": "^5.10.3",
-    "bcryptjs": "^3.0.3",
-    "cloudflare": "^5.2.0",
-    "dotenv": "^17.3.1",
-    "nuxt": "^4.3.1",
-    "otplib": "^13.3.0",
-    "qrcode": "^1.5.4",
-    "vue": "^3.5.29",
-    "vue-router": "^4.6.4",
-    "vue3-apexcharts": "^1.11.1"
-  },
-  "devDependencies": {
-    "@iconify-json/heroicons": "^1.2.3",
-    "@iconify-json/lucide": "^1.2.96",
-    "@types/bcryptjs": "^2.4.6",
-    "@types/qrcode": "^1.5.6",
-    "prisma": "^7.4.2"
-  }
+    "name": "tetherdns",
+    "type": "module",
+    "private": true,
+    "scripts": {
+        "build": "nuxt build",
+        "dev": "nuxt dev",
+        "generate": "nuxt generate",
+        "preview": "nuxt preview",
+        "postinstall": "nuxt prepare",
+        "prisma:gen": "npx prisma generate",
+        "prisma:push": "npx prisma db push",
+        "prisma:reset": "npx prisma migrate reset",
+        "update:check": "npx npm-check-updates",
+        "update:install": "npx npm-check-updates -u && npm install"
+    },
+    "dependencies": {
+        "@libsql/client": "^0.17.0",
+        "@nuxt/ui": "^4.5.1",
+        "@nuxtjs/i18n": "^10.2.3",
+        "@prisma/adapter-libsql": "^7.4.2",
+        "@prisma/client": "^7.4.2",
+        "apexcharts": "^5.10.3",
+        "bcryptjs": "^3.0.3",
+        "cloudflare": "^5.2.0",
+        "dotenv": "^17.3.1",
+        "nuxt": "^4.3.1",
+        "otplib": "^13.3.0",
+        "qrcode": "^1.5.4",
+        "vue": "^3.5.29",
+        "vue-router": "^4.6.4",
+        "vue3-apexcharts": "^1.11.1"
+    },
+    "devDependencies": {
+        "@iconify-json/heroicons": "^1.2.3",
+        "@iconify-json/lucide": "^1.2.96",
+        "@types/bcryptjs": "^2.4.6",
+        "@types/qrcode": "^1.5.6",
+        "prisma": "^7.4.2"
+    }
 }

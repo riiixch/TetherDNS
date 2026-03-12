@@ -239,6 +239,7 @@
         "save_settings": "ใช้การตั้งค่านี้",
         "notif_title": "ช่องทางการแจ้งเตือน",
         "notif_subtitle": "รับการแจ้งเตือนแบบเรียลไทม์เมื่อ IP เปลี่ยน หรือมีการซิงค์ข้อมูลล้มเหลว",
+        "no_notifs": "ไม่พบช่องทางการแจ้งเตือน",
         "add_channel": "เพิ่มช่องทาง",
         "add_notif_modal": "กำหนดค่าการแจ้งเตือน (Alert Channel)",
         "add_notif_overlay": "ระบุแพลตฟอร์มที่ระบบจะทำการยิง Webhook ไปแจ้งเตือน",
@@ -282,7 +283,7 @@
         }
     },
     "audit": {
-        "title": "บันทึกระบบ (Audit Trail)",
+        "title": "บันทึกระบบ",
         "subtitle": "บัญชีแยกประเภทแบบแก้ไขไม่ได้ (Immutable ledger) สำหรับบันทึกการทำงานของผู้ดูแลระบบ",
         "col_time": "วันเวลา (Timestamp)",
         "col_user": "ผู้ทำรายการ",
@@ -291,7 +292,7 @@
         "col_details": "ข้อมูลเหตุการณ์ (Event Data)",
         "filter_users": "กรองตามผู้ใช้",
         "filter_actions": "กรองตามเหตุการณ์",
-        "load_error": "ไม่สามารถโหลดข้อมูล Audit Trail ได้",
+        "load_error": "ไม่สามารถโหลดข้อมูล Audit Logs ได้",
         "action_create_record": "สร้างเรคคอร์ด",
         "action_update_record": "อัปเดตเรคคอร์ด",
         "action_delete_record": "ลบเรคคอร์ด",
@@ -345,15 +346,18 @@
         "err_occurred": "เกิดข้อผิดพลาดร้ายแรง (Critical Error) ระหว่างการตั้งค่าระบบ"
     },
     "footer": {
-        "powered_by": "ขับเคลื่อนโดย Cloudflare v4 API",
+        "powered_by": "Powered by the Cloudflare v4 API",
         "developed_by": "ออกแบบและพัฒนาโดย",
-        "copyright": "© {year} TetherDNS. สงวนลิขสิทธิ์.",
+        "copyright": "© {year} TetherDNS. All rights reserved.",
         "brand_description": "แพลตฟอร์มจัดการ Cloudflare DNS และซิงค์ Dynamic IP ระดับองค์กร (Enterprise-grade)",
-        "infrastructure": "สถาปัตยกรรมระบบ",
-        "engine_status": "Core Engine v4.3.1 (รุ่นเสถียร)",
+        "infrastructure": "System Architecture",
+        "engine_status": "Core Engine v4.3.1 (Stable)",
         "links": {
-            "home": "แดชบอร์ดหลัก",
-            "audit": "บันทึก Audit",
+            "dashboard": "แดชบอร์ด",
+            "zones": "โดเมนโซน",
+            "accounts": "บัญชีผู้ใช้",
+            "logs": "ประวัติการอัปเดต",
+            "audit": "บันทึกระบบ",
             "settings": "การตั้งค่า",
             "github": "โปรไฟล์นักพัฒนา",
             "repository": "ซอร์สโค้ด"
