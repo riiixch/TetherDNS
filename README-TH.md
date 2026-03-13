@@ -4,7 +4,7 @@
 
 # **TetherDNS**
 
-### _Precision Cloudflare DNS & Dynamic IP Orchestrator_
+### _ระบบจัดการ Cloudflare DNS และ Dynamic IP อย่างแม่นยำ_
 
 <p align="center">
   <a href="https://nuxt.com/">
@@ -22,9 +22,12 @@
   <a href="https://www.docker.com/">
     <img src="https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
   </a>
+  <a href="https://developers.cloudflare.com/">
+    <img src="https://img.shields.io/badge/Cloudflare_API-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Cloudflare API">
+  </a>
 </p>
 
-**TetherDNS** คือเว็บแอปพลิเคชันประสิทธิภาพสูงระดับองค์กร (Enterprise-ready) ที่ออกแบบมาเพื่อการจัดการ DNS ขั้นสูง เป็นตัวกลางที่เชื่อมเปลี่ยนการตั้งค่าเครือข่ายที่ซับซ้อนให้กลายเป็นการควบคุมที่ง่ายดาย ภายใต้ประสบการณ์การใช้งานระดับพรีเมียมในธีม **Ocean Deep Tech**
+**TetherDNS** คือเว็บแอปพลิเคชันแบบ Self-hosted ระดับองค์กร สำหรับจัดการ DNS Records ของ Cloudflare และอัปเดต Dynamic DNS (DDNS) อัตโนมัติ เปลี่ยนการตั้งค่าเครือข่ายที่ซับซ้อนให้กลายเป็นเรื่องง่าย ภายใต้ UI ระดับพรีเมียมในธีม **Ocean Deep Tech**
 
 [English](README.md) • [ภาษาไทย](README-TH.md)
 
@@ -32,126 +35,477 @@
 
 ---
 
-## 💎 นิยามใหม่ของการจัดการ DNS
+## 📋 สารบัญ
 
-มากกว่าแค่เครื่องมือทั่วไป TetherDNS คือระบบจัดการแบบครบวงจร (Orchestration suite) ที่ออกแบบมาเพื่อเคารพเวลาและเวิร์กโฟลว์ของคุณ
-
-### 🌌 ประสบการณ์แบบ "Ocean Deep"
-
-สัมผัสกับ UI ที่ถูกคราฟต์มาเป็นพิเศษสำหรับการนั่งจัดการระบบเป็นเวลานาน:
-
-- **Glassmorphism:** เลเยอร์กึ่งโปร่งใสที่ดูหรูหรา ช่วยให้คุณโฟกัสกับงานโดยไม่มีสิ่งรบกวน
-- **Deep Indigo Syntax:** ทฤษฎีสีที่ออกแบบมาเฉพาะเพื่อลดอาการล้าของดวงตา ระหว่างการทำงานกลางดึก
-- **Responsive Fluidity:** จัดการโครงสร้างพื้นฐาน (Infrastructure) ทั้งหมดของคุณได้อย่างไร้รอยต่อ ตั้งแต่หน้าจอ Desktop 4K ไปจนถึงหน้าจอมือถือ
-
----
-
-## 🚀 ฟีเจอร์ระดับจักรวาล (Feature Galaxy)
-
-### 🔐 ความปลอดภัยแกนหลัก (Core Security)
-
-- **Multi-Account Vault:** จัดเก็บและจัดการบัญชี Cloudflare หลายบัญชีอย่างปลอดภัยจากแดชบอร์ดเดียว
-- **TOTP 2FA Protection:** ปกป้องหน้า Admin Console ด้วยการยืนยันตัวตนแบบสองขั้นตอน (2FA) ระดับองค์กร
-- **Encrypted Sessions:** รักษาความปลอดภัยของ Cookie ระดับอุตสาหกรรม (HTTP-only) พร้อมนโยบายที่เข้มงวดและปรับแต่งได้
-
-### 🌍 การจัดการโซนแบบเบ็ดเสร็จ (Zone Mastery)
-
-- **Intelligent Explorer:** ค้นหา กรอง และแบ่งหน้า (Pagination) ได้ทันทีแม้มีโดเมนภายใต้การจัดการนับร้อย
-- **Precision Record CRUD:** เพิ่ม, แก้ไข และลบเรคคอร์ด `A`, `AAAA`, `CNAME`, `TXT`, `MX`, และ `SRV` พร้อมการตรวจสอบความถูกต้อง (Validation) แบบเรียลไทม์
-- **Proxy Orchestration:** เปิด/ปิด Cloudflare Proxy (เมฆสีส้ม) และปรับตั้งค่า TTL ได้อย่างราบรื่นและรวดเร็ว
-
-### 🔄 ระบบอัตโนมัติและความอัจฉริยะ (Automation & Intelligence)
-
-- **Webhook API Generation:** สร้าง URL Endpoint ที่มีความปลอดภัยเฉพาะตัว เพื่อรับการอัปเดต Dynamic IP (DDNS) อัตโนมัติจากเราเตอร์หรือสคริปต์ต่างๆ
-- **IP Analytics Engine:** กราฟแสดงผลแบบ Interactive เพื่อติดตามการเปลี่ยนแปลง (Mutations) และความเสถียรของ IP ตลอดช่วงเวลาที่ผ่านมา
-- **Real-Time Audit Trail:** บันทึก Log ที่ไม่สามารถแก้ไขได้ (Immutable) สำหรับทุกการล็อกอิน, การเปลี่ยนคอนฟิก, และการอัปเดตอัตโนมัติ เพื่อความโปร่งใสสูงสุดของระบบ
+- [✨ ฟีเจอร์](#-ฟีเจอร์)
+- [🏗️ สถาปัตยกรรม](#️-สถาปัตยกรรม)
+- [⚡ เริ่มต้นอย่างรวดเร็ว](#-เริ่มต้นอย่างรวดเร็ว)
+  - [🐳 Docker (แนะนำ)](#-docker-แนะนำ)
+  - [💻 การพัฒนาในเครื่อง](#-การพัฒนาในเครื่อง)
+- [⚙️ การตั้งค่า](#️-การตั้งค่า)
+- [🚀 การตั้งค่าครั้งแรก](#-การตั้งค่าครั้งแรก)
+- [📖 คู่มือการใช้งาน](#-คู่มือการใช้งาน)
+  - [🔐 บัญชี (Accounts)](#-บัญชี-accounts)
+  - [🌍 DNS Zones](#-dns-zones)
+  - [📝 DNS Records](#-dns-records)
+  - [🔄 Dynamic DNS (DDNS)](#-dynamic-dns-ddns)
+  - [📊 Logs และ Audit Trail](#-logs-และ-audit-trail)
+  - [⚙️ การตั้งค่าและ 2FA](#️-การตั้งค่าและ-2fa)
+- [🔗 Webhook API](#-webhook-api)
+- [🛠️ คำสั่ง Scripts](#️-คำสั่ง-scripts)
+- [🔒 ความปลอดภัย](#-ความปลอดภัย)
+- [📜 สัญญาอนุญาต](#-สัญญาอนุญาต)
 
 ---
 
-## 🏗️ สถาปัตยกรรมทางเทคนิค
+## ✨ ฟีเจอร์
+
+### 🔐 ความปลอดภัยและการยืนยันตัวตน
+| ฟีเจอร์ | คำอธิบาย |
+|---|---|
+| **Setup Wizard** | ขั้นตอนการตั้งค่าครั้งแรกเพื่อสร้างบัญชีผู้ดูแลระบบเมื่อเปิดใช้งานครั้งแรก |
+| **TOTP 2FA** | การยืนยันตัวตนสองขั้นตอนมาตรฐานอุตสาหกรรม (ผ่าน `otplib`) พร้อม QR Code สำหรับสแกน |
+| **bcrypt Password Hashing** | รหัสผ่านทั้งหมดจัดเก็บด้วย `bcryptjs` — ไม่มีการเก็บแบบ Plaintext |
+| **Encrypted Sessions** | Session ฝั่งเซิร์ฟเวอร์แบบ HTTP-only เข้ารหัสด้วย Secret Key ยาว 32+ ตัวอักษร |
+| **Cookie Security ที่ปรับได้** | ตั้งค่า `SESSION_SECURE` เพื่อบังคับใช้ HTTPS-only cookies ใน Production |
+| **Auth Middleware** | ทุก Route ที่ได้รับการปกป้องถูกตรวจสอบฝั่งเซิร์ฟเวอร์ผ่าน Nitro Middleware |
+
+### 🌍 Multi-Account และ Cloudflare DNS
+| ฟีเจอร์ | คำอธิบาย |
+|---|---|
+| **Multi-Account Vault** | เพิ่มและจัดการบัญชี Cloudflare API หลายบัญชีจาก Dashboard เดียว |
+| **Zone Explorer** | เรียกดู DNS Zones ทั้งหมดในทุกบัญชีพร้อมการค้นหาทันทีและ Pagination |
+| **Full Record CRUD** | สร้าง, ดู, แก้ไข และลบ DNS Records: `A`, `AAAA`, `CNAME`, `TXT`, `MX`, `SRV` |
+| **Proxy Toggle** | เปิด/ปิด Cloudflare Proxy (เมฆสีส้ม ☁️) ต่อ Record ด้วยคลิกเดียว |
+| **TTL Control** | ปรับ Time-To-Live ต่อ Record รองรับ `1` (Auto) และค่า TTL มาตรฐานทั้งหมด |
+
+### 🔄 ระบบ Dynamic DNS (DDNS) อัตโนมัติ
+| ฟีเจอร์ | คำอธิบาย |
+|---|---|
+| **Auto IP Detection** | Cron Job ในตัวตรวจสอบและอัปเดต IP สาธารณะในช่วงเวลาที่กำหนด (ค่าเริ่มต้น: ทุก 5 นาที) |
+| **DDNS ต่อ Record** | เปิดใช้ DDNS บน `A` หรือ `AAAA` Record ใดก็ได้เป็นรายตัว |
+| **Webhook Endpoints** | สร้าง Webhook URL เฉพาะ เพื่อเรียก DDNS update จากเราเตอร์, Script หรือเครื่องมือ Automation |
+| **รองรับ IPv4 และ IPv6** | ตรวจจับและอัปเดตทั้ง IPv4 (`A`) และ IPv6 (`AAAA`) แยกอิสระจากกัน |
+
+### 📊 Analytics และ Logging
+| ฟีเจอร์ | คำอธิบาย |
+|---|---|
+| **IP History Charts** | กราฟ ApexCharts แบบ Interactive ติดตามประวัติการเปลี่ยนแปลง IP ตลอดช่วงเวลา |
+| **Real-Time Audit Log** | บันทึกที่ไม่สามารถแก้ไขได้ พร้อม Timestamp ของทุกการ Login, Logout, การเปลี่ยนค่าคอนฟิก และ DDNS update |
+| **DDNS Event Log** | มุมมองเฉพาะสำหรับเหตุการณ์ DDNS แสดง IP ก่อน/หลังการอัปเดตทุกครั้ง |
+
+### 🎨 UI / UX
+| ฟีเจอร์ | คำอธิบาย |
+|---|---|
+| **Ocean Deep Tech Theme** | UI มืดแบบ Glassmorphism โทน Deep Indigo ออกแบบเพื่อลดการล้าของดวงตา |
+| **Responsive Design** | รองรับทุกขนาดหน้าจอ ตั้งแต่ Desktop 4K ถึง Mobile |
+| **รองรับ i18n** | รองรับสองภาษาเต็มรูปแบบ: ภาษาอังกฤษ 🇬🇧 และภาษาไทย 🇹🇭 (ผ่าน `@nuxtjs/i18n`) |
+
+---
+
+## 🏗️ สถาปัตยกรรม
 
 ```mermaid
-graph LR
-    subgraph "Elite Frontend"
-        UI[Nuxt 4 / Vue 3]
-        Theme[Ocean Deep Theme]
+graph TD
+    subgraph "Client Layer"
+        Browser["🌐 Browser (Vue 3 + Nuxt UI)"]
     end
 
-    subgraph "High-Performance API"
-        Nitro[Nitro Server Engine]
-        Middle[Auth Middleware]
-        Utility[Session & CF Utils]
+    subgraph "Server Layer (Nitro)"
+        Middleware["🛡️ Auth Middleware"]
+        API["📡 REST API Endpoints"]
+        Session["🔑 Session Manager"]
+        Cron["⏱️ DDNS Cron Job"]
     end
 
-    subgraph "Data Persistence"
-        Prisma[Prisma ORM]
-        DB[(SQLite / LibSQL)]
+    subgraph "Service Layer"
+        CFService["☁️ Cloudflare SDK"]
+        IPService["📍 IP Detection Service"]
     end
 
-    UI <--> Nitro
-    Nitro <--> Middle
-    Nitro <--> Utility
-    Utility <--> CF[Cloudflare API]
-    Utility <--> Prisma
-    Prisma <--> DB
+    subgraph "Data Layer"
+        Prisma["🔷 Prisma ORM"]
+        SQLite[("🗄️ SQLite / LibSQL")]
+    end
 
+    Browser -->|"HTTP Request"| Middleware
+    Middleware -->|"Authenticated"| API
+    API --> Session
+    API --> CFService
+    API --> Prisma
+    Cron --> IPService
+    Cron --> CFService
+    Cron --> Prisma
+    CFService -->|"Cloudflare REST API v4"| Cloudflare["☁️ Cloudflare"]
+    Prisma --> SQLite
 ```
+
+### เทคโนโลยีที่ใช้
+
+| Layer | เทคโนโลยี |
+|---|---|
+| **Frontend Framework** | [Nuxt 4](https://nuxt.com/) + [Vue 3](https://vuejs.org/) (Composition API) |
+| **UI Component Library** | [@nuxt/ui](https://ui.nuxt.com/) v4 + [Tailwind CSS](https://tailwindcss.com/) |
+| **Server Engine** | [Nitro](https://nitro.build/) (ติดตั้งมากับ Nuxt) |
+| **Database ORM** | [Prisma](https://prisma.io/) v7 พร้อม `@prisma/adapter-libsql` |
+| **Database** | SQLite (ผ่าน LibSQL) — ไม่มี Dependencies, ใช้ไฟล์ |
+| **Cloudflare Client** | Official [`cloudflare`](https://github.com/cloudflare/cloudflare-typescript) TypeScript SDK v5 |
+| **Authentication** | `nuxt-auth-utils` session + `bcryptjs` + `otplib` (TOTP 2FA) |
+| **Charts** | [ApexCharts](https://apexcharts.com/) + `vue3-apexcharts` |
+| **i18n** | `@nuxtjs/i18n` v10 |
+| **Icons** | `heroicons` + `lucide` ผ่าน `@nuxt/icon` |
 
 ---
 
-## 📦 เริ่มต้นใช้งานอย่างรวดเร็ว
+## ⚡ เริ่มต้นอย่างรวดเร็ว
 
-### 🐳 วิธีใช้งานผ่าน Docker (แนะนำ)
+### 🐳 Docker (แนะนำ)
 
-Deploy ขึ้น Production ได้ในไม่กี่วินาที โดยไม่ต้องตั้งค่าด้วยตัวเองให้วุ่นวาย:
+วิธีที่เร็วที่สุดในการรัน TetherDNS ใน Production ต้องการ [Docker](https://docs.docker.com/get-docker/) และ [Docker Compose](https://docs.docker.com/compose/)
 
+**ขั้นตอนที่ 1 — Clone Repository**
 ```bash
-# 1. โคลน Repository
-git clone https://github.com/riiixch/TetherDNS
+git clone https://github.com/riiixch/TetherDNS.git
 cd TetherDNS
+```
 
-# 2. คัดลอกและตั้งค่า Environment Variables
+**ขั้นตอนที่ 2 — ตั้งค่า Environment**
+```bash
+# คัดลอกไฟล์ตัวอย่าง
 cp .env.example .env
 
-# 3. สตาร์ทระบบ
-docker-compose up -d --build
-
+# แก้ไขไฟล์และตั้งค่า SESSION_PASSWORD ของคุณ (ต้องยาว 32+ ตัวอักษร!)
+# ดูรายละเอียดเพิ่มเติมในส่วน Configuration ด้านล่าง
 ```
 
-### 💻 สำหรับนักพัฒนา (Developer Track)
+> **⚠️ สำคัญมาก:** ตัวแปร `SESSION_PASSWORD` **ต้องยาวอย่างน้อย 32 ตัวอักษร** หากใส่ Password ที่สั้นเกินไปจะเกิด Error `500` ทุกครั้งที่มี Request เข้ามา
 
-สำหรับนักพัฒนาที่ต้องการต่อยอด ปรับแต่ง หรือร่วมพัฒนา (Contribute):
+**ขั้นตอนที่ 3 — Build และสตาร์ท Container**
+```bash
+docker compose up -d --build
+```
+
+**ขั้นตอนที่ 4 — เข้าใช้งานแอป**
+
+เปิดเบราว์เซอร์และไปที่: **`http://localhost:3000`**
+
+ระบบจะพาไปยัง **Setup Wizard** โดยอัตโนมัติเมื่อเปิดครั้งแรก
+
+---
+
+**อัปเดตเป็นเวอร์ชันใหม่:**
+```bash
+git pull
+docker compose down
+docker compose up -d --build
+```
+
+**ดู Log แบบ Live:**
+```bash
+docker compose logs -f tetherdns
+```
+
+**หยุดการทำงาน:**
+```bash
+docker compose down
+```
+
+---
+
+### 💻 การพัฒนาในเครื่อง
+
+สำหรับผู้ร่วมพัฒนาและ Developer ที่ต้องการต่อยอดหรือปรับแต่ง TetherDNS
+
+**สิ่งที่ต้องมีก่อน:**
+- [Node.js](https://nodejs.org/) v20 ขึ้นไป
+- npm v10 ขึ้นไป
+
+**ขั้นตอนที่ 1 — Clone และติดตั้ง Dependencies**
+```bash
+git clone https://github.com/riiixch/TetherDNS.git
+cd TetherDNS
+npm install
+```
+
+**ขั้นตอนที่ 2 — ตั้งค่า Environment Variables**
+```bash
+cp .env.example .env
+# แก้ไข .env ตามที่ต้องการ
+```
+
+**ขั้นตอนที่ 3 — สร้างฐานข้อมูล**
+```bash
+npx prisma db push
+```
+
+**ขั้นตอนที่ 4 — สตาร์ท Development Server**
+```bash
+npm run dev
+```
+
+Dev Server พร้อมใช้งานที่: **`http://localhost:3000`** พร้อม Hot Module Replacement (HMR)
+
+---
+
+## ⚙️ การตั้งค่า
+
+การตั้งค่าทั้งหมดทำผ่าน Environment Variables สำหรับ Docker ให้ตั้งค่าใน `docker-compose.yml` สำหรับการพัฒนาในเครื่องให้ใช้ไฟล์ `.env`
+
+| ตัวแปร | จำเป็น | ค่าเริ่มต้น | คำอธิบาย |
+|---|---|---|---|
+| `DATABASE_URL` | ✅ ใช่ | `file:./tetherdns.db` | Path ไปยังไฟล์ฐานข้อมูล SQLite สำหรับ Docker ให้ใช้ Path แบบ Absolute เช่น `file:/app/data/tetherdns.db` เพื่อให้ข้อมูลคงอยู่ผ่าน Volume |
+| `SESSION_PASSWORD` | ✅ ใช่ | _(ไม่มี)_ | **ต้องยาว 32+ ตัวอักษร** Secret แบบสุ่มและแข็งแกร่งสำหรับเข้ารหัส Session Cookie สร้างด้วย `openssl rand -base64 48` |
+| `SESSION_SECURE` | ✅ ใช่ | `false` | ตั้งเป็น `true` เพื่อบังคับใช้ HTTPS-only Cookies **ควรเป็น `true` เสมอใน Production ที่ใช้ HTTPS** ตั้งเป็น `false` สำหรับ HTTP หรือการพัฒนาในเครื่อง |
+| `NODE_ENV` | ✅ ใช่ | `development` | ตั้งเป็น `production` สำหรับ Instance ที่ Deploy แล้ว |
+| `TZ` | ไม่บังคับ | ตามระบบ | Timezone สำหรับ Timestamp ของ Log เช่น `Asia/Bangkok`, `America/New_York` |
+| `PORT` | ไม่บังคับ | `3000` | Port ที่เซิร์ฟเวอร์รับฟัง |
+| `HOST` | ไม่บังคับ | `0.0.0.0` | Host Address ที่ผูกกับเซิร์ฟเวอร์ |
+
+### การสร้าง `SESSION_PASSWORD` ที่ปลอดภัย
 
 ```bash
-# ติดตั้ง Dependencies ทั้งหมด
-npm install
+# ใช้ openssl (Linux/macOS/WSL)
+openssl rand -base64 48
 
-# สร้างและพุชโครงสร้างฐานข้อมูล (Schema) ลง SQLite
-npx prisma db push
+# ใช้ Node.js
+node -e "console.log(require('crypto').randomBytes(48).toString('base64'))"
 
-# รันเซิร์ฟเวอร์สำหรับโหมดนักพัฒนา
-npm run dev
+# ใช้ PowerShell (Windows)
+[System.Convert]::ToBase64String((1..48 | ForEach-Object { [byte](Get-Random -Max 256) }))
+```
 
+### ตัวอย่าง `docker-compose.yml`
+
+```yaml
+services:
+  tetherdns:
+    image: tetherdns:latest
+    container_name: tetherdns
+    restart: always
+    volumes:
+      - ./data:/app/data          # เก็บฐานข้อมูลไว้นอก Container
+    environment:
+      - DATABASE_URL=file:/app/data/tetherdns.db
+      - SESSION_PASSWORD=your-super-secret-key-min-32-characters-long
+      - SESSION_SECURE=false      # ตั้งเป็น true หากใช้ HTTPS
+      - NODE_ENV=production
+      - TZ=Asia/Bangkok
+    ports:
+      - "3000:3000"
+```
+
+> **💡 เคล็ดลับ:** การ Mount `./data` เป็น Volume ทำให้ไฟล์ฐานข้อมูลรอดได้เมื่อ Container รีสตาร์ทหรืออัปเกรด
+
+---
+
+## 🚀 การตั้งค่าครั้งแรก
+
+เมื่อเปิด TetherDNS ครั้งแรกโดยที่ฐานข้อมูลยังว่างเปล่า ระบบจะ Redirect ไปยัง **Setup Wizard** ที่ `/setup` โดยอัตโนมัติ
+
+**1. สร้างบัญชีผู้ดูแลระบบ**
+- ใส่ชื่อผู้ใช้และรหัสผ่านที่แข็งแกร่งสำหรับบัญชี Admin
+- นี่คือบัญชีหลักสำหรับเข้าถึง TetherDNS Dashboard
+
+**2. (ไม่บังคับ) เปิดใช้งาน Two-Factor Authentication**
+- หลัง Setup เสร็จ ไปที่ **Settings** (⚙️) → **Security**
+- คลิก **Enable 2FA** เพื่อสร้าง QR Code
+- สแกน QR Code ด้วย Authenticator App (เช่น Google Authenticator, Authy)
+- ใส่รหัส TOTP 6 หลักเพื่อยืนยันและเปิดใช้ 2FA
+
+เมื่อ Setup เสร็จสมบูรณ์ ระบบจะ Redirect ไปยังหน้า **Login**
+
+---
+
+## 📖 คู่มือการใช้งาน
+
+### 🔐 บัญชี (Accounts)
+
+หน้า **Accounts** คือที่จัดการ Cloudflare API Credentials ของคุณ
+
+**การเพิ่มบัญชี Cloudflare:**
+1. ไปที่แท็บ **Accounts**
+2. คลิก **+ Add Account**
+3. ใส่ **ชื่อ** ที่จำง่ายสำหรับบัญชีนี้ (เช่น "Cloudflare ส่วนตัว")
+4. ใส่ Cloudflare **API Token**
+   - ไปที่ [Cloudflare Dashboard → My Profile → API Tokens](https://dash.cloudflare.com/profile/api-tokens)
+   - สร้าง Token ที่มีสิทธิ์ **Zone:DNS:Edit** และ **Zone:Zone:Read**
+5. คลิก **Save** ระบบจะตรวจสอบ Token กับ Cloudflare API ทันที
+
+**การจัดการบัญชี:**
+- **แก้ไข:** อัปเดตชื่อบัญชีหรือ API Token ได้ทุกเวลา
+- **ลบ:** ลบบัญชีออก ซึ่งจะลบ Zone และ DDNS Configuration ที่เกี่ยวข้องทั้งหมดออกจาก TetherDNS ด้วย (แต่จะ **ไม่** ลบข้อมูลใดๆ ออกจาก Cloudflare)
+
+---
+
+### 🌍 DNS Zones
+
+หน้า **Zones** แสดงรายการ DNS Zones (โดเมน) ทั้งหมดที่พบในบัญชี Cloudflare ที่ตั้งค่าไว้
+
+- **ค้นหา:** ใช้ช่องค้นหาเพื่อกรอง Zone ตามชื่อโดเมน
+- **Pagination:** เลื่อนดูรายการขนาดใหญ่
+- **เลือก Zone:** คลิกที่ Zone ใดก็ได้เพื่อเปิดหน้าจัดการ DNS Records
+
+---
+
+### 📝 DNS Records
+
+ภายใน Zone คุณสามารถดูและจัดการ DNS Records ทั้งหมดได้
+
+**ประเภท Record ที่รองรับ:** `A`, `AAAA`, `CNAME`, `TXT`, `MX`, `SRV`
+
+**การเพิ่ม Record:**
+1. คลิกปุ่ม **+ Add Record**
+2. เลือก **Type** (A, AAAA, CNAME ฯลฯ)
+3. ใส่ **Name** (เช่น `@` สำหรับ Root, `www`, `mail`)
+4. ใส่ **Content** (เช่น IP Address สำหรับ `A` Record, Hostname สำหรับ `CNAME`)
+5. ตั้งค่า **TTL** (Time To Live) ใช้ `1` สำหรับ "Auto"
+6. เปิด **Proxied** (☁️) หากต้องการใช้ Cloudflare Proxy
+7. คลิก **Save**
+
+**การแก้ไข Record:**
+1. คลิกไอคอน **✏️ Edit** ในแถว Record ที่ต้องการ
+2. แก้ไขข้อมูลและคลิก **Update**
+
+**การลบ Record:**
+1. คลิกไอคอน **🗑️ Delete** ในแถว Record
+2. ยืนยันการลบในกล่องโต้ตอบ
+
+> **⚠️ คำเตือน:** การลบจะถูกส่งไปยัง Cloudflare API ทันทีและไม่สามารถยกเลิกได้ผ่าน TetherDNS
+
+---
+
+### 🔄 Dynamic DNS (DDNS)
+
+DDNS อัปเดต DNS Records ของคุณให้ตรงกับ Public IP ปัจจุบันโดยอัตโนมัติ จำเป็นมากสำหรับ Home Server หรืออุปกรณ์ใดๆ ที่มี Dynamic IP
+
+**หลักการทำงาน:**
+1. Cron Job รันในพื้นหลังทุก **5 นาที** (ปรับได้)
+2. ตรวจจับ Public IPv4 และ IPv6 ปัจจุบันของคุณ
+3. `A` หรือ `AAAA` Record ใดก็ตามที่เปิด DDNS ไว้จะถูกอัปเดตใน Cloudflare โดยอัตโนมัติเมื่อ IP เปลี่ยน
+
+**การเปิด DDNS บน Record:**
+1. เปิด Zone และค้นหา `A` หรือ `AAAA` Record
+2. Toggle สวิตช์ **DDNS** บน Record นั้น
+3. TetherDNS จะติดตามและอัปเดต Record นั้นโดยอัตโนมัติ
+
+**DDNS ผ่าน Webhook:**
+สำหรับการอัปเดตทันทีโดยไม่ต้องรอรอบ Cron ให้ใช้ Webhook URL ที่สร้างขึ้น ดูส่วน [Webhook API](#-webhook-api) ด้านล่าง
+
+---
+
+### 📊 Logs และ Audit Trail
+
+**Audit Log (`/audit`)**
+บันทึกครบถ้วนแบบ Real-time ของทุกการกระทำของผู้ใช้และระบบ:
+- การ Login และ Logout ของ Admin
+- การเพิ่ม, แก้ไข และลบบัญชี
+- การเปลี่ยนแปลง DNS Record (สร้าง, อัปเดต, ลบ)
+- เหตุการณ์ DDNS Cron Job และการแจ้งเตือนเมื่อ IP เปลี่ยน
+
+**DDNS Log (`/logs`)**
+มุมมองเฉพาะสำหรับเหตุการณ์ DDNS แสดง Timestamp, Record ที่เกิดผล, IP เดิม และ IP ใหม่ทุกการอัปเดตอัตโนมัติ
+
+---
+
+### ⚙️ การตั้งค่าและ 2FA
+
+**การเข้าถึง Settings:** คลิกไอคอน ⚙️ ในแถบนำทาง
+
+**Profile Settings:**
+- เปลี่ยน **ชื่อผู้ใช้** และ **รหัสผ่าน** Admin
+
+**Two-Factor Authentication (2FA):**
+| สถานะ | การกระทำ |
+|---|---|
+| **ปิดอยู่** | คลิก **Enable 2FA** → สแกน QR Code ด้วย Authenticator App → ใส่รหัส 6 หลักเพื่อยืนยัน |
+| **เปิดอยู่** | คลิก **Disable 2FA** → ใส่รหัส 2FA ปัจจุบันเพื่อยืนยันการปิด |
+
+> **🔑 สำรองข้อมูล:** เมื่อเปิด 2FA แล้ว ให้บันทึก Setup Key ไว้ในที่ปลอดภัย หากสูญเสียการเข้าถึง Authenticator App จะต้องเข้าถึงฐานข้อมูลโดยตรงเพื่อกู้คืน
+
+**ภาษา:**
+- ใช้ตัวสลับภาษา 🌐 ในแถบนำทางเพื่อสลับระหว่าง **ภาษาอังกฤษ** และ **ภาษาไทย**
+
+---
+
+## 🔗 Webhook API
+
+TetherDNS เปิด Endpoint แบบ Webhook ที่เรียก DDNS update ทันทีสำหรับทุก Record ที่เปิดใช้งาน เหมาะสำหรับเราเตอร์ที่รองรับ DDNS Scripts แบบกำหนดเอง
+
+**Endpoint:**
+```
+GET /api/webhook/ddns?token=<YOUR_WEBHOOK_TOKEN>
+```
+
+**วิธีรับ Token:**
+1. ไปที่ **Settings** → **Webhook**
+2. คัดลอก Token ที่สร้างขึ้น (หรือสร้างใหม่หากต้องการ)
+
+**ตัวอย่างการใช้งาน:**
+
+```bash
+# เรียก Update โดยใช้ curl
+curl "http://your-server:3000/api/webhook/ddns?token=YOUR_TOKEN_HERE"
+```
+
+```bash
+# ใช้ใน Cron Job บนเซิร์ฟเวอร์อื่น
+*/10 * * * * /usr/bin/curl -s "http://your-server:3000/api/webhook/ddns?token=YOUR_TOKEN_HERE"
+```
+
+**การตั้งค่าเราเตอร์ (DD-WRT / OpnSense / pfSense):**
+- ตั้งค่า URL ของ DDNS Provider แบบกำหนดเองเป็น:
+  ```
+  http://your-server:3000/api/webhook/ddns?token=YOUR_TOKEN_HERE
+  ```
+
+**Response:**
+```json
+{ "success": true, "updated": 2 }
 ```
 
 ---
 
-## ⚙️ แผงควบคุมระบบ (.env)
+## 🛠️ คำสั่ง Scripts
 
-คุณสามารถปรับแต่ง Instance ของคุณผ่านตัวแปรในไฟล์ `.env`:
+รันทุก Script ด้วย `npm run <script>`
 
-| ขอบเขต (Scope)  | ตัวแปร (Variable)  | ความสำคัญ (Significance)                                                           |
-| --------------- | ------------------ | ---------------------------------------------------------------------------------- |
-| **ฐานข้อมูล**   | `DATABASE_URL`     | Path แบบ Absolute ที่ชี้ไปยังฐานข้อมูล SQLite (เช่น `file:/app/data/tetherdns.db`) |
-| **ความปลอดภัย** | `SESSION_PASSWORD` | รหัสผ่านเข้ารหัสความปลอดภัยสูง (ยาว 32+ ตัวอักษร) สำหรับจัดการ User Session        |
-| **เครือข่าย**   | `SESSION_SECURE`   | ตั้งค่าเป็น `true` เพื่อบังคับใช้ HTTPS (Strict Transport Security) สำหรับ Cookies |
-| **ระบบเวลา**    | `TZ`               | Timezone ของระบบเพื่อให้การบันทึก Log แม่นยำ (เช่น `Asia/Bangkok`)                 |
+| Script | คำสั่ง | คำอธิบาย |
+|---|---|---|
+| `dev` | `nuxt dev` | สตาร์ท Development Server พร้อม HMR |
+| `build` | `nuxt build` | Build แอปสำหรับ Production |
+| `preview` | `nuxt preview` | Preview Production Build ในเครื่อง |
+| `generate` | `nuxt generate` | สร้างเวอร์ชัน Static ของแอป |
+| `prisma:gen` | `npx prisma generate` | สร้าง Prisma Client ใหม่หลังเปลี่ยน Schema |
+| `prisma:push` | `npx prisma db push` | Push Prisma Schema ไปยังฐานข้อมูล (สร้างตารางอัตโนมัติ) |
+| `prisma:reset` | `npx prisma migrate reset` | ⚠️ **อันตราย!** Reset ฐานข้อมูลให้เป็นสถานะว่างเปล่า |
+| `update:check` | `npx npm-check-updates` | ตรวจสอบการอัปเดต Dependencies ที่มี |
+| `update:install` | `npx npm-check-updates -u && npm install` | ติดตั้ง Dependencies ที่อัปเดตทั้งหมด |
 
 ---
 
-## 📜 ลิขสิทธิ์ (License)
+## 🔒 ความปลอดภัย
 
-ภูมิใจเผยแพร่ภายใต้ **MIT License** เราเชื่อมั่นในซอฟต์แวร์แบบเปิด (Open-source) ที่มีคุณภาพสูง ดูรายละเอียดเพิ่มเติมได้ที่ [LICENSE](https://www.google.com/search?q=LICENSE)
+TetherDNS ออกแบบโดยมีความปลอดภัยเป็นสิ่งสำคัญอันดับแรก:
+
+- **ไม่เก็บ Credentials แบบ Plaintext** รหัสผ่านทั้งหมด Hash ด้วย `bcryptjs`
+- **การเข้ารหัส Session** Session ถูกเข้ารหัสด้วย Secret Key ที่ผู้ใช้กำหนด (ขั้นต่ำ 32 ตัวอักษร) โดยใช้ `iron-webcrypto` Key ที่อ่อนแอหรือขาดหายจะทำให้เกิด Error ทันที
+- **HTTP-only Cookies** Session Cookie ไม่สามารถเข้าถึงได้จาก JavaScript ฝั่ง Client ป้องกันการโจมตีแบบ XSS
+- **Auth Middleware ฝั่งเซิร์ฟเวอร์** ทุก API Route และหน้าที่ได้รับการปกป้องถูกตรวจสอบฝั่งเซิร์ฟเวอร์ก่อนส่งข้อมูลใดๆ
+- **แยก API Token** Cloudflare API Token จัดเก็บในฐานข้อมูลในเครื่องและไม่เคยถูกส่งไปยัง Frontend
+- **TOTP 2FA** ปัจจัยที่สองที่แนะนำให้เปิดใช้งาน ป้องกันการขโมย Credentials
+
+**คำแนะนำด้านความปลอดภัยสำหรับ Production:**
+1. ใช้ `SESSION_SECURE=true` เสมอเบื้องหลัง HTTPS Reverse Proxy (เช่น Nginx, Caddy, Traefik)
+2. ใช้ `SESSION_PASSWORD` แบบสุ่มที่มีความยาวอย่างน้อย 48 ตัวอักษร
+3. เปิด TOTP 2FA ทันทีหลัง Setup เสร็จ
+4. จำกัดการเข้าถึง Port `3000` ผ่าน Firewall หรือ Reverse Proxy — อย่า Expose ตรงสู่อินเทอร์เน็ตโดยตรง
+5. ใช้ Cloudflare API Token ที่มีสิทธิ์**ขั้นต่ำที่จำเป็น** ไม่ใช่ Global API Key
+
+---
+
+## 📜 สัญญาอนุญาต
+
+เผยแพร่ภายใต้ **MIT License** ดูรายละเอียดทั้งหมดได้ที่ [LICENSE](./LICENSE)
 
 ---
 
