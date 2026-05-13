@@ -61,45 +61,50 @@
 ## ✨ Features
 
 ### 🔐 Security & Authentication
-| Feature | Description |
-|---|---|
-| **Secure Setup Wizard** | A one-time initialization flow to create your admin credentials on first launch |
-| **TOTP 2FA** | Industry-standard Time-based One-Time Password (via `otplib`) protects the admin console with QR-code scan setup |
-| **bcrypt Password Hashing** | All passwords are stored using battle-tested `bcryptjs` hashing — never in plaintext |
-| **Encrypted Sessions** | HTTP-only, server-side sessions encrypted with a 32+ character secret key |
-| **Configurable Cookie Security** | Toggle `SESSION_SECURE` to enforce HTTPS-only cookie transport in production |
-| **Auth Middleware** | All protected routes are guarded server-side via Nitro middleware |
+
+| Feature                          | Description                                                                                                      |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| **Secure Setup Wizard**          | A one-time initialization flow to create your admin credentials on first launch                                  |
+| **TOTP 2FA**                     | Industry-standard Time-based One-Time Password (via `otplib`) protects the admin console with QR-code scan setup |
+| **bcrypt Password Hashing**      | All passwords are stored using battle-tested `bcryptjs` hashing — never in plaintext                             |
+| **Encrypted Sessions**           | HTTP-only, server-side sessions encrypted with a 32+ character secret key                                        |
+| **Configurable Cookie Security** | Toggle `SESSION_SECURE` to enforce HTTPS-only cookie transport in production                                     |
+| **Auth Middleware**              | All protected routes are guarded server-side via Nitro middleware                                                |
 
 ### 🌍 Multi-Account & Cloudflare DNS
-| Feature | Description |
-|---|---|
-| **Multi-Account Vault** | Add and manage multiple Cloudflare API accounts from a single dashboard |
-| **Zone Explorer** | Browse all DNS zones across accounts with instant search and pagination |
-| **Full Record CRUD** | Create, read, update, and delete DNS records: `A`, `AAAA`, `CNAME`, `TXT`, `MX`, `SRV` |
-| **Proxy Toggle** | Enable or disable Cloudflare's proxy (Orange Cloud ☁️) per record with one click |
-| **TTL Control** | Adjust Time-To-Live per record; supports `1` (Auto) and all standard TTL values |
+
+| Feature                 | Description                                                                            |
+| ----------------------- | -------------------------------------------------------------------------------------- |
+| **Multi-Account Vault** | Add and manage multiple Cloudflare API accounts from a single dashboard                |
+| **Zone Explorer**       | Browse all DNS zones across accounts with instant search and pagination                |
+| **Full Record CRUD**    | Create, read, update, and delete DNS records: `A`, `AAAA`, `CNAME`, `TXT`, `MX`, `SRV` |
+| **Proxy Toggle**        | Enable or disable Cloudflare's proxy (Orange Cloud ☁️) per record with one click       |
+| **TTL Control**         | Adjust Time-To-Live per record; supports `1` (Auto) and all standard TTL values        |
 
 ### 🔄 Dynamic DNS (DDNS) Automation
-| Feature | Description |
-|---|---|
-| **Auto IP Detection** | Built-in cron job checks and updates your public IP at a configurable interval (default: every 5 minutes) |
-| **Per-Record DDNS** | Enable DDNS on any `A` or `AAAA` record individually |
-| **Webhook Endpoints** | Generate unique, signed webhook URLs to trigger DDNS updates from routers, scripts, or automation tools |
-| **IPv4 & IPv6 Support** | Detects and updates both IPv4 (`A`) and IPv6 (`AAAA`) records independently |
+
+| Feature                 | Description                                                                                               |
+| ----------------------- | --------------------------------------------------------------------------------------------------------- |
+| **Auto IP Detection**   | Built-in cron job checks and updates your public IP at a configurable interval (default: every 5 minutes) |
+| **Per-Record DDNS**     | Enable DDNS on any `A` or `AAAA` record individually                                                      |
+| **Webhook Endpoints**   | Generate unique, signed webhook URLs to trigger DDNS updates from routers, scripts, or automation tools   |
+| **IPv4 & IPv6 Support** | Detects and updates both IPv4 (`A`) and IPv6 (`AAAA`) records independently                               |
 
 ### 📊 Analytics & Logging
-| Feature | Description |
-|---|---|
-| **IP History Charts** | Interactive ApexCharts visualizations tracking your IP change history over time |
-| **Real-Time Audit Log** | Immutable, timestamped log of every login, logout, config change, and DDNS update |
-| **DDNS Event Log** | Dedicated chronological view of all DDNS update events with IP before/after values |
+
+| Feature                 | Description                                                                        |
+| ----------------------- | ---------------------------------------------------------------------------------- |
+| **IP History Charts**   | Interactive ApexCharts visualizations tracking your IP change history over time    |
+| **Real-Time Audit Log** | Immutable, timestamped log of every login, logout, config change, and DDNS update  |
+| **DDNS Event Log**      | Dedicated chronological view of all DDNS update events with IP before/after values |
 
 ### 🎨 UI / UX
-| Feature | Description |
-|---|---|
-| **Ocean Deep Tech Theme** | Glassmorphism-inspired dark UI with deep indigo tones, designed to minimize eye strain |
-| **Responsive Design** | Fully responsive from 4K desktop down to mobile screens |
-| **i18n Support** | Full internationalization with English 🇬🇧 and Thai 🇹🇭 language support (`@nuxtjs/i18n`) |
+
+| Feature                   | Description                                                                             |
+| ------------------------- | --------------------------------------------------------------------------------------- |
+| **Ocean Deep Tech Theme** | Glassmorphism-inspired dark UI with deep indigo tones, designed to minimize eye strain  |
+| **Responsive Design**     | Fully responsive from 4K desktop down to mobile screens                                 |
+| **i18n Support**          | Full internationalization with English 🇬🇧 and Thai 🇹🇭 language support (`@nuxtjs/i18n`) |
 
 ---
 
@@ -142,18 +147,18 @@ graph TD
 
 ### Tech Stack
 
-| Layer | Technology |
-|---|---|
-| **Frontend Framework** | [Nuxt 4](https://nuxt.com/) + [Vue 3](https://vuejs.org/) (Composition API) |
-| **UI Component Library** | [@nuxt/ui](https://ui.nuxt.com/) v4 + [Tailwind CSS](https://tailwindcss.com/) |
-| **Server Engine** | [Nitro](https://nitro.build/) (built into Nuxt) |
-| **Database ORM** | [Prisma](https://prisma.io/) v7 with `@prisma/adapter-libsql` |
-| **Database** | SQLite (via LibSQL) — zero-dependency, file-based |
-| **Cloudflare Client** | Official [`cloudflare`](https://github.com/cloudflare/cloudflare-typescript) TypeScript SDK v5 |
-| **Authentication** | `nuxt-auth-utils` session + `bcryptjs` + `otplib` (TOTP 2FA) |
-| **Charts** | [ApexCharts](https://apexcharts.com/) + `vue3-apexcharts` |
-| **i18n** | `@nuxtjs/i18n` v10 |
-| **Icons** | `heroicons` + `lucide` via `@nuxt/icon` |
+| Layer                    | Technology                                                                                     |
+| ------------------------ | ---------------------------------------------------------------------------------------------- |
+| **Frontend Framework**   | [Nuxt 4](https://nuxt.com/) + [Vue 3](https://vuejs.org/) (Composition API)                    |
+| **UI Component Library** | [@nuxt/ui](https://ui.nuxt.com/) v4 + [Tailwind CSS](https://tailwindcss.com/)                 |
+| **Server Engine**        | [Nitro](https://nitro.build/) (built into Nuxt)                                                |
+| **Database ORM**         | [Prisma](https://prisma.io/) v7 with `@prisma/adapter-libsql`                                  |
+| **Database**             | SQLite (via LibSQL) — zero-dependency, file-based                                              |
+| **Cloudflare Client**    | Official [`cloudflare`](https://github.com/cloudflare/cloudflare-typescript) TypeScript SDK v5 |
+| **Authentication**       | `nuxt-auth-utils` session + `bcryptjs` + `otplib` (TOTP 2FA)                                   |
+| **Charts**               | [ApexCharts](https://apexcharts.com/) + `vue3-apexcharts`                                      |
+| **i18n**                 | `@nuxtjs/i18n` v10                                                                             |
+| **Icons**                | `heroicons` + `lucide` via `@nuxt/icon`                                                        |
 
 ---
 
@@ -164,12 +169,14 @@ graph TD
 The fastest way to get TetherDNS running in production. Requires [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/).
 
 **Step 1 — Clone the repository**
+
 ```bash
 git clone https://github.com/riiixch/TetherDNS.git
 cd TetherDNS
 ```
 
 **Step 2 — Configure your environment**
+
 ```bash
 # Copy the example file
 cp .env.example .env
@@ -181,6 +188,7 @@ cp .env.example .env
 > **⚠️ Important:** The `SESSION_PASSWORD` variable **must be at least 32 characters**. A short password will cause a `500` error on every request.
 
 **Step 3 — Build and start the container**
+
 ```bash
 docker compose up -d --build
 ```
@@ -194,6 +202,7 @@ You will be redirected to the **Setup Wizard** on first launch.
 ---
 
 **To update to a new version:**
+
 ```bash
 git pull
 docker compose down
@@ -201,11 +210,13 @@ docker compose up -d --build
 ```
 
 **To view live logs:**
+
 ```bash
 docker compose logs -f tetherdns
 ```
 
 **To stop:**
+
 ```bash
 docker compose down
 ```
@@ -217,10 +228,12 @@ docker compose down
 For contributors and developers who want to extend or customize TetherDNS.
 
 **Prerequisites:**
+
 - [Node.js](https://nodejs.org/) v20 or higher
 - npm v10 or higher
 
 **Step 1 — Clone and install dependencies**
+
 ```bash
 git clone https://github.com/riiixch/TetherDNS.git
 cd TetherDNS
@@ -228,17 +241,20 @@ npm install
 ```
 
 **Step 2 — Configure environment variables**
+
 ```bash
 cp .env.example .env
 # Edit .env with your configuration
 ```
 
 **Step 3 — Initialize the database**
+
 ```bash
 npx prisma db push
 ```
 
 **Step 4 — Start the development server**
+
 ```bash
 npm run dev
 ```
@@ -251,15 +267,15 @@ The dev server is available at: **`http://localhost:3000`** with hot module repl
 
 All configuration is done through environment variables. For Docker deployments, set them in `docker-compose.yml`. For local development, use a `.env` file.
 
-| Variable | Required | Default | Description |
-|---|---|---|---|
-| `DATABASE_URL` | ✅ Yes | `file:./tetherdns.db` | Path to the SQLite database file. For Docker, use an absolute path like `file:/app/data/tetherdns.db` to persist data via a volume mount. |
-| `SESSION_PASSWORD` | ✅ Yes | _(none)_ | **Must be 32+ characters.** A strong, random secret used to encrypt session cookies. Generate one with `openssl rand -base64 48`. |
-| `SESSION_SECURE` | ✅ Yes | `false` | Set to `true` to enforce HTTPS-only cookies. **Always `true` in production with HTTPS.** Set to `false` for HTTP or local development. |
-| `NODE_ENV` | ✅ Yes | `development` | Set to `production` for deployed instances. |
-| `TZ` | No | System default | Timezone for log timestamps (e.g., `Asia/Bangkok`, `America/New_York`). |
-| `PORT` | No | `3000` | The port the server listens on. |
-| `HOST` | No | `0.0.0.0` | The host address to bind to. |
+| Variable           | Required | Default               | Description                                                                                                                               |
+| ------------------ | -------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`     | ✅ Yes   | `file:./tetherdns.db` | Path to the SQLite database file. For Docker, use an absolute path like `file:/app/data/tetherdns.db` to persist data via a volume mount. |
+| `SESSION_PASSWORD` | ✅ Yes   | _(none)_              | **Must be 32+ characters.** A strong, random secret used to encrypt session cookies. Generate one with `openssl rand -base64 48`.         |
+| `SESSION_SECURE`   | ✅ Yes   | `false`               | Set to `true` to enforce HTTPS-only cookies. **Always `true` in production with HTTPS.** Set to `false` for HTTP or local development.    |
+| `NODE_ENV`         | ✅ Yes   | `development`         | Set to `production` for deployed instances.                                                                                               |
+| `TZ`               | No       | System default        | Timezone for log timestamps (e.g., `Asia/Bangkok`, `America/New_York`).                                                                   |
+| `PORT`             | No       | `3000`                | The port the server listens on.                                                                                                           |
+| `HOST`             | No       | `0.0.0.0`             | The host address to bind to.                                                                                                              |
 
 ### Generating a Secure `SESSION_PASSWORD`
 
@@ -283,11 +299,11 @@ services:
     container_name: tetherdns
     restart: always
     volumes:
-      - ./data:/app/data          # Persists the database outside the container
+      - ./data:/app/data # Persists the database outside the container
     environment:
       - DATABASE_URL=file:/app/data/tetherdns.db
       - SESSION_PASSWORD=your-super-secret-key-min-32-characters-long
-      - SESSION_SECURE=false      # Set to true if using HTTPS
+      - SESSION_SECURE=false # Set to true if using HTTPS
       - NODE_ENV=production
       - TZ=Asia/Bangkok
     ports:
@@ -303,10 +319,12 @@ services:
 When you launch TetherDNS for the first time with an empty database, you will automatically be redirected to the **Setup Wizard** at `/setup`.
 
 **1. Create Admin Account**
+
 - Enter a username and a strong password for your admin account.
 - This is the primary account for accessing the TetherDNS dashboard.
 
 **2. (Optional) Enable Two-Factor Authentication**
+
 - After setup, navigate to **Settings** (⚙️) → **Security**.
 - Click **Enable 2FA** to generate a QR code.
 - Scan the QR code with your authenticator app (e.g., Google Authenticator, Authy).
@@ -323,6 +341,7 @@ Once setup is complete, you will be redirected to the **Login** page.
 The **Accounts** page is where you manage your Cloudflare API credentials.
 
 **Adding a Cloudflare Account:**
+
 1. Navigate to the **Accounts** tab.
 2. Click **+ Add Account**.
 3. Enter a friendly **Name** for the account (e.g., "Personal Cloudflare").
@@ -332,6 +351,7 @@ The **Accounts** page is where you manage your Cloudflare API credentials.
 5. Click **Save**. TetherDNS will validate the token against the Cloudflare API.
 
 **Managing Accounts:**
+
 - **Edit:** Update the account name or API token at any time.
 - **Delete:** Remove an account. This will also remove all associated zone and DDNS configurations from TetherDNS (but will **not** delete anything from Cloudflare).
 
@@ -354,6 +374,7 @@ Inside a zone, you can view and manage all its DNS records.
 **Supported Record Types:** `A`, `AAAA`, `CNAME`, `TXT`, `MX`, `SRV`
 
 **Adding a Record:**
+
 1. Click the **+ Add Record** button.
 2. Select the **Type** (A, AAAA, CNAME, etc.).
 3. Fill in the **Name** (e.g., `@` for root, `www`, `mail`).
@@ -363,10 +384,12 @@ Inside a zone, you can view and manage all its DNS records.
 7. Click **Save**.
 
 **Editing a Record:**
+
 1. Click the **✏️ Edit** icon on any record row.
 2. Modify the fields and click **Update**.
 
 **Deleting a Record:**
+
 1. Click the **🗑️ Delete** icon on a record row.
 2. Confirm the deletion in the dialog.
 
@@ -379,11 +402,13 @@ Inside a zone, you can view and manage all its DNS records.
 DDNS automatically keeps your DNS records updated with your current public IP address — essential for home servers or any device with a dynamic IP.
 
 **How It Works:**
+
 1. A background cron job runs every **5 minutes** (configurable).
 2. It detects your current public IPv4 and IPv6 addresses.
 3. Any `A` or `AAAA` record with DDNS enabled is automatically updated in Cloudflare if the IP has changed.
 
 **Enabling DDNS on a Record:**
+
 1. Open a zone and find an `A` or `AAAA` record.
 2. Toggle the **DDNS** switch on that record.
 3. TetherDNS will track and update this record automatically.
@@ -397,6 +422,7 @@ For instant updates without waiting for the cron interval, use the generated Web
 
 **Audit Log (`/audit`)**
 A comprehensive, real-time log of all user and system actions:
+
 - Admin logins and logouts
 - Account additions, edits, and deletions
 - DNS record changes (create, update, delete)
@@ -412,6 +438,7 @@ A focused view specifically for DDNS-related events, showing the timestamp, reco
 **Accessing Settings:** Click the ⚙️ icon in the navigation bar.
 
 **Profile Settings:**
+
 - Change your admin **username** and **password**.
 
 **Two-Factor Authentication (2FA):**
@@ -423,6 +450,7 @@ A focused view specifically for DDNS-related events, showing the timestamp, reco
 > **🔑 Backup:** When 2FA is enabled, save your setup key in a secure location. If you lose access to your authenticator app, you will need direct database access to recover.
 
 **Language:**
+
 - Use the 🌐 language switcher in the navigation bar to toggle between **English** and **Thai (ภาษาไทย)**.
 
 ---
@@ -432,11 +460,13 @@ A focused view specifically for DDNS-related events, showing the timestamp, reco
 TetherDNS exposes a webhook endpoint that triggers an immediate DDNS update for all enabled records. This is ideal for routers that support custom DDNS scripts.
 
 **Endpoint:**
+
 ```
 GET /api/webhook/ddns?token=<YOUR_WEBHOOK_TOKEN>
 ```
 
 **How to get your token:**
+
 1. Navigate to **Settings** → **Webhook**.
 2. Copy the generated token (or regenerate it if needed).
 
@@ -453,12 +483,14 @@ curl "http://your-server:3000/api/webhook/ddns?token=YOUR_TOKEN_HERE"
 ```
 
 **Router Configuration (DD-WRT / OpnSense / pfSense):**
+
 - Set the custom DDNS provider URL to:
   ```
   http://your-server:3000/api/webhook/ddns?token=YOUR_TOKEN_HERE
   ```
 
 **Response:**
+
 ```json
 { "success": true, "updated": 2 }
 ```
@@ -469,17 +501,17 @@ curl "http://your-server:3000/api/webhook/ddns?token=YOUR_TOKEN_HERE"
 
 All scripts are run with `npm run <script>`.
 
-| Script | Command | Description |
-|---|---|---|
-| `dev` | `nuxt dev` | Start the development server with HMR |
-| `build` | `nuxt build` | Build the application for production |
-| `preview` | `nuxt preview` | Preview the production build locally |
-| `generate` | `nuxt generate` | Generate a static version of the app |
-| `prisma:gen` | `npx prisma generate` | Regenerate the Prisma client after schema changes |
-| `prisma:push` | `npx prisma db push` | Push the Prisma schema to the database (auto-creates tables) |
-| `prisma:reset` | `npx prisma migrate reset` | ⚠️ **Destructive!** Resets the database to a clean state |
-| `update:check` | `npx npm-check-updates` | Check for available dependency updates |
-| `update:install` | `npx npm-check-updates -u && npm install` | Apply all dependency updates |
+| Script           | Command                                   | Description                                                  |
+| ---------------- | ----------------------------------------- | ------------------------------------------------------------ |
+| `dev`            | `nuxt dev`                                | Start the development server with HMR                        |
+| `build`          | `nuxt build`                              | Build the application for production                         |
+| `preview`        | `nuxt preview`                            | Preview the production build locally                         |
+| `generate`       | `nuxt generate`                           | Generate a static version of the app                         |
+| `prisma:gen`     | `npx prisma generate`                     | Regenerate the Prisma client after schema changes            |
+| `prisma:push`    | `npx prisma db push`                      | Push the Prisma schema to the database (auto-creates tables) |
+| `prisma:reset`   | `npx prisma migrate reset`                | ⚠️ **Destructive!** Resets the database to a clean state     |
+| `update:check`   | `npx npm-check-updates`                   | Check for available dependency updates                       |
+| `update:install` | `npx npm-check-updates -u && npm install` | Apply all dependency updates                                 |
 
 ---
 
@@ -495,6 +527,7 @@ TetherDNS is designed with security as a first-class concern:
 - **TOTP 2FA.** An optional but highly recommended second factor protects against credential theft.
 
 **Security Recommendations for Production:**
+
 1. Always use `SESSION_SECURE=true` behind an HTTPS reverse proxy (e.g., Nginx, Caddy, Traefik).
 2. Use a randomly generated `SESSION_PASSWORD` of at least 48 characters.
 3. Enable TOTP 2FA immediately after setup.
