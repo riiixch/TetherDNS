@@ -1,9 +1,6 @@
 @echo off
 setlocal enabledelayedexpansion
 
-:: 🚀 ย้ายตำแหน่งการทำงานไปยังโฟลเดอร์ที่ Script นี้อยู่ (เพื่อให้เจอ Dockerfile)
-cd /d "%~dp0"
-
 :: --- ส่วนการตั้งค่า Default ---
 set DEFAULT_REGISTRY=docker-private.riiixch.com
 set DEFAULT_IMAGE_NAME=tetherdns
@@ -61,8 +58,7 @@ if /i "%CONFIRM%" NEQ "y" (
 :: --- เริ่มขั้นตอน Docker Build ---
 echo.
 echo [+] Building image: %IMAGE_NAME%:%IMG_TAG%...
-:: Build จาก root context เพื่อให้เจอ packages/
-docker build -t %IMAGE_NAME%:%IMG_TAG% -f Dockerfile ../../
+docker build -t %IMAGE_NAME%:%IMG_TAG% .
 
 if %ERRORLEVEL% NEQ 0 (
     echo.
