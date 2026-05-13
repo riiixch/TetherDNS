@@ -22,7 +22,11 @@
         "loading": "Loading...",
         "no_results": "No results found.",
         "showing_results": "Showing {start} - {end} of {total}",
-        "err_occurred": "An unexpected error occurred."
+        "err_occurred": "An unexpected error occurred.",
+        "active": "Active",
+        "disabled": "Disabled",
+        "next": "Next",
+        "prev": "Prev"
     },
     "nav": {
         "dashboard": "Dashboard",
@@ -192,6 +196,16 @@
         "err_required": "Hostname and target value are required.",
         "add_success": "Record '{name}' saved successfully.",
         "add_failed": "Failed to save the record.",
+        "delete_success": "Record '{name}' deleted successfully",
+        "placeholder_a": "e.g. 1.2.3.4",
+        "placeholder_aaaa": "e.g. 2001:db8::1",
+        "placeholder_cname": "e.g. target.example.com",
+        "placeholder_mx": "e.g. mail.example.com",
+        "placeholder_txt": "Text content here",
+        "placeholder_ns": "e.g. ns1.example.com",
+        "placeholder_srv": "e.g. 0 5 5060 service.example.com",
+        "placeholder_caa": "e.g. 0 issue \"letsencrypt.org\"",
+        "ttl_auto": "Auto",
         "fully_propagated": "Fully Propagated",
         "propagation_progress": "Propagating...",
         "expected_ip": "Expected Value",
@@ -228,6 +242,8 @@
         "title": "System Settings",
         "subtitle": "Configure global application behavior and notifications.",
         "subtitle_desc": "Manage administrative access and background daemon intervals.",
+        "discord_webhook": "Discord Webhook",
+        "line_notify": "LINE Notify",
         "tab_general": "General",
         "tab_security": "Security",
         "tab_api": "Access Tokens",
@@ -369,7 +385,13 @@
         "days": "{n} day | {n} days",
         "months": "{n} month | {n} months",
         "years": "{n} year | {n} years",
-        "ago": "{time} ago"
+        "ago": "{time} ago",
+        "years_ago": "years ago",
+        "months_ago": "months ago",
+        "days_ago": "days ago",
+        "hours_ago": "hours ago",
+        "mins_ago": "minutes ago",
+        "seconds_ago": "seconds ago"
     },
     "propagation": {
         "title": "Global DNS Propagation",

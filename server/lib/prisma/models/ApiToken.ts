@@ -1205,6 +1205,11 @@ export type ApiTokenFindManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Skip the first `n` ApiTokens.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of ApiTokens.
+   */
   distinct?: Prisma.ApiTokenScalarFieldEnum | Prisma.ApiTokenScalarFieldEnum[]
 }
 

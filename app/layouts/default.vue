@@ -24,7 +24,7 @@ const navLinks = [
 const isActive = (path: string) => route.path === path
 
 // ตั้งค่า Dropdown สำหรับ User Profile (Desktop)
-const userMenuItems = ref<DropdownMenuItem[]>([
+const userMenuItems = ref<DropdownMenuItem[][]>([
     [{
         label: user.value?.username.toUpperCase() || t('nav.user_profile'),
         slot: 'account',
@@ -318,8 +318,16 @@ const userMenuItems = ref<DropdownMenuItem[]>([
 
                 <div
                     class="mt-10 pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div class="text-xs font-medium text-slate-400 dark:text-slate-50">
+                    <div class="text-xs font-medium text-slate-400 dark:text-slate-500">
                         {{ $t('footer.copyright', { year: currentYear }) }}
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <div class="h-px w-3 bg-slate-200 dark:bg-slate-800"></div>
+                        <p class="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-400 dark:text-slate-500">
+                            Design by <span class="text-primary-500 dark:text-primary-400">RIIIXCH</span>
+                        </p>
+                        <div class="h-px w-3 bg-slate-200 dark:bg-slate-800"></div>
                     </div>
                 </div>
             </div>

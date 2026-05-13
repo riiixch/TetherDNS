@@ -22,7 +22,11 @@
         "loading": "กำลังโหลด...",
         "no_results": "ไม่พบข้อมูล",
         "showing_results": "แสดง {start} - {end} จากทั้งหมด {total} รายการ",
-        "err_occurred": "เกิดข้อผิดพลาดที่ไม่คาดคิด"
+        "err_occurred": "เกิดข้อผิดพลาดที่ไม่คาดคิด",
+        "active": "ทำงานอยู่",
+        "disabled": "ปิดใช้งาน",
+        "next": "ถัดไป",
+        "prev": "ก่อนหน้า"
     },
     "nav": {
         "dashboard": "แดชบอร์ด",
@@ -192,6 +196,16 @@
         "err_required": "กรุณาระบุชื่อโฮสต์และเป้าหมาย (Content)",
         "add_success": "บันทึกเรคคอร์ด '{name}' สำเร็จ",
         "add_failed": "ไม่สามารถบันทึกเรคคอร์ดได้",
+        "delete_success": "ลบเรคคอร์ด '{name}' สำเร็จ",
+        "placeholder_a": "เช่น 1.2.3.4",
+        "placeholder_aaaa": "เช่น 2001:db8::1",
+        "placeholder_cname": "เช่น target.example.com",
+        "placeholder_mx": "เช่น mail.example.com",
+        "placeholder_txt": "ข้อความที่ต้องการระบุ",
+        "placeholder_ns": "เช่น ns1.example.com",
+        "placeholder_srv": "เช่น 0 5 5060 service.example.com",
+        "placeholder_caa": "เช่น 0 issue \"letsencrypt.org\"",
+        "ttl_auto": "อัตโนมัติ",
         "fully_propagated": "อัปเดตทั่วโลกแล้ว (Propagated)",
         "propagation_progress": "กำลังกระจายข้อมูล (Propagating...)",
         "expected_ip": "IP ที่คาดหวัง",
@@ -228,6 +242,8 @@
         "title": "การตั้งค่าระบบ (System Settings)",
         "subtitle": "กำหนดพฤติกรรมการทำงานของแอปพลิเคชันและการแจ้งเตือน",
         "subtitle_desc": "จัดการสิทธิ์ของผู้ดูแลระบบและความถี่ของ Background Daemon",
+        "discord_webhook": "Discord Webhook",
+        "line_notify": "LINE Notify",
         "tab_general": "ทั่วไป",
         "tab_security": "ความปลอดภัย",
         "tab_api": "Access Tokens",
@@ -369,7 +385,13 @@
         "days": "{n} วัน",
         "months": "{n} เดือน",
         "years": "{n} ปี",
-        "ago": "{time}ที่ผ่านมา"
+        "ago": "{time}ที่ผ่านมา",
+        "years_ago": "ปีที่ผ่านมา",
+        "months_ago": "เดือนที่ผ่านมา",
+        "days_ago": "วันที่ผ่านมา",
+        "hours_ago": "ชั่วโมงที่ผ่านมา",
+        "mins_ago": "นาทีที่ผ่านมา",
+        "seconds_ago": "วินาทีที่ผ่านมา"
     },
     "propagation": {
         "title": "สถานะการกระจายข้อมูล DNS (Propagation)",

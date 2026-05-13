@@ -89,6 +89,14 @@ const handleLogin = async () => {
                     class="mt-3 rounded-xl font-medium">
                     {{ $t('auth.back_to_login') }}
                 </UButton>
+
+                <div class="mt-6 flex items-center justify-center gap-2">
+                    <div class="h-px w-4 bg-slate-200 dark:bg-slate-800"></div>
+                    <p class="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-400 dark:text-slate-500">
+                        Design by <span class="text-primary-500 dark:text-primary-400 hover:text-primary-600 dark:hover:text-primary-300 cursor-default transition-colors">RIIIXCH</span>
+                    </p>
+                    <div class="h-px w-4 bg-slate-200 dark:bg-slate-800"></div>
+                </div>
             </div>
         </form>
     </UCard>
