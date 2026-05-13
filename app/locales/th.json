@@ -30,7 +30,8 @@
     },
     "nav": {
         "dashboard": "แดชบอร์ด",
-        "zones": "โดเมนโซน",
+        "zones": "โซน/โดเมน",
+        "records": "เรคคอร์ด",
         "accounts": "บัญชีผู้ใช้",
         "logs": "ประวัติการอัปเดต",
         "audit": "บันทึกระบบ",
@@ -395,8 +396,8 @@
     },
     "propagation": {
         "title": "สถานะการกระจายข้อมูล DNS (Propagation)",
-        "desc": "กำลังตรวจสอบสถานะ DNS Cache ข้าม Resolvers ทั่วโลกสำหรับ {name}",
-        "querying": "กำลังตรวจสอบเนมเซิร์ฟเวอร์หลัก (Global Resolvers)...",
+        "desc": "ตรวจสอบสถานะการอัปเดตข้อมูลของ '{name}' ผ่าน Public DNS Resolvers ทั่วโลก",
+        "querying": "กำลังส่งคำขอไปยัง DNS Resolvers...",
         "fully_propagated": "อัปเดตทั่วโลกแล้ว (Propagated)",
         "in_progress": "กำลังกระจายข้อมูล (In Progress)",
         "expected_ip": "IP เป้าหมาย:",

@@ -21,7 +21,7 @@ const navLinks = [
 ]
 
 // เช็ค Active State ของ Menu
-const isActive = (path: string) => route.path === path
+const isActive = (path: string) => route.path === path || route.path.startsWith(path + '/')
 
 // ตั้งค่า Dropdown สำหรับ User Profile (Desktop)
 const userMenuItems = ref<DropdownMenuItem[][]>([

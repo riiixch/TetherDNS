@@ -31,6 +31,7 @@
     "nav": {
         "dashboard": "Dashboard",
         "zones": "Zones",
+        "records": "Records",
         "accounts": "Accounts",
         "logs": "Update Logs",
         "audit": "Audit Logs",
@@ -395,8 +396,8 @@
     },
     "propagation": {
         "title": "Global DNS Propagation",
-        "desc": "Verifying DNS cache status across global resolvers for {name}",
-        "querying": "Interrogating global name servers...",
+        "desc": "Checking the status of '{name}' across public DNS resolvers worldwide.",
+        "querying": "Querying global DNS resolvers...",
         "fully_propagated": "Globally Propagated",
         "in_progress": "Propagation in Progress",
         "expected_ip": "Target IP:",

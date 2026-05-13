@@ -8,6 +8,7 @@ const { t } = useI18n()
 // State
 const accounts = ref<any[]>([])
 const pending = ref(true)
+const searchQuery = ref('')
 const isAddModalOpen = ref(false)
 
 // Delete Confirm Modal State
@@ -16,6 +17,15 @@ const deletingAccount = ref<any>(null)
 const deleteLoading = ref(false)
 
 // Computed
+const filteredAccounts = computed(() => {
+    if (!searchQuery.value) return accounts.value
+    const q = searchQuery.value.toLowerCase()
+    return accounts.value.filter(a => 
+        a.label.toLowerCase().includes(q) || 
+        a.email.toLowerCase().includes(q)
+    )
+})
+
 const columns = computed(() => [
     { accessorKey: 'label', header: t('accounts.col_label') },
     { accessorKey: 'email', header: t('accounts.col_email') },
@@ -81,15 +91,21 @@ onMounted(() => loadData())
         <template #header>
             <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div class="flex flex-col">
-                    <h2 class="text-lg font-bold text-slate-900 dark:text-white tracking-tight">{{ $t('accounts.title')
-                        }}</h2>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">{{ $t('accounts.subtitle')
-                        }}</p>
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
+                        {{ $t('accounts.title') }}
+                    </h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+                        {{ $t('accounts.subtitle') }}
+                    </p>
                 </div>
 
-                <div class="flex w-full md:w-auto justify-end">
+                <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+                    <UInput v-model="searchQuery" :placeholder="$t('common.search')" icon="i-heroicons-magnifying-glass"
+                        size="sm" class="w-full sm:w-64"
+                        :ui="{ root: 'rounded-xl shadow-sm transition-all focus-within:ring-2 focus-within:ring-primary-500' }" />
+                    
                     <UButton icon="i-heroicons-plus" color="primary" variant="solid"
-                        class="rounded-xl font-bold shadow-sm w-full md:w-auto justify-center"
+                        class="rounded-xl font-bold shadow-sm w-full sm:w-auto justify-center px-4" size="sm"
                         @click="isAddModalOpen = true">
                         {{ $t('accounts.add_account') }}
                     </UButton>
@@ -97,43 +113,100 @@ onMounted(() => loadData())
             </div>
         </template>
 
-        <div class="overflow-x-auto">
-            <UTable :data="accounts" :columns="columns" :loading="pending" :ui="{
-                th: 'bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold whitespace-nowrap py-3.5 border-b border-slate-200 dark:border-slate-800',
-                td: 'py-3 text-sm text-slate-600 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800/60',
+        <!-- Desktop Table View (lg and up) -->
+        <div class="hidden lg:block overflow-x-auto">
+            <UTable :data="filteredAccounts" :columns="columns" :loading="pending" :ui="{
+                th: 'bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold whitespace-nowrap py-4 border-b border-slate-200 dark:border-slate-800 lg:text-sm uppercase tracking-wider',
+                td: 'py-4 lg:text-base text-slate-600 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800/60',
                 tr: 'hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors'
             }">
                 <template #label-cell="{ row }">
-                    <span class="font-semibold text-slate-900 dark:text-white">{{ row.original.label }}</span>
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400 font-bold text-xs">
+                            {{ row.original.label.charAt(0).toUpperCase() }}
+                        </div>
+                        <span class="font-bold text-slate-900 dark:text-white">{{ row.original.label }}</span>
+                    </div>
                 </template>
 
                 <template #email-cell="{ row }">
-                    <span class="text-slate-500 dark:text-slate-400">{{ row.original.email }}</span>
+                    <span class="text-slate-500 dark:text-slate-400 font-medium">{{ row.original.email }}</span>
                 </template>
 
                 <template #zones-cell="{ row }">
-                    <UBadge color="info" variant="subtle" size="xs" class="font-bold">
-                        {{ row.original?._count?.zones || 0 }}
+                    <UBadge color="info" variant="subtle" size="sm" class="font-bold px-2.5">
+                        {{ row.original?._count?.zones || 0 }} {{ $t('nav.zones') }}
                     </UBadge>
                 </template>
 
                 <template #createdAt-cell="{ row }">
-                    <span class="text-xs font-medium text-slate-400">{{ formatDate(row.original.createdAt) }}</span>
+                    <span class="text-sm font-medium text-slate-400">{{ formatDate(row.original.createdAt) }}</span>
                 </template>
 
                 <template #actions-cell="{ row }">
-                    <div class="flex justify-end gap-1.5">
-                        <UButton size="xs" color="neutral" variant="ghost" icon="i-heroicons-signal"
-                            class="rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    <div class="flex justify-end gap-2">
+                        <UButton size="sm" color="neutral" variant="ghost" icon="i-heroicons-signal"
+                            class="rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-95"
                             @click="testConnection(row.original)">
                             {{ $t('common.test') }}
                         </UButton>
-                        <UButton size="xs" color="error" variant="ghost" icon="i-heroicons-trash"
-                            class="rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+                        <UButton size="sm" color="error" variant="ghost" icon="i-heroicons-trash"
+                            class="rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 transition-all active:scale-95"
                             @click="openDeleteModal(row.original)" />
                     </div>
                 </template>
             </UTable>
+        </div>
+
+        <!-- Mobile/Tablet Card View (below lg) -->
+        <div class="lg:hidden p-4 space-y-4 bg-slate-50/50 dark:bg-slate-950/20">
+            <template v-if="pending">
+                <div v-for="i in 3" :key="i"
+                    class="p-4 bg-white dark:bg-slate-900 rounded-2xl animate-pulse h-32 ring-1 ring-slate-200 dark:ring-slate-800">
+                </div>
+            </template>
+            <template v-else-if="filteredAccounts.length === 0">
+                <div class="py-12 text-center">
+                    <UIcon name="i-heroicons-user-group" class="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                    <p class="text-base font-bold text-slate-900 dark:text-white">{{ $t('common.no_results') }}</p>
+                </div>
+            </template>
+            <template v-else>
+                <div v-for="account in filteredAccounts" :key="account.id"
+                    class="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-4 hover:ring-2 hover:ring-primary-500/20 transition-all">
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400 font-bold">
+                                {{ account.label.charAt(0).toUpperCase() }}
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-900 dark:text-white leading-tight">{{ account.label }}
+                                </h3>
+                                <p class="text-xs text-slate-500 mt-1">{{ account.email }}</p>
+                            </div>
+                        </div>
+                        <UBadge color="info" variant="subtle" size="xs" class="font-bold">
+                            {{ account?._count?.zones || 0 }} {{ $t('nav.zones') }}
+                        </UBadge>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <span class="text-[10px] uppercase tracking-wider font-bold text-slate-400">
+                            {{ formatDate(account.createdAt) }}
+                        </span>
+                        <div class="flex gap-2">
+                            <UButton size="xs" color="neutral" variant="soft" icon="i-heroicons-signal"
+                                class="rounded-lg" @click="testConnection(account)">
+                                {{ $t('common.test') }}
+                            </UButton>
+                            <UButton size="xs" color="error" variant="soft" icon="i-heroicons-trash" class="rounded-lg"
+                                @click="openDeleteModal(account)" />
+                        </div>
+                    </div>
+                </div>
+            </template>
         </div>
 
         <AccountAddModal v-if="isAddModalOpen" @close="isAddModalOpen = false" @refresh="loadData" />

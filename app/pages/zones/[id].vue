@@ -230,60 +230,70 @@ onMounted(() => loadData())
         <UCard :ui="{ header: 'px-4 sm:px-6 py-5', body: 'p-0 sm:p-0' }"
             class="bg-white dark:bg-slate-900 shadow-sm overflow-hidden ring-1 ring-slate-200 dark:ring-slate-800">
             <template #header>
-                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full md:w-auto">
-                        <div class="flex flex-col">
-                            <h2 class="text-lg font-bold text-slate-900 dark:text-white tracking-tight">{{
-                                $t('records.title') }}</h2>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">{{
-                                $t('records.subtitle') }}</p>
+                <div class="flex flex-col gap-6 p-2">
+                    <!-- Title & Search Row -->
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <div class="flex flex-col gap-1">
+                            <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+                                {{ $t('records.title') }}
+                            </h2>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">
+                                {{ $t('records.subtitle') }}
+                            </p>
                         </div>
 
-                        <div class="hidden sm:block w-px h-8 bg-slate-200 dark:bg-slate-700 mx-2"></div>
-
-                        <UInput v-model="searchQuery" :placeholder="$t('records.search_placeholder')"
-                            icon="i-heroicons-magnifying-glass" class="w-full sm:max-w-xs"
-                            :ui="{ root: 'rounded-xl transition-colors focus-within:ring-primary-500' }" />
+                        <div class="w-full lg:max-w-xs">
+                            <UInput v-model="searchQuery" :placeholder="$t('records.search_placeholder')"
+                                icon="i-heroicons-magnifying-glass" size="md"
+                                :ui="{ root: 'rounded-2xl shadow-sm transition-all focus-within:ring-2 focus-within:ring-primary-500' }" />
+                        </div>
                     </div>
-                    <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto justify-end">
-                        <UButton icon="i-heroicons-arrow-path" color="neutral" variant="soft"
-                            class="rounded-xl font-semibold shadow-sm" :loading="pending" @click="loadData">
-                            <span class="hidden sm:inline">{{ $t('common.refresh') }}</span>
-                        </UButton>
+
+                    <!-- Actions Row -->
+                    <div class="flex flex-col sm:flex-row items-center gap-3">
+                        <div class="flex items-center gap-2 w-full sm:w-auto">
+                            <UButton icon="i-heroicons-arrow-path" color="neutral" variant="soft"
+                                class="rounded-2xl font-bold flex-1 justify-center sm:px-6" size="md" :loading="pending"
+                                @click="loadData">
+                                {{ $t('common.refresh') }}
+                            </UButton>
+                        </div>
+
                         <UButton icon="i-heroicons-plus" color="primary" variant="solid"
-                            class="rounded-xl font-bold shadow-sm" @click="isAddModalOpen = true">
+                            class="rounded-2xl font-black shadow-lg shadow-primary-500/20 w-full sm:w-auto justify-center px-8"
+                            size="md" @click="isAddModalOpen = true">
                             {{ $t('records.add_record') }}
                         </UButton>
                     </div>
                 </div>
-
-                <div class="sm:hidden mt-4">
-                    <UInput v-model="searchQuery" :placeholder="$t('records.search_placeholder')"
-                        icon="i-heroicons-magnifying-glass" class="w-full" :ui="{ root: 'rounded-xl' }" />
-                </div>
             </template>
 
-            <div class="overflow-x-auto relative min-h-[300px]">
+            <!-- Desktop Table View (lg and up) -->
+            <div class="hidden lg:block overflow-x-auto relative min-h-[300px]">
                 <UTable :data="filteredRecords" :columns="columns" :loading="pending" :ui="{
-                    th: 'bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold whitespace-nowrap py-3.5 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-10',
-                    td: 'py-3 text-sm text-slate-600 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800/60',
+                    th: 'bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold whitespace-nowrap py-4 border-b border-slate-200 dark:border-slate-800 lg:text-sm uppercase tracking-wider sticky top-0 z-10',
+                    td: 'py-4 lg:text-base text-slate-600 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800/60',
                     tr: 'hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors'
                 }">
                     <template #type-cell="{ row }">
                         <UBadge
                             :color="row.original.type === 'A' ? 'primary' : row.original.type === 'AAAA' ? 'info' : 'neutral'"
-                            variant="subtle" class="font-bold">
+                            variant="subtle" class="font-bold px-2.5">
                             {{ row.original.type }}
                         </UBadge>
                     </template>
+                    <template #name-cell="{ row }">
+                        <span class="font-bold text-slate-900 dark:text-white">{{ row.original.name }}</span>
+                    </template>
                     <template #content-cell="{ row }">
-                        <div class="max-w-[20ch] sm:max-w-[40ch] truncate text-slate-900 dark:text-white font-mono text-xs"
+                        <div class="max-w-[20ch] sm:max-w-[40ch] truncate text-slate-600 dark:text-slate-400 font-mono text-sm"
                             :title="row.original.content">
                             {{ row.original.content }}
                         </div>
                     </template>
                     <template #proxied-cell="{ row }">
-                        <UBadge :color="row.original.proxied ? 'warning' : 'neutral'" variant="subtle" size="xs">
+                        <UBadge :color="row.original.proxied ? 'warning' : 'neutral'" variant="soft" size="xs"
+                            class="font-bold uppercase tracking-tighter px-2">
                             {{ row.original.proxied ? $t('records.proxied') : $t('records.dns_only') }}
                         </UBadge>
                     </template>
@@ -292,20 +302,22 @@ onMounted(() => loadData())
                             @update:model-value="handleToggle(row.original)" color="primary" />
                     </template>
                     <template #actions-cell="{ row }">
-                        <div class="flex justify-end gap-1.5">
-                            <UButton v-if="row.original.type === 'A' || row.original.type === 'AAAA'" size="xs"
-                                color="neutral" variant="ghost" icon="i-heroicons-clock" title="View IP History"
-                                class="rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+                        <div class="flex justify-end gap-2">
+                            <UButton v-if="row.original.type === 'A' || row.original.type === 'AAAA'" size="sm"
+                                color="neutral" variant="ghost" icon="i-heroicons-clock"
+                                :title="$t('records.history_title')"
+                                class="rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-95"
                                 @click="openHistory(row.original)" />
-                            <UButton v-if="row.original.type === 'A' || row.original.type === 'AAAA'" size="xs"
-                                color="info" variant="ghost" icon="i-heroicons-globe-alt" title="Check DNS Propagation"
-                                class="rounded-lg hover:bg-blue-50 dark:hover:bg-blue-500/10"
+                            <UButton v-if="row.original.type === 'A' || row.original.type === 'AAAA'" size="sm"
+                                color="info" variant="ghost" icon="i-heroicons-globe-alt"
+                                :title="$t('propagation.title')"
+                                class="rounded-xl hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-all active:scale-95"
                                 @click="checkPropagation(row.original)" />
-                            <UButton size="xs" color="neutral" variant="ghost" icon="i-heroicons-pencil-square"
-                                class="rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+                            <UButton size="sm" color="neutral" variant="ghost" icon="i-heroicons-pencil-square"
+                                class="rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all active:scale-95"
                                 @click="openEdit(row.original)" />
-                            <UButton size="xs" color="error" variant="ghost" icon="i-heroicons-trash"
-                                class="rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10"
+                            <UButton size="sm" color="error" variant="ghost" icon="i-heroicons-trash"
+                                class="rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 transition-all active:scale-95"
                                 @click="openDeleteModal(row.original)" />
                         </div>
                     </template>
@@ -319,6 +331,86 @@ onMounted(() => loadData())
                     </div>
                     <p class="text-sm font-medium text-slate-500">{{ $t('common.no_results') }}</p>
                 </div>
+            </div>
+
+            <!-- Mobile/Tablet Card View (below lg) -->
+            <div class="lg:hidden p-4 space-y-4 bg-slate-50/50 dark:bg-slate-950/20 min-h-[400px]">
+                <template v-if="pending">
+                    <div v-for="i in 3" :key="i"
+                        class="p-5 bg-white dark:bg-slate-900 rounded-3xl animate-pulse h-48 ring-1 ring-slate-200 dark:ring-slate-800">
+                    </div>
+                </template>
+                <template v-else-if="filteredRecords.length === 0">
+                    <div class="py-20 text-center">
+                        <div
+                            class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <UIcon name="i-heroicons-magnifying-glass" class="w-8 h-8 text-slate-400" />
+                        </div>
+                        <p class="text-base font-bold text-slate-900 dark:text-white">{{ $t('common.no_results') }}</p>
+                    </div>
+                </template>
+                <template v-else>
+                    <div v-for="record in filteredRecords" :key="record.id"
+                        class="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-5 hover:border-primary-500/50 transition-all group">
+
+                        <!-- Top Info: Type + Name + Proxied -->
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-center gap-4 min-w-0">
+                                <div class="w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center font-black text-xs group-hover:scale-105 transition-transform duration-300"
+                                    :class="record.type === 'A' ? 'bg-primary-500/10 text-primary-500' : record.type === 'AAAA' ? 'bg-blue-500/10 text-blue-500' : 'bg-slate-500/10 text-slate-500'">
+                                    {{ record.type }}
+                                </div>
+                                <div class="min-w-0">
+                                    <h3
+                                        class="text-lg font-medium text-slate-900 dark:text-white leading-tight truncate">
+                                        {{ record.name }}
+                                    </h3>
+                                    <p class="text-[11px] font-mono font-bold text-slate-400 mt-1 truncate">
+                                        {{ record.content }}
+                                    </p>
+                                </div>
+                            </div>
+                            <UBadge :color="record.proxied ? 'warning' : 'neutral'" variant="soft" size="xs"
+                                class="text-sm font-medium px-2 rounded-lg">
+                                {{ record.proxied ? 'Proxy' : 'DNS' }}
+                            </UBadge>
+                        </div>
+
+                        <!-- DDNS Status Box -->
+                        <div
+                            class="flex items-center justify-between p-4 bg-slate-50/50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800/60">
+                            <div class="flex flex-col">
+                                <span
+                                    class="text-[10px] uppercase font-black text-slate-400 tracking-widest leading-none mb-1">Dynamic
+                                    DNS</span>
+                                <span class="text-sm font-bold"
+                                    :class="record.isAutoUpdate ? 'text-primary-500' : 'text-slate-500'">
+                                    {{ record.isAutoUpdate ? 'Auto Update Active' : 'Manual Mode' }}
+                                </span>
+                            </div>
+                            <USwitch :model-value="record.isAutoUpdate" @update:model-value="handleToggle(record)"
+                                size="md" color="primary" />
+                        </div>
+
+                        <!-- Bottom Actions: Full Width -->
+                        <div class="flex gap-2 pt-1">
+                            <div class="flex gap-2 flex-1">
+                                <UButton v-if="record.type === 'A' || record.type === 'AAAA'" size="md" color="neutral"
+                                    variant="soft" icon="i-heroicons-clock" class="rounded-2xl px-3"
+                                    @click="openHistory(record)" />
+                                <UButton v-if="record.type === 'A' || record.type === 'AAAA'" size="md" color="info"
+                                    variant="soft" icon="i-heroicons-globe-alt" class="rounded-2xl px-3"
+                                    @click="checkPropagation(record)" />
+                                <UButton size="md" color="neutral" variant="soft" icon="i-heroicons-pencil-square" block
+                                    class="rounded-2xl font-bold flex-1 justify-center" @click="openEdit(record)">
+                                    {{ $t('common.edit') }}
+                                </UButton>
+                            </div>
+                            <UButton size="md" color="error" variant="soft" icon="i-heroicons-trash"
+                                class="rounded-2xl px-3" @click="openDeleteModal(record)" />
+                        </div>
+                    </div>
+                </template>
             </div>
         </UCard>
 
