@@ -117,25 +117,21 @@ onMounted(() => loadData())
                 td: 'py-4 lg:text-base text-slate-600 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800/60',
                 tr: 'hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors'
             }">
-                <template #createdAt-cell="{ row }">
+                <template #time-cell="{ row }">
                     <span class="font-medium text-slate-500 tabular-nums">{{ formatDate(row.original.createdAt) }}</span>
                 </template>
 
-                <template #zoneName-cell="{ row }">
+                <template #zone-cell="{ row }">
                     <div class="flex items-center gap-2">
                         <UIcon name="i-heroicons-globe-alt" class="w-4 h-4 text-blue-500" />
-                        <span class="font-bold text-slate-900 dark:text-white">{{ row.original.zoneName }}</span>
+                        <span class="font-bold text-slate-900 dark:text-white">{{ row.original.record?.zone?.name || 'N/A' }}</span>
                     </div>
                 </template>
 
-                <template #recordName-cell="{ row }">
+                <template #record-cell="{ row }">
                     <span class="font-mono text-sm px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700">
-                        {{ row.original.recordName }}
+                        {{ row.original.record?.name || 'N/A' }}
                     </span>
-                </template>
-
-                <template #content-cell="{ row }">
-                    <span class="font-mono text-sm font-bold text-primary-600 dark:text-primary-400">{{ row.original.content }}</span>
                 </template>
 
                 <template #status-cell="{ row }">
@@ -166,7 +162,7 @@ onMounted(() => loadData())
                             <span class="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-1">{{ formatDate(log.createdAt) }}</span>
                             <div class="flex items-center gap-2">
                                 <UIcon name="i-heroicons-globe-alt" class="w-4 h-4 text-blue-500" />
-                                <h3 class="font-bold text-slate-900 dark:text-white truncate max-w-[200px]">{{ log.zoneName }}</h3>
+                                <h3 class="font-bold text-slate-900 dark:text-white truncate max-w-[200px]">{{ log.record?.zone?.name || 'N/A' }}</h3>
                             </div>
                         </div>
                         <UBadge :color="log.status === 'SUCCESS' ? 'success' : 'error'" variant="soft" size="xs" class="font-black rounded-lg">
@@ -177,11 +173,11 @@ onMounted(() => loadData())
                     <div class="flex flex-col p-4 bg-slate-50/50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800/60 gap-3">
                         <div class="flex justify-between items-center">
                             <span class="text-[10px] uppercase font-black text-slate-400">Record</span>
-                            <span class="font-mono text-xs font-bold text-slate-700 dark:text-slate-200">{{ log.recordName }}</span>
+                            <span class="font-mono text-xs font-bold text-slate-700 dark:text-slate-200">{{ log.record?.name || 'N/A' }}</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <span class="text-[10px] uppercase font-black text-slate-400">Update Content</span>
-                            <span class="font-mono text-xs font-bold text-primary-500">{{ log.content }}</span>
+                            <span class="font-mono text-xs font-bold text-primary-500">{{ log.newIp || '-' }}</span>
                         </div>
                     </div>
                 </div>
