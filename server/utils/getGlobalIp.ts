@@ -8,8 +8,8 @@ const DEFAULT_PROVIDERS = [
 ]
 
 const DEFAULT_V6_PROVIDERS = [
-    'https://api64.ipify.org?format=json',
-    'https://ifconfig.co/ip'
+    'https://api6.ipify.org?format=json',
+    'https://v6.ident.me'
 ]
 
 export async function getGlobalIp(ipv6 = false): Promise<string | null> {
@@ -31,7 +31,13 @@ export async function getGlobalIp(ipv6 = false): Promise<string | null> {
 
     for (const provider of providers) {
         const ip = await fetchFromTarget(provider)
-        if (ip) return ip
+        if (ip) {
+            const isV4 = /^(\d{1,3}\.){3}\d{1,3}$/.test(ip)
+            const isV6 = /^[a-fA-F0-9:]+$/.test(ip) && ip.includes(':')
+
+            if (ipv6 && isV6) return ip
+            if (!ipv6 && isV4) return ip
+        }
     }
 
     return null
