@@ -6,10 +6,10 @@ export const useRecords = () => {
         return data?.data || []
     }
 
-    const addRecord = async (cfZoneId: string, type: string, name: string, content: string, proxied: boolean, ttl: number) => {
+    const addRecord = async (cfZoneId: string, type: string, name: string, content: string, proxied: boolean, ttl: number, extra: Record<string, any> = {}) => {
         return await $fetch('/api/records', {
             method: 'POST',
-            body: { cfZoneId, type, name, content, proxied, ttl }
+            body: { cfZoneId, type, name, content, proxied, ttl, ...extra }
         })
     }
 

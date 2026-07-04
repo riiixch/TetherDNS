@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.5.0
- * Query Engine version: 280c870be64f457428992c43c1f6d557fab6e29e
+ * Prisma Client JS version: 7.8.0
+ * Query Engine version: 3c6e192761c0362d496ed980de936e2f3cebcd3a
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.5.0",
-  engine: "280c870be64f457428992c43c1f6d557fab6e29e"
+  client: "7.8.0",
+  engine: "3c6e192761c0362d496ed980de936e2f3cebcd3a"
 }
 
 /**
@@ -389,6 +389,7 @@ export const ModelName = {
   User: 'User',
   ApiToken: 'ApiToken',
   DnsRecord: 'DnsRecord',
+  CloudflareTunnel: 'CloudflareTunnel',
   UpdateLog: 'UpdateLog',
   Settings: 'Settings',
   NotificationChannel: 'NotificationChannel',
@@ -408,7 +409,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "cloudflareAccount" | "zone" | "user" | "apiToken" | "dnsRecord" | "updateLog" | "settings" | "notificationChannel" | "auditLog"
+    modelProps: "cloudflareAccount" | "zone" | "user" | "apiToken" | "dnsRecord" | "cloudflareTunnel" | "updateLog" | "settings" | "notificationChannel" | "auditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -779,6 +780,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.DnsRecordCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.DnsRecordCountAggregateOutputType> | number
+        }
+      }
+    }
+    CloudflareTunnel: {
+      payload: Prisma.$CloudflareTunnelPayload<ExtArgs>
+      fields: Prisma.CloudflareTunnelFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CloudflareTunnelFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CloudflareTunnelPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CloudflareTunnelFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CloudflareTunnelPayload>
+        }
+        findFirst: {
+          args: Prisma.CloudflareTunnelFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CloudflareTunnelPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CloudflareTunnelFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CloudflareTunnelPayload>
+        }
+        findMany: {
+          args: Prisma.CloudflareTunnelFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CloudflareTunnelPayload>[]
+        }
+        create: {
+          args: Prisma.CloudflareTunnelCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CloudflareTunnelPayload>
+        }
+        createMany: {
+          args: Prisma.CloudflareTunnelCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CloudflareTunnelCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CloudflareTunnelPayload>[]
+        }
+        delete: {
+          args: Prisma.CloudflareTunnelDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CloudflareTunnelPayload>
+        }
+        update: {
+          args: Prisma.CloudflareTunnelUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CloudflareTunnelPayload>
+        }
+        deleteMany: {
+          args: Prisma.CloudflareTunnelDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CloudflareTunnelUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CloudflareTunnelUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CloudflareTunnelPayload>[]
+        }
+        upsert: {
+          args: Prisma.CloudflareTunnelUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CloudflareTunnelPayload>
+        }
+        aggregate: {
+          args: Prisma.CloudflareTunnelAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCloudflareTunnel>
+        }
+        groupBy: {
+          args: Prisma.CloudflareTunnelGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CloudflareTunnelGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CloudflareTunnelCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CloudflareTunnelCountAggregateOutputType> | number
         }
       }
     }
@@ -1168,11 +1243,28 @@ export const DnsRecordScalarFieldEnum = {
   content: 'content',
   isAutoUpdate: 'isAutoUpdate',
   proxied: 'proxied',
+  routingMode: 'routingMode',
+  tunnelId: 'tunnelId',
+  localAddress: 'localAddress',
   updateToken: 'updateToken',
   zoneId: 'zoneId'
 } as const
 
 export type DnsRecordScalarFieldEnum = (typeof DnsRecordScalarFieldEnum)[keyof typeof DnsRecordScalarFieldEnum]
+
+
+export const CloudflareTunnelScalarFieldEnum = {
+  id: 'id',
+  tunnelId: 'tunnelId',
+  name: 'name',
+  token: 'token',
+  status: 'status',
+  connections: 'connections',
+  accountId: 'accountId',
+  createdAt: 'createdAt'
+} as const
+
+export type CloudflareTunnelScalarFieldEnum = (typeof CloudflareTunnelScalarFieldEnum)[keyof typeof CloudflareTunnelScalarFieldEnum]
 
 
 export const UpdateLogScalarFieldEnum = {
@@ -1370,6 +1462,21 @@ export type PrismaClientOptions = ({
    * ```
    */
   comments?: runtime.SqlCommenterPlugin[]
+  /**
+   * Optional maximum size for the query plan cache. If not provided, a default size will be used.
+   * A value of `0` can be used to disable the cache entirely. A higher cache size can improve
+   * performance for applications that execute a large number of unique queries, while a smaller
+   * cache size can reduce memory usage.
+   * 
+   * @example
+   * ```
+   * const prisma = new PrismaClient({
+   *   adapter,
+   *   queryPlanCacheMaxSize: 100,
+   * })
+   * ```
+   */
+  queryPlanCacheMaxSize?: number
 }
 export type GlobalOmitConfig = {
   cloudflareAccount?: Prisma.CloudflareAccountOmit
@@ -1377,6 +1484,7 @@ export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   apiToken?: Prisma.ApiTokenOmit
   dnsRecord?: Prisma.DnsRecordOmit
+  cloudflareTunnel?: Prisma.CloudflareTunnelOmit
   updateLog?: Prisma.UpdateLogOmit
   settings?: Prisma.SettingsOmit
   notificationChannel?: Prisma.NotificationChannelOmit

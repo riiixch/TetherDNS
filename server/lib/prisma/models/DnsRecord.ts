@@ -44,6 +44,9 @@ export type DnsRecordMinAggregateOutputType = {
   content: string | null
   isAutoUpdate: boolean | null
   proxied: boolean | null
+  routingMode: string | null
+  tunnelId: string | null
+  localAddress: string | null
   updateToken: string | null
   zoneId: number | null
 }
@@ -56,6 +59,9 @@ export type DnsRecordMaxAggregateOutputType = {
   content: string | null
   isAutoUpdate: boolean | null
   proxied: boolean | null
+  routingMode: string | null
+  tunnelId: string | null
+  localAddress: string | null
   updateToken: string | null
   zoneId: number | null
 }
@@ -68,6 +74,9 @@ export type DnsRecordCountAggregateOutputType = {
   content: number
   isAutoUpdate: number
   proxied: number
+  routingMode: number
+  tunnelId: number
+  localAddress: number
   updateToken: number
   zoneId: number
   _all: number
@@ -92,6 +101,9 @@ export type DnsRecordMinAggregateInputType = {
   content?: true
   isAutoUpdate?: true
   proxied?: true
+  routingMode?: true
+  tunnelId?: true
+  localAddress?: true
   updateToken?: true
   zoneId?: true
 }
@@ -104,6 +116,9 @@ export type DnsRecordMaxAggregateInputType = {
   content?: true
   isAutoUpdate?: true
   proxied?: true
+  routingMode?: true
+  tunnelId?: true
+  localAddress?: true
   updateToken?: true
   zoneId?: true
 }
@@ -116,6 +131,9 @@ export type DnsRecordCountAggregateInputType = {
   content?: true
   isAutoUpdate?: true
   proxied?: true
+  routingMode?: true
+  tunnelId?: true
+  localAddress?: true
   updateToken?: true
   zoneId?: true
   _all?: true
@@ -215,6 +233,9 @@ export type DnsRecordGroupByOutputType = {
   content: string
   isAutoUpdate: boolean
   proxied: boolean
+  routingMode: string
+  tunnelId: string | null
+  localAddress: string | null
   updateToken: string | null
   zoneId: number
   _count: DnsRecordCountAggregateOutputType | null
@@ -224,7 +245,7 @@ export type DnsRecordGroupByOutputType = {
   _max: DnsRecordMaxAggregateOutputType | null
 }
 
-type GetDnsRecordGroupByPayload<T extends DnsRecordGroupByArgs> = Prisma.PrismaPromise<
+export type GetDnsRecordGroupByPayload<T extends DnsRecordGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<DnsRecordGroupByOutputType, T['by']> &
       {
@@ -250,6 +271,9 @@ export type DnsRecordWhereInput = {
   content?: Prisma.StringFilter<"DnsRecord"> | string
   isAutoUpdate?: Prisma.BoolFilter<"DnsRecord"> | boolean
   proxied?: Prisma.BoolFilter<"DnsRecord"> | boolean
+  routingMode?: Prisma.StringFilter<"DnsRecord"> | string
+  tunnelId?: Prisma.StringNullableFilter<"DnsRecord"> | string | null
+  localAddress?: Prisma.StringNullableFilter<"DnsRecord"> | string | null
   updateToken?: Prisma.StringNullableFilter<"DnsRecord"> | string | null
   zoneId?: Prisma.IntFilter<"DnsRecord"> | number
   zone?: Prisma.XOR<Prisma.ZoneScalarRelationFilter, Prisma.ZoneWhereInput>
@@ -264,6 +288,9 @@ export type DnsRecordOrderByWithRelationInput = {
   content?: Prisma.SortOrder
   isAutoUpdate?: Prisma.SortOrder
   proxied?: Prisma.SortOrder
+  routingMode?: Prisma.SortOrder
+  tunnelId?: Prisma.SortOrderInput | Prisma.SortOrder
+  localAddress?: Prisma.SortOrderInput | Prisma.SortOrder
   updateToken?: Prisma.SortOrderInput | Prisma.SortOrder
   zoneId?: Prisma.SortOrder
   zone?: Prisma.ZoneOrderByWithRelationInput
@@ -282,6 +309,9 @@ export type DnsRecordWhereUniqueInput = Prisma.AtLeast<{
   content?: Prisma.StringFilter<"DnsRecord"> | string
   isAutoUpdate?: Prisma.BoolFilter<"DnsRecord"> | boolean
   proxied?: Prisma.BoolFilter<"DnsRecord"> | boolean
+  routingMode?: Prisma.StringFilter<"DnsRecord"> | string
+  tunnelId?: Prisma.StringNullableFilter<"DnsRecord"> | string | null
+  localAddress?: Prisma.StringNullableFilter<"DnsRecord"> | string | null
   zoneId?: Prisma.IntFilter<"DnsRecord"> | number
   zone?: Prisma.XOR<Prisma.ZoneScalarRelationFilter, Prisma.ZoneWhereInput>
   updateLogs?: Prisma.UpdateLogListRelationFilter
@@ -295,6 +325,9 @@ export type DnsRecordOrderByWithAggregationInput = {
   content?: Prisma.SortOrder
   isAutoUpdate?: Prisma.SortOrder
   proxied?: Prisma.SortOrder
+  routingMode?: Prisma.SortOrder
+  tunnelId?: Prisma.SortOrderInput | Prisma.SortOrder
+  localAddress?: Prisma.SortOrderInput | Prisma.SortOrder
   updateToken?: Prisma.SortOrderInput | Prisma.SortOrder
   zoneId?: Prisma.SortOrder
   _count?: Prisma.DnsRecordCountOrderByAggregateInput
@@ -315,6 +348,9 @@ export type DnsRecordScalarWhereWithAggregatesInput = {
   content?: Prisma.StringWithAggregatesFilter<"DnsRecord"> | string
   isAutoUpdate?: Prisma.BoolWithAggregatesFilter<"DnsRecord"> | boolean
   proxied?: Prisma.BoolWithAggregatesFilter<"DnsRecord"> | boolean
+  routingMode?: Prisma.StringWithAggregatesFilter<"DnsRecord"> | string
+  tunnelId?: Prisma.StringNullableWithAggregatesFilter<"DnsRecord"> | string | null
+  localAddress?: Prisma.StringNullableWithAggregatesFilter<"DnsRecord"> | string | null
   updateToken?: Prisma.StringNullableWithAggregatesFilter<"DnsRecord"> | string | null
   zoneId?: Prisma.IntWithAggregatesFilter<"DnsRecord"> | number
 }
@@ -326,6 +362,9 @@ export type DnsRecordCreateInput = {
   content: string
   isAutoUpdate?: boolean
   proxied?: boolean
+  routingMode?: string
+  tunnelId?: string | null
+  localAddress?: string | null
   updateToken?: string | null
   zone: Prisma.ZoneCreateNestedOneWithoutRecordsInput
   updateLogs?: Prisma.UpdateLogCreateNestedManyWithoutRecordInput
@@ -339,6 +378,9 @@ export type DnsRecordUncheckedCreateInput = {
   content: string
   isAutoUpdate?: boolean
   proxied?: boolean
+  routingMode?: string
+  tunnelId?: string | null
+  localAddress?: string | null
   updateToken?: string | null
   zoneId: number
   updateLogs?: Prisma.UpdateLogUncheckedCreateNestedManyWithoutRecordInput
@@ -351,6 +393,9 @@ export type DnsRecordUpdateInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   isAutoUpdate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   proxied?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  routingMode?: Prisma.StringFieldUpdateOperationsInput | string
+  tunnelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  localAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updateToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zone?: Prisma.ZoneUpdateOneRequiredWithoutRecordsNestedInput
   updateLogs?: Prisma.UpdateLogUpdateManyWithoutRecordNestedInput
@@ -364,6 +409,9 @@ export type DnsRecordUncheckedUpdateInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   isAutoUpdate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   proxied?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  routingMode?: Prisma.StringFieldUpdateOperationsInput | string
+  tunnelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  localAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updateToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoneId?: Prisma.IntFieldUpdateOperationsInput | number
   updateLogs?: Prisma.UpdateLogUncheckedUpdateManyWithoutRecordNestedInput
@@ -377,6 +425,9 @@ export type DnsRecordCreateManyInput = {
   content: string
   isAutoUpdate?: boolean
   proxied?: boolean
+  routingMode?: string
+  tunnelId?: string | null
+  localAddress?: string | null
   updateToken?: string | null
   zoneId: number
 }
@@ -388,6 +439,9 @@ export type DnsRecordUpdateManyMutationInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   isAutoUpdate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   proxied?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  routingMode?: Prisma.StringFieldUpdateOperationsInput | string
+  tunnelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  localAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updateToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -399,6 +453,9 @@ export type DnsRecordUncheckedUpdateManyInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   isAutoUpdate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   proxied?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  routingMode?: Prisma.StringFieldUpdateOperationsInput | string
+  tunnelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  localAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updateToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoneId?: Prisma.IntFieldUpdateOperationsInput | number
 }
@@ -421,6 +478,9 @@ export type DnsRecordCountOrderByAggregateInput = {
   content?: Prisma.SortOrder
   isAutoUpdate?: Prisma.SortOrder
   proxied?: Prisma.SortOrder
+  routingMode?: Prisma.SortOrder
+  tunnelId?: Prisma.SortOrder
+  localAddress?: Prisma.SortOrder
   updateToken?: Prisma.SortOrder
   zoneId?: Prisma.SortOrder
 }
@@ -438,6 +498,9 @@ export type DnsRecordMaxOrderByAggregateInput = {
   content?: Prisma.SortOrder
   isAutoUpdate?: Prisma.SortOrder
   proxied?: Prisma.SortOrder
+  routingMode?: Prisma.SortOrder
+  tunnelId?: Prisma.SortOrder
+  localAddress?: Prisma.SortOrder
   updateToken?: Prisma.SortOrder
   zoneId?: Prisma.SortOrder
 }
@@ -450,6 +513,9 @@ export type DnsRecordMinOrderByAggregateInput = {
   content?: Prisma.SortOrder
   isAutoUpdate?: Prisma.SortOrder
   proxied?: Prisma.SortOrder
+  routingMode?: Prisma.SortOrder
+  tunnelId?: Prisma.SortOrder
+  localAddress?: Prisma.SortOrder
   updateToken?: Prisma.SortOrder
   zoneId?: Prisma.SortOrder
 }
@@ -527,6 +593,9 @@ export type DnsRecordCreateWithoutZoneInput = {
   content: string
   isAutoUpdate?: boolean
   proxied?: boolean
+  routingMode?: string
+  tunnelId?: string | null
+  localAddress?: string | null
   updateToken?: string | null
   updateLogs?: Prisma.UpdateLogCreateNestedManyWithoutRecordInput
 }
@@ -539,6 +608,9 @@ export type DnsRecordUncheckedCreateWithoutZoneInput = {
   content: string
   isAutoUpdate?: boolean
   proxied?: boolean
+  routingMode?: string
+  tunnelId?: string | null
+  localAddress?: string | null
   updateToken?: string | null
   updateLogs?: Prisma.UpdateLogUncheckedCreateNestedManyWithoutRecordInput
 }
@@ -579,6 +651,9 @@ export type DnsRecordScalarWhereInput = {
   content?: Prisma.StringFilter<"DnsRecord"> | string
   isAutoUpdate?: Prisma.BoolFilter<"DnsRecord"> | boolean
   proxied?: Prisma.BoolFilter<"DnsRecord"> | boolean
+  routingMode?: Prisma.StringFilter<"DnsRecord"> | string
+  tunnelId?: Prisma.StringNullableFilter<"DnsRecord"> | string | null
+  localAddress?: Prisma.StringNullableFilter<"DnsRecord"> | string | null
   updateToken?: Prisma.StringNullableFilter<"DnsRecord"> | string | null
   zoneId?: Prisma.IntFilter<"DnsRecord"> | number
 }
@@ -590,6 +665,9 @@ export type DnsRecordCreateWithoutUpdateLogsInput = {
   content: string
   isAutoUpdate?: boolean
   proxied?: boolean
+  routingMode?: string
+  tunnelId?: string | null
+  localAddress?: string | null
   updateToken?: string | null
   zone: Prisma.ZoneCreateNestedOneWithoutRecordsInput
 }
@@ -602,6 +680,9 @@ export type DnsRecordUncheckedCreateWithoutUpdateLogsInput = {
   content: string
   isAutoUpdate?: boolean
   proxied?: boolean
+  routingMode?: string
+  tunnelId?: string | null
+  localAddress?: string | null
   updateToken?: string | null
   zoneId: number
 }
@@ -629,6 +710,9 @@ export type DnsRecordUpdateWithoutUpdateLogsInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   isAutoUpdate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   proxied?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  routingMode?: Prisma.StringFieldUpdateOperationsInput | string
+  tunnelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  localAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updateToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zone?: Prisma.ZoneUpdateOneRequiredWithoutRecordsNestedInput
 }
@@ -641,6 +725,9 @@ export type DnsRecordUncheckedUpdateWithoutUpdateLogsInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   isAutoUpdate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   proxied?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  routingMode?: Prisma.StringFieldUpdateOperationsInput | string
+  tunnelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  localAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updateToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoneId?: Prisma.IntFieldUpdateOperationsInput | number
 }
@@ -653,6 +740,9 @@ export type DnsRecordCreateManyZoneInput = {
   content: string
   isAutoUpdate?: boolean
   proxied?: boolean
+  routingMode?: string
+  tunnelId?: string | null
+  localAddress?: string | null
   updateToken?: string | null
 }
 
@@ -663,6 +753,9 @@ export type DnsRecordUpdateWithoutZoneInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   isAutoUpdate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   proxied?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  routingMode?: Prisma.StringFieldUpdateOperationsInput | string
+  tunnelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  localAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updateToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updateLogs?: Prisma.UpdateLogUpdateManyWithoutRecordNestedInput
 }
@@ -675,6 +768,9 @@ export type DnsRecordUncheckedUpdateWithoutZoneInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   isAutoUpdate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   proxied?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  routingMode?: Prisma.StringFieldUpdateOperationsInput | string
+  tunnelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  localAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updateToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updateLogs?: Prisma.UpdateLogUncheckedUpdateManyWithoutRecordNestedInput
 }
@@ -687,6 +783,9 @@ export type DnsRecordUncheckedUpdateManyWithoutZoneInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   isAutoUpdate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   proxied?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  routingMode?: Prisma.StringFieldUpdateOperationsInput | string
+  tunnelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  localAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updateToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -729,6 +828,9 @@ export type DnsRecordSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   content?: boolean
   isAutoUpdate?: boolean
   proxied?: boolean
+  routingMode?: boolean
+  tunnelId?: boolean
+  localAddress?: boolean
   updateToken?: boolean
   zoneId?: boolean
   zone?: boolean | Prisma.ZoneDefaultArgs<ExtArgs>
@@ -744,6 +846,9 @@ export type DnsRecordSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   content?: boolean
   isAutoUpdate?: boolean
   proxied?: boolean
+  routingMode?: boolean
+  tunnelId?: boolean
+  localAddress?: boolean
   updateToken?: boolean
   zoneId?: boolean
   zone?: boolean | Prisma.ZoneDefaultArgs<ExtArgs>
@@ -757,6 +862,9 @@ export type DnsRecordSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   content?: boolean
   isAutoUpdate?: boolean
   proxied?: boolean
+  routingMode?: boolean
+  tunnelId?: boolean
+  localAddress?: boolean
   updateToken?: boolean
   zoneId?: boolean
   zone?: boolean | Prisma.ZoneDefaultArgs<ExtArgs>
@@ -770,11 +878,14 @@ export type DnsRecordSelectScalar = {
   content?: boolean
   isAutoUpdate?: boolean
   proxied?: boolean
+  routingMode?: boolean
+  tunnelId?: boolean
+  localAddress?: boolean
   updateToken?: boolean
   zoneId?: boolean
 }
 
-export type DnsRecordOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "cfRecordId" | "name" | "type" | "content" | "isAutoUpdate" | "proxied" | "updateToken" | "zoneId", ExtArgs["result"]["dnsRecord"]>
+export type DnsRecordOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "cfRecordId" | "name" | "type" | "content" | "isAutoUpdate" | "proxied" | "routingMode" | "tunnelId" | "localAddress" | "updateToken" | "zoneId", ExtArgs["result"]["dnsRecord"]>
 export type DnsRecordInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   zone?: boolean | Prisma.ZoneDefaultArgs<ExtArgs>
   updateLogs?: boolean | Prisma.DnsRecord$updateLogsArgs<ExtArgs>
@@ -801,6 +912,9 @@ export type $DnsRecordPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     content: string
     isAutoUpdate: boolean
     proxied: boolean
+    routingMode: string
+    tunnelId: string | null
+    localAddress: string | null
     updateToken: string | null
     zoneId: number
   }, ExtArgs["result"]["dnsRecord"]>
@@ -1235,6 +1349,9 @@ export interface DnsRecordFieldRefs {
   readonly content: Prisma.FieldRef<"DnsRecord", 'String'>
   readonly isAutoUpdate: Prisma.FieldRef<"DnsRecord", 'Boolean'>
   readonly proxied: Prisma.FieldRef<"DnsRecord", 'Boolean'>
+  readonly routingMode: Prisma.FieldRef<"DnsRecord", 'String'>
+  readonly tunnelId: Prisma.FieldRef<"DnsRecord", 'String'>
+  readonly localAddress: Prisma.FieldRef<"DnsRecord", 'String'>
   readonly updateToken: Prisma.FieldRef<"DnsRecord", 'String'>
   readonly zoneId: Prisma.FieldRef<"DnsRecord", 'Int'>
 }

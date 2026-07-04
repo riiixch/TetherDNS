@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, onMounted } from 'vue'
 
 const { t } = useI18n()
 const props = defineProps<{ record: any }>()
@@ -17,34 +17,100 @@ const isLoading = ref(false)
 const isTokenLoading = ref(false)
 const isConfirmRevokeOpen = ref(false)
 
-const typeOptions = [
-    { label: 'A', value: 'A' },
-    { label: 'AAAA', value: 'AAAA' },
-    { label: 'CNAME', value: 'CNAME' },
-    { label: 'MX', value: 'MX' },
-    { label: 'TXT', value: 'TXT' },
-    { label: 'SRV', value: 'SRV' },
-    { label: 'NS', value: 'NS' },
-    { label: 'CAA', value: 'CAA' },
+// Tunnel & Routing Mode
+const routingMode = ref(props.record.routingMode || 'static')
+const selectedTunnelId = ref<string>(props.record.tunnelId || '')
+const localAddress = ref(props.record.localAddress || 'http://localhost:8080')
+const tunnels = ref<any[]>([])
+
+const typeOptions = computed(() => {
+    if (routingMode.value === 'ddns') {
+        return [
+            { label: 'A', value: 'A' },
+            { label: 'AAAA', value: 'AAAA' }
+        ]
+    }
+    return [
+        { label: 'A', value: 'A' },
+        { label: 'AAAA', value: 'AAAA' },
+        { label: 'CNAME', value: 'CNAME' },
+        { label: 'MX', value: 'MX' },
+        { label: 'TXT', value: 'TXT' },
+        { label: 'SRV', value: 'SRV' },
+        { label: 'NS', value: 'NS' },
+        { label: 'CAA', value: 'CAA' },
+    ]
+})
+
+const routingModeOptions = [
+    { label: 'Static / Manual', value: 'static' },
+    { label: 'Auto DDNS', value: 'ddns' },
+    { label: 'Cloudflare Tunnel', value: 'tunnel' }
 ]
 
-const showProxied = computed(() => ['A', 'AAAA', 'CNAME'].includes(recordType.value))
+const showProxied = computed(() => ['A', 'AAAA', 'CNAME'].includes(recordType.value) && routingMode.value !== 'tunnel')
+
+// Fetch tunnels
+const fetchTunnels = async () => {
+    const accountId = props.record.zone?.accountId
+    if (!accountId) return
+    try {
+        const res = await $fetch<any>(`/api/tunnels?accountId=${accountId}`)
+        if (res.success) {
+            tunnels.value = res.data
+            if (tunnels.value.length > 0 && !selectedTunnelId.value) {
+                selectedTunnelId.value = tunnels.value[0].tunnelId
+            }
+        }
+    } catch (e) {
+        console.error(e)
+    }
+}
+
+watch(routingMode, (newVal) => {
+    if (newVal === 'tunnel') {
+        recordType.value = 'CNAME'
+        proxied.value = true
+    } else if (newVal === 'ddns') {
+        if (recordType.value !== 'A' && recordType.value !== 'AAAA') {
+            recordType.value = 'A'
+        }
+    }
+})
 
 const handleSave = async () => {
-    if (!recordName.value || !recordContent.value) {
+    const isTunnel = routingMode.value === 'tunnel'
+
+    if (!recordName.value) {
+        toast.add({ title: t('common.failed'), description: 'Record Name is required', color: 'error' })
+        return
+    }
+
+    if (!isTunnel && !recordContent.value) {
         toast.add({ title: t('common.failed'), description: t('records.err_required'), color: 'error' })
+        return
+    }
+
+    if (isTunnel && !selectedTunnelId.value) {
+        toast.add({ title: t('common.failed'), description: 'Please select a Cloudflare Tunnel', color: 'error' })
         return
     }
 
     isLoading.value = true
     try {
-        await updateRecord(props.record.id, {
+        const updatePayload: Record<string, any> = {
             type: recordType.value,
             name: recordName.value,
-            content: recordContent.value,
-            proxied: showProxied.value ? proxied.value : false,
-        })
-        toast.add({ title: t('common.success'), description: t('records.add_success', { name: recordName.value }), color: 'success' })
+            content: isTunnel ? '' : recordContent.value,
+            proxied: showProxied.value ? proxied.value : true,
+            routingMode: routingMode.value,
+            tunnelId: isTunnel ? selectedTunnelId.value : null,
+            localAddress: isTunnel ? localAddress.value : null
+        }
+
+        await updateRecord(props.record.id, updatePayload)
+        
+        toast.add({ title: t('common.success'), description: 'Record updated successfully.', color: 'success' })
         isOpen.value = false
         emit('refresh')
         emit('close')
@@ -99,6 +165,10 @@ const ddnsUrl = computed(() => {
     return `${base}/api/ddns/update?token=${updateToken.value}&ip=<YOUR_IP>`
 })
 
+onMounted(() => {
+    fetchTunnels()
+})
+
 watch(isOpen, (val) => { if (!val) emit('close') })
 </script>
 
@@ -114,12 +184,19 @@ watch(isOpen, (val) => { if (!val) emit('close') })
                             <p class="text-xs text-slate-500 mt-0.5">{{ $t('records.edit_modal_desc') }}</p>
                         </div>
                         <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark" class="-my-1"
-                            @click="isOpen = false" />
+                            @click="() => { isOpen = false }" />
                     </div>
                 </template>
 
                 <form @submit.prevent="handleSave" class="space-y-5 py-2">
-                    <UFormField :label="$t('records.type_field')" name="type">
+                    <!-- Routing Mode Selector -->
+                    <UFormField label="Routing Mode" name="routingMode">
+                        <USelect v-model="routingMode" :items="routingModeOptions" value-key="value" class="w-full"
+                            :ui="{ base: 'rounded-xl h-10 font-bold' }" />
+                    </UFormField>
+
+                    <!-- Type (hidden in tunnel mode) -->
+                    <UFormField v-if="routingMode !== 'tunnel'" :label="$t('records.type_field')" name="type">
                         <USelect v-model="recordType" :items="typeOptions" value-key="value" class="w-full"
                             :ui="{ base: 'rounded-xl h-10 font-bold' }" />
                     </UFormField>
@@ -128,7 +205,27 @@ watch(isOpen, (val) => { if (!val) emit('close') })
                         <UInput v-model="recordName" class="w-full" :ui="{ base: 'rounded-xl h-10 tracking-wide' }" />
                     </UFormField>
 
-                    <UFormField :label="$t('records.content_field')" name="content">
+                    <!-- Tunnel specific settings -->
+                    <template v-if="routingMode === 'tunnel'">
+                        <UFormField label="Cloudflare Tunnel" name="tunnelId">
+                            <USelect
+                                v-model="selectedTunnelId"
+                                :items="tunnels.map(t => ({ label: t.name, value: t.tunnelId }))"
+                                value-key="value"
+                                class="w-full"
+                                placeholder="Select a Tunnel"
+                                :ui="{ base: 'rounded-xl h-10 font-bold' }"
+                            />
+                        </UFormField>
+
+                        <UFormField label="Local Target Address" name="localAddress" help="The local address/port where traffic should be forwarded.">
+                            <UInput v-model="localAddress" placeholder="e.g. http://localhost:8080" class="w-full font-mono"
+                                :ui="{ base: 'rounded-xl h-10' }" />
+                        </UFormField>
+                    </template>
+
+                    <!-- Manual/DDNS content input -->
+                    <UFormField v-else :label="$t('records.content_field')" name="content">
                         <UInput v-model="recordContent" class="w-full font-mono text-sm"
                             :ui="{ base: 'rounded-xl h-10' }" />
                     </UFormField>
@@ -137,7 +234,8 @@ watch(isOpen, (val) => { if (!val) emit('close') })
                         <USwitch v-model="proxied" color="warning" />
                     </UFormField>
 
-                    <div v-if="recordType === 'A' || recordType === 'AAAA'"
+                    <!-- DDNS API URL generation section -->
+                    <div v-if="routingMode === 'ddns'"
                         class="mt-6 pt-5 border-t border-slate-200 dark:border-slate-800 border-dashed">
                         <div class="flex items-center justify-between mb-3">
                             <div>
@@ -158,7 +256,7 @@ watch(isOpen, (val) => { if (!val) emit('close') })
                             <div class="flex justify-end">
                                 <UButton color="error" variant="ghost" size="xs" icon="i-heroicons-trash"
                                     class="rounded-lg font-semibold hover:bg-red-50 dark:hover:bg-red-500/10"
-                                    :loading="isTokenLoading" @click="isConfirmRevokeOpen = true">
+                                    :loading="isTokenLoading" @click="() => { isConfirmRevokeOpen = true }">
                                     {{ $t('records.revoke_token') }}
                                 </UButton>
                             </div>
@@ -171,7 +269,7 @@ watch(isOpen, (val) => { if (!val) emit('close') })
                     </div>
 
                     <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800 mt-6">
-                        <UButton color="neutral" variant="ghost" class="rounded-xl font-bold" @click="isOpen = false">
+                        <UButton color="neutral" variant="ghost" class="rounded-xl font-bold" @click="() => { isOpen = false }">
                             {{ $t('common.cancel') }}
                         </UButton>
                         <UButton type="submit" color="primary" :loading="isLoading"
@@ -192,7 +290,7 @@ watch(isOpen, (val) => { if (!val) emit('close') })
                         <h3 class="text-base font-bold text-red-600 dark:text-red-400">{{ $t('records.revoke_token') }}
                         </h3>
                         <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark" class="-my-1"
-                            @click="isConfirmRevokeOpen = false" />
+                            @click="() => { isConfirmRevokeOpen = false }" />
                     </div>
                 </template>
                 <div class="py-2">
@@ -201,7 +299,7 @@ watch(isOpen, (val) => { if (!val) emit('close') })
                     </p>
                     <div class="flex justify-end gap-3 pt-5 mt-4 border-t border-slate-100 dark:border-slate-800">
                         <UButton color="neutral" variant="ghost" class="rounded-xl font-bold"
-                            @click="isConfirmRevokeOpen = false">
+                            @click="() => { isConfirmRevokeOpen = false }">
                             {{ $t('common.cancel') }}
                         </UButton>
                         <UButton color="error" variant="solid" :loading="isTokenLoading"

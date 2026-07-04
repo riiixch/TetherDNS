@@ -67,6 +67,11 @@ export type ApiToken = Prisma.ApiTokenModel
  */
 export type DnsRecord = Prisma.DnsRecordModel
 /**
+ * Model CloudflareTunnel
+ * 
+ */
+export type CloudflareTunnel = Prisma.CloudflareTunnelModel
+/**
  * Model UpdateLog
  * 
  */

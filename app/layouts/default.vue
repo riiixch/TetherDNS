@@ -15,6 +15,7 @@ const navLinks = [
     { name: 'nav.dashboard', path: '/', icon: 'i-heroicons-squares-2x2' },
     { name: 'nav.zones', path: '/zones', icon: 'i-heroicons-globe-alt' },
     { name: 'nav.accounts', path: '/accounts', icon: 'i-heroicons-user-group' },
+    { name: 'nav.tunnels', path: '/tunnels', icon: 'i-heroicons-key' },
     { name: 'nav.logs', path: '/logs', icon: 'i-heroicons-clock' },
     { name: 'nav.audit', path: '/audit', icon: 'i-heroicons-clipboard-document-list' },
     { name: 'nav.settings', path: '/settings', icon: 'i-heroicons-cog-6-tooth' },
@@ -105,7 +106,7 @@ const userMenuItems = ref<DropdownMenuItem[][]>([
                                     :icon="$colorMode.preference === 'dark' ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun-20-solid'"
                                     color="neutral" variant="ghost" aria-label="Toggle Theme"
                                     class="rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
-                                    @click="$colorMode.preference = $colorMode.value === 'dark' ? 'light' : 'dark'" />
+                                    @click="() => { $colorMode.preference = $colorMode.value === 'dark' ? 'light' : 'dark' }" />
                                 <template #fallback>
                                     <div class="w-8 h-8" />
                                 </template>
@@ -141,7 +142,7 @@ const userMenuItems = ref<DropdownMenuItem[][]>([
                                                         $t('nav.menu') }}</span>
                                                 </div>
                                                 <UButton icon="i-heroicons-x-mark" color="neutral" variant="ghost"
-                                                    @click="isOpenMenu = false" />
+                                                    @click="() => { isOpenMenu = false }" />
                                             </div>
                                         </div>
                                     </template>
@@ -189,7 +190,7 @@ const userMenuItems = ref<DropdownMenuItem[][]>([
                                                     <UButton
                                                         :icon="$colorMode.preference === 'dark' ? 'i-heroicons-moon' : 'i-heroicons-sun'"
                                                         color="neutral" variant="ghost" class="rounded-md"
-                                                        @click="$colorMode.preference = $colorMode.value === 'dark' ? 'light' : 'dark'" />
+                                                        @click="() => { $colorMode.preference = $colorMode.value === 'dark' ? 'light' : 'dark' }" />
                                                 </div>
                                                 <UButton v-if="user" block color="error" variant="soft"
                                                     icon="i-heroicons-arrow-right-on-rectangle" class="font-semibold"

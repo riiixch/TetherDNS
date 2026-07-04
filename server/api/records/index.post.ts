@@ -1,11 +1,14 @@
 import { prisma } from '../../utils/prisma'
-import { createCloudflareClient } from '../../utils/cloudflare'
+import { createCloudflareClient, syncTunnelConfiguration } from '../../utils/cloudflare'
 import { logAudit } from '../../utils/audit'
 
 export default defineEventHandler(async (event) => {
     const body = await readBody(event)
 
-    if (!body.cfZoneId || !body.type || !body.name || !body.content) {
+    const isTunnelMode = body.routingMode === 'tunnel'
+    const requiredContent = isTunnelMode ? true : !!body.content
+
+    if (!body.cfZoneId || !body.type || !body.name || !requiredContent) {
         throw createError({ statusCode: 400, statusMessage: 'cfZoneId, type, name, and content are required' })
     }
 
@@ -14,15 +17,30 @@ export default defineEventHandler(async (event) => {
         if (!zone) throw createError({ statusCode: 404, statusMessage: 'Zone not found' })
         if (!zone.accountId) throw createError({ statusCode: 400, statusMessage: 'Zone has no linked account' })
 
+        let targetContent = body.content
+        let targetType = body.type
+        let targetProxied = body.proxied ?? false
+
+        if (isTunnelMode) {
+            if (!body.tunnelId || !body.localAddress) {
+                throw createError({ statusCode: 400, statusMessage: 'tunnelId and localAddress are required for tunnel routing mode' })
+            }
+            const tunnel = await prisma.cloudflareTunnel.findUnique({ where: { tunnelId: body.tunnelId } })
+            if (!tunnel) throw createError({ statusCode: 404, statusMessage: 'Selected Cloudflare Tunnel not found' })
+            targetType = 'CNAME'
+            targetContent = `${tunnel.tunnelId}.cfargotunnel.com`
+            targetProxied = true // Tunnels are proxied by default
+        }
+
         const cf = await createCloudflareClient(zone.accountId)
 
         // Create on Cloudflare
         const created = await cf.dns.records.create({
             zone_id: body.cfZoneId,
-            type: body.type,
+            type: targetType,
             name: body.name,
-            content: body.content,
-            proxied: body.proxied ?? false,
+            content: targetContent,
+            proxied: targetProxied,
             ttl: body.ttl || 1,
         } as any)
 
@@ -33,22 +51,30 @@ export default defineEventHandler(async (event) => {
         // Save to local DB
         const createdRecord = await prisma.dnsRecord.create({
             data: {
-                cfRecordId: created.id, // Assuming 'created' is the Cloudflare response object
+                cfRecordId: created.id,
                 name: body.name,
-                type: body.type,
-                content: body.content,
-                proxied: body.proxied ?? false, // Use body.proxied if available, otherwise false
-                isAutoUpdate: false, // Added field
-                zoneId: zone.id // Assuming 'zone' is the local DB zone object
+                type: targetType,
+                content: targetContent,
+                proxied: targetProxied,
+                isAutoUpdate: body.routingMode === 'ddns',
+                routingMode: body.routingMode || 'static',
+                tunnelId: body.tunnelId || null,
+                localAddress: body.localAddress || null,
+                zoneId: zone.id
             }
         })
+
+        // If routing mode is tunnel, sync configuration
+        if (isTunnelMode && body.tunnelId) {
+            await syncTunnelConfiguration(zone.accountId, body.tunnelId)
+        }
 
         if (event.context.userId) {
             await logAudit(
                 event.context.userId,
                 'CREATE_RECORD',
-                `Record: ${body.name} (${body.type})`,
-                { content: body.content, proxied: body.proxied, zone: zone.name } // Assuming zone.name exists
+                `Record: ${body.name} (${targetType})`,
+                { content: targetContent, proxied: targetProxied, zone: zone.name, routingMode: body.routingMode }
             )
         }
 

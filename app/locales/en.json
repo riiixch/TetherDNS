@@ -33,6 +33,7 @@
         "zones": "Zones",
         "records": "Records",
         "accounts": "Accounts",
+        "tunnels": "Tunnels",
         "logs": "Update Logs",
         "audit": "Audit Logs",
         "settings": "Settings",

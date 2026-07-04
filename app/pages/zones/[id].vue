@@ -33,7 +33,7 @@ const columns = computed(() => [
     { accessorKey: 'name', header: t('records.col_name') },
     { accessorKey: 'content', header: t('records.col_content') },
     { id: 'proxied', header: t('records.col_proxied') },
-    { id: 'autoUpdate', header: t('records.col_ddns') },
+    { id: 'routingMode', header: 'Routing Mode' },
     { id: 'actions', header: t('records.col_actions') },
 ])
 
@@ -261,7 +261,7 @@ onMounted(() => loadData())
 
                         <UButton icon="i-heroicons-plus" color="primary" variant="solid"
                             class="rounded-2xl font-black shadow-lg shadow-primary-500/20 w-full sm:w-auto justify-center px-8"
-                            size="md" @click="isAddModalOpen = true">
+                            size="md" @click="() => { isAddModalOpen = true }">
                             {{ $t('records.add_record') }}
                         </UButton>
                     </div>
@@ -297,9 +297,12 @@ onMounted(() => loadData())
                             {{ row.original.proxied ? $t('records.proxied') : $t('records.dns_only') }}
                         </UBadge>
                     </template>
-                    <template #autoUpdate-cell="{ row }">
-                        <USwitch :model-value="row.original.isAutoUpdate"
-                            @update:model-value="handleToggle(row.original)" color="primary" />
+                    <template #routingMode-cell="{ row }">
+                        <UBadge
+                            :color="row.original.routingMode === 'tunnel' ? 'success' : row.original.routingMode === 'ddns' ? 'primary' : 'neutral'"
+                            variant="soft" class="font-bold px-2.5">
+                            {{ row.original.routingMode === 'tunnel' ? 'Tunnel' : row.original.routingMode === 'ddns' ? 'Auto DDNS' : 'Manual' }}
+                        </UBadge>
                     </template>
                     <template #actions-cell="{ row }">
                         <div class="flex justify-end gap-2">
@@ -377,19 +380,22 @@ onMounted(() => loadData())
                         </div>
 
                         <!-- DDNS Status Box -->
+                        <!-- Routing Mode Status Box -->
                         <div
                             class="flex items-center justify-between p-4 bg-slate-50/50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800/60">
                             <div class="flex flex-col">
                                 <span
-                                    class="text-[10px] uppercase font-black text-slate-400 tracking-widest leading-none mb-1">Dynamic
-                                    DNS</span>
-                                <span class="text-sm font-bold"
-                                    :class="record.isAutoUpdate ? 'text-primary-500' : 'text-slate-500'">
-                                    {{ record.isAutoUpdate ? 'Auto Update Active' : 'Manual Mode' }}
+                                    class="text-[10px] uppercase font-black text-slate-400 tracking-widest leading-none mb-1">Routing Mode</span>
+                                <span class="text-sm font-bold capitalize"
+                                    :class="record.routingMode === 'tunnel' ? 'text-emerald-500' : record.routingMode === 'ddns' ? 'text-primary-500' : 'text-slate-500'">
+                                    {{ record.routingMode === 'tunnel' ? 'Cloudflare Tunnel' : record.routingMode === 'ddns' ? 'Auto DDNS' : 'Manual / Static' }}
                                 </span>
                             </div>
-                            <USwitch :model-value="record.isAutoUpdate" @update:model-value="handleToggle(record)"
-                                size="md" color="primary" />
+                            <UBadge
+                                :color="record.routingMode === 'tunnel' ? 'success' : record.routingMode === 'ddns' ? 'primary' : 'neutral'"
+                                variant="soft" class="font-bold px-2.5">
+                                {{ record.routingMode === 'tunnel' ? 'Tunnel' : record.routingMode === 'ddns' ? 'Auto DDNS' : 'Manual' }}
+                            </UBadge>
                         </div>
 
                         <!-- Bottom Actions: Full Width -->
@@ -429,7 +435,7 @@ onMounted(() => loadData())
                             <h3 class="text-base font-bold text-slate-900 dark:text-white">{{ $t('common.delete') }}
                                 Record</h3>
                             <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark" class="-my-1"
-                                @click="deleteRecordModalOpen = false" />
+                                @click="() => { deleteRecordModalOpen = false }" />
                         </div>
                     </template>
                     <div class="py-2 space-y-4">
@@ -455,7 +461,7 @@ onMounted(() => loadData())
                     <template #footer>
                         <div class="flex justify-end gap-3">
                             <UButton color="neutral" variant="ghost" class="rounded-xl"
-                                @click="deleteRecordModalOpen = false">{{ $t('common.cancel') }}</UButton>
+                                @click="() => { deleteRecordModalOpen = false }">{{ $t('common.cancel') }}</UButton>
                             <UButton color="error" variant="solid" class="rounded-xl shadow-sm"
                                 :loading="deleteRecordLoading" @click="executeDeleteRecord">{{ $t('common.delete') }}
                             </UButton>
@@ -481,7 +487,7 @@ onMounted(() => loadData())
                                 }) }}</p>
                             </div>
                             <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark" class="-my-1"
-                                @click="propagationModalOpen = false" />
+                                @click="() => { propagationModalOpen = false }" />
                         </div>
                     </template>
 
@@ -550,7 +556,7 @@ onMounted(() => loadData())
                     <template #footer>
                         <div class="flex justify-end gap-3">
                             <UButton color="neutral" variant="ghost" class="rounded-xl"
-                                @click="propagationModalOpen = false">{{ $t('common.close') }}</UButton>
+                                @click="() => { propagationModalOpen = false }">{{ $t('common.close') }}</UButton>
                             <UButton v-if="propagationResults && !propagationResults.fullyPropagated"
                                 icon="i-heroicons-arrow-path" color="primary" variant="soft" class="rounded-xl"
                                 @click="checkPropagation(propagationRecord)">
@@ -626,7 +632,7 @@ onMounted(() => loadData())
                                 }) }}</p>
                             </div>
                             <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark" class="-my-1"
-                                @click="historyModalOpen = false" />
+                                @click="() => { historyModalOpen = false }" />
                         </div>
                     </template>
 
@@ -668,7 +674,7 @@ onMounted(() => loadData())
                     <template #footer>
                         <div class="flex justify-end">
                             <UButton color="neutral" variant="ghost" class="rounded-xl"
-                                @click="historyModalOpen = false">{{ $t('common.close') }}</UButton>
+                                @click="() => { historyModalOpen = false }">{{ $t('common.close') }}</UButton>
                         </div>
                     </template>
                 </UCard>

@@ -56,6 +56,7 @@ export const ModelName = {
   User: 'User',
   ApiToken: 'ApiToken',
   DnsRecord: 'DnsRecord',
+  CloudflareTunnel: 'CloudflareTunnel',
   UpdateLog: 'UpdateLog',
   Settings: 'Settings',
   NotificationChannel: 'NotificationChannel',
@@ -129,11 +130,28 @@ export const DnsRecordScalarFieldEnum = {
   content: 'content',
   isAutoUpdate: 'isAutoUpdate',
   proxied: 'proxied',
+  routingMode: 'routingMode',
+  tunnelId: 'tunnelId',
+  localAddress: 'localAddress',
   updateToken: 'updateToken',
   zoneId: 'zoneId'
 } as const
 
 export type DnsRecordScalarFieldEnum = (typeof DnsRecordScalarFieldEnum)[keyof typeof DnsRecordScalarFieldEnum]
+
+
+export const CloudflareTunnelScalarFieldEnum = {
+  id: 'id',
+  tunnelId: 'tunnelId',
+  name: 'name',
+  token: 'token',
+  status: 'status',
+  connections: 'connections',
+  accountId: 'accountId',
+  createdAt: 'createdAt'
+} as const
+
+export type CloudflareTunnelScalarFieldEnum = (typeof CloudflareTunnelScalarFieldEnum)[keyof typeof CloudflareTunnelScalarFieldEnum]
 
 
 export const UpdateLogScalarFieldEnum = {

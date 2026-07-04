@@ -199,7 +199,7 @@ export type CloudflareAccountGroupByOutputType = {
   _max: CloudflareAccountMaxAggregateOutputType | null
 }
 
-type GetCloudflareAccountGroupByPayload<T extends CloudflareAccountGroupByArgs> = Prisma.PrismaPromise<
+export type GetCloudflareAccountGroupByPayload<T extends CloudflareAccountGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<CloudflareAccountGroupByOutputType, T['by']> &
       {
@@ -225,6 +225,7 @@ export type CloudflareAccountWhereInput = {
   apiToken?: Prisma.StringFilter<"CloudflareAccount"> | string
   createdAt?: Prisma.DateTimeFilter<"CloudflareAccount"> | Date | string
   zones?: Prisma.ZoneListRelationFilter
+  tunnels?: Prisma.CloudflareTunnelListRelationFilter
 }
 
 export type CloudflareAccountOrderByWithRelationInput = {
@@ -235,6 +236,7 @@ export type CloudflareAccountOrderByWithRelationInput = {
   apiToken?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   zones?: Prisma.ZoneOrderByRelationAggregateInput
+  tunnels?: Prisma.CloudflareTunnelOrderByRelationAggregateInput
 }
 
 export type CloudflareAccountWhereUniqueInput = Prisma.AtLeast<{
@@ -248,6 +250,7 @@ export type CloudflareAccountWhereUniqueInput = Prisma.AtLeast<{
   apiToken?: Prisma.StringFilter<"CloudflareAccount"> | string
   createdAt?: Prisma.DateTimeFilter<"CloudflareAccount"> | Date | string
   zones?: Prisma.ZoneListRelationFilter
+  tunnels?: Prisma.CloudflareTunnelListRelationFilter
 }, "id">
 
 export type CloudflareAccountOrderByWithAggregationInput = {
@@ -283,6 +286,7 @@ export type CloudflareAccountCreateInput = {
   apiToken: string
   createdAt?: Date | string
   zones?: Prisma.ZoneCreateNestedManyWithoutAccountInput
+  tunnels?: Prisma.CloudflareTunnelCreateNestedManyWithoutAccountInput
 }
 
 export type CloudflareAccountUncheckedCreateInput = {
@@ -293,6 +297,7 @@ export type CloudflareAccountUncheckedCreateInput = {
   apiToken: string
   createdAt?: Date | string
   zones?: Prisma.ZoneUncheckedCreateNestedManyWithoutAccountInput
+  tunnels?: Prisma.CloudflareTunnelUncheckedCreateNestedManyWithoutAccountInput
 }
 
 export type CloudflareAccountUpdateInput = {
@@ -302,6 +307,7 @@ export type CloudflareAccountUpdateInput = {
   apiToken?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   zones?: Prisma.ZoneUpdateManyWithoutAccountNestedInput
+  tunnels?: Prisma.CloudflareTunnelUpdateManyWithoutAccountNestedInput
 }
 
 export type CloudflareAccountUncheckedUpdateInput = {
@@ -312,6 +318,7 @@ export type CloudflareAccountUncheckedUpdateInput = {
   apiToken?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   zones?: Prisma.ZoneUncheckedUpdateManyWithoutAccountNestedInput
+  tunnels?: Prisma.CloudflareTunnelUncheckedUpdateManyWithoutAccountNestedInput
 }
 
 export type CloudflareAccountCreateManyInput = {
@@ -380,6 +387,11 @@ export type CloudflareAccountNullableScalarRelationFilter = {
   isNot?: Prisma.CloudflareAccountWhereInput | null
 }
 
+export type CloudflareAccountScalarRelationFilter = {
+  is?: Prisma.CloudflareAccountWhereInput
+  isNot?: Prisma.CloudflareAccountWhereInput
+}
+
 export type StringFieldUpdateOperationsInput = {
   set?: string
 }
@@ -416,12 +428,27 @@ export type CloudflareAccountUpdateOneWithoutZonesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CloudflareAccountUpdateToOneWithWhereWithoutZonesInput, Prisma.CloudflareAccountUpdateWithoutZonesInput>, Prisma.CloudflareAccountUncheckedUpdateWithoutZonesInput>
 }
 
+export type CloudflareAccountCreateNestedOneWithoutTunnelsInput = {
+  create?: Prisma.XOR<Prisma.CloudflareAccountCreateWithoutTunnelsInput, Prisma.CloudflareAccountUncheckedCreateWithoutTunnelsInput>
+  connectOrCreate?: Prisma.CloudflareAccountCreateOrConnectWithoutTunnelsInput
+  connect?: Prisma.CloudflareAccountWhereUniqueInput
+}
+
+export type CloudflareAccountUpdateOneRequiredWithoutTunnelsNestedInput = {
+  create?: Prisma.XOR<Prisma.CloudflareAccountCreateWithoutTunnelsInput, Prisma.CloudflareAccountUncheckedCreateWithoutTunnelsInput>
+  connectOrCreate?: Prisma.CloudflareAccountCreateOrConnectWithoutTunnelsInput
+  upsert?: Prisma.CloudflareAccountUpsertWithoutTunnelsInput
+  connect?: Prisma.CloudflareAccountWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CloudflareAccountUpdateToOneWithWhereWithoutTunnelsInput, Prisma.CloudflareAccountUpdateWithoutTunnelsInput>, Prisma.CloudflareAccountUncheckedUpdateWithoutTunnelsInput>
+}
+
 export type CloudflareAccountCreateWithoutZonesInput = {
   providerType?: string
   label: string
   email?: string | null
   apiToken: string
   createdAt?: Date | string
+  tunnels?: Prisma.CloudflareTunnelCreateNestedManyWithoutAccountInput
 }
 
 export type CloudflareAccountUncheckedCreateWithoutZonesInput = {
@@ -431,6 +458,7 @@ export type CloudflareAccountUncheckedCreateWithoutZonesInput = {
   email?: string | null
   apiToken: string
   createdAt?: Date | string
+  tunnels?: Prisma.CloudflareTunnelUncheckedCreateNestedManyWithoutAccountInput
 }
 
 export type CloudflareAccountCreateOrConnectWithoutZonesInput = {
@@ -455,6 +483,7 @@ export type CloudflareAccountUpdateWithoutZonesInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apiToken?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tunnels?: Prisma.CloudflareTunnelUpdateManyWithoutAccountNestedInput
 }
 
 export type CloudflareAccountUncheckedUpdateWithoutZonesInput = {
@@ -464,6 +493,61 @@ export type CloudflareAccountUncheckedUpdateWithoutZonesInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apiToken?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tunnels?: Prisma.CloudflareTunnelUncheckedUpdateManyWithoutAccountNestedInput
+}
+
+export type CloudflareAccountCreateWithoutTunnelsInput = {
+  providerType?: string
+  label: string
+  email?: string | null
+  apiToken: string
+  createdAt?: Date | string
+  zones?: Prisma.ZoneCreateNestedManyWithoutAccountInput
+}
+
+export type CloudflareAccountUncheckedCreateWithoutTunnelsInput = {
+  id?: number
+  providerType?: string
+  label: string
+  email?: string | null
+  apiToken: string
+  createdAt?: Date | string
+  zones?: Prisma.ZoneUncheckedCreateNestedManyWithoutAccountInput
+}
+
+export type CloudflareAccountCreateOrConnectWithoutTunnelsInput = {
+  where: Prisma.CloudflareAccountWhereUniqueInput
+  create: Prisma.XOR<Prisma.CloudflareAccountCreateWithoutTunnelsInput, Prisma.CloudflareAccountUncheckedCreateWithoutTunnelsInput>
+}
+
+export type CloudflareAccountUpsertWithoutTunnelsInput = {
+  update: Prisma.XOR<Prisma.CloudflareAccountUpdateWithoutTunnelsInput, Prisma.CloudflareAccountUncheckedUpdateWithoutTunnelsInput>
+  create: Prisma.XOR<Prisma.CloudflareAccountCreateWithoutTunnelsInput, Prisma.CloudflareAccountUncheckedCreateWithoutTunnelsInput>
+  where?: Prisma.CloudflareAccountWhereInput
+}
+
+export type CloudflareAccountUpdateToOneWithWhereWithoutTunnelsInput = {
+  where?: Prisma.CloudflareAccountWhereInput
+  data: Prisma.XOR<Prisma.CloudflareAccountUpdateWithoutTunnelsInput, Prisma.CloudflareAccountUncheckedUpdateWithoutTunnelsInput>
+}
+
+export type CloudflareAccountUpdateWithoutTunnelsInput = {
+  providerType?: Prisma.StringFieldUpdateOperationsInput | string
+  label?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  apiToken?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  zones?: Prisma.ZoneUpdateManyWithoutAccountNestedInput
+}
+
+export type CloudflareAccountUncheckedUpdateWithoutTunnelsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  providerType?: Prisma.StringFieldUpdateOperationsInput | string
+  label?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  apiToken?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  zones?: Prisma.ZoneUncheckedUpdateManyWithoutAccountNestedInput
 }
 
 
@@ -473,10 +557,12 @@ export type CloudflareAccountUncheckedUpdateWithoutZonesInput = {
 
 export type CloudflareAccountCountOutputType = {
   zones: number
+  tunnels: number
 }
 
 export type CloudflareAccountCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   zones?: boolean | CloudflareAccountCountOutputTypeCountZonesArgs
+  tunnels?: boolean | CloudflareAccountCountOutputTypeCountTunnelsArgs
 }
 
 /**
@@ -496,6 +582,13 @@ export type CloudflareAccountCountOutputTypeCountZonesArgs<ExtArgs extends runti
   where?: Prisma.ZoneWhereInput
 }
 
+/**
+ * CloudflareAccountCountOutputType without action
+ */
+export type CloudflareAccountCountOutputTypeCountTunnelsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CloudflareTunnelWhereInput
+}
+
 
 export type CloudflareAccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -505,6 +598,7 @@ export type CloudflareAccountSelect<ExtArgs extends runtime.Types.Extensions.Int
   apiToken?: boolean
   createdAt?: boolean
   zones?: boolean | Prisma.CloudflareAccount$zonesArgs<ExtArgs>
+  tunnels?: boolean | Prisma.CloudflareAccount$tunnelsArgs<ExtArgs>
   _count?: boolean | Prisma.CloudflareAccountCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["cloudflareAccount"]>
 
@@ -538,6 +632,7 @@ export type CloudflareAccountSelectScalar = {
 export type CloudflareAccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "providerType" | "label" | "email" | "apiToken" | "createdAt", ExtArgs["result"]["cloudflareAccount"]>
 export type CloudflareAccountInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   zones?: boolean | Prisma.CloudflareAccount$zonesArgs<ExtArgs>
+  tunnels?: boolean | Prisma.CloudflareAccount$tunnelsArgs<ExtArgs>
   _count?: boolean | Prisma.CloudflareAccountCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CloudflareAccountIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -547,6 +642,7 @@ export type $CloudflareAccountPayload<ExtArgs extends runtime.Types.Extensions.I
   name: "CloudflareAccount"
   objects: {
     zones: Prisma.$ZonePayload<ExtArgs>[]
+    tunnels: Prisma.$CloudflareTunnelPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -950,6 +1046,7 @@ readonly fields: CloudflareAccountFieldRefs;
 export interface Prisma__CloudflareAccountClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   zones<T extends Prisma.CloudflareAccount$zonesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CloudflareAccount$zonesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ZonePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  tunnels<T extends Prisma.CloudflareAccount$tunnelsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CloudflareAccount$tunnelsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CloudflareTunnelPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1397,6 +1494,30 @@ export type CloudflareAccount$zonesArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.ZoneScalarFieldEnum | Prisma.ZoneScalarFieldEnum[]
+}
+
+/**
+ * CloudflareAccount.tunnels
+ */
+export type CloudflareAccount$tunnelsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CloudflareTunnel
+   */
+  select?: Prisma.CloudflareTunnelSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CloudflareTunnel
+   */
+  omit?: Prisma.CloudflareTunnelOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CloudflareTunnelInclude<ExtArgs> | null
+  where?: Prisma.CloudflareTunnelWhereInput
+  orderBy?: Prisma.CloudflareTunnelOrderByWithRelationInput | Prisma.CloudflareTunnelOrderByWithRelationInput[]
+  cursor?: Prisma.CloudflareTunnelWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CloudflareTunnelScalarFieldEnum | Prisma.CloudflareTunnelScalarFieldEnum[]
 }
 
 /**

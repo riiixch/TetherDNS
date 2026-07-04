@@ -20,10 +20,25 @@ export default defineEventHandler(async (event) => {
         const cfRecords = await cf.dns.records.list({ zone_id: cfZoneId })
 
         const relevantRecords = cfRecords.result
+        const cfRecordIds = new Set(relevantRecords.map(r => r.id).filter(Boolean))
 
+        // Get all local records currently stored for this zone
+        const localRecords = await prisma.dnsRecord.findMany({
+            where: { zoneId: zone.id }
+        })
+
+        // 1. Delete local records that are no longer present on Cloudflare
+        const recordsToDelete = localRecords.filter(r => !cfRecordIds.has(r.cfRecordId))
+        for (const localRec of recordsToDelete) {
+            await prisma.updateLog.deleteMany({ where: { recordId: localRec.id } })
+            await prisma.dnsRecord.delete({ where: { id: localRec.id } })
+        }
+
+        // 2. Upsert existing records from Cloudflare
         for (const record of relevantRecords) {
             if (!record.id || !record.name || !record.type || !record.content) continue
 
+            // If record exists, we update it but preserve the routingMode/tunnelId/token
             await prisma.dnsRecord.upsert({
                 where: { cfRecordId: record.id },
                 update: {
@@ -54,7 +69,7 @@ export default defineEventHandler(async (event) => {
     } catch (error: any) {
         throw createError({
             statusCode: error.statusCode || 500,
-            statusMessage: error.message
+            message: error.message
         })
     }
 })

@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 :: --- ส่วนการตั้งค่า Default ---
-set DEFAULT_REGISTRY=docker-private.riiixch.com
+set DEFAULT_REGISTRY=10.0.0.101:5000
 set DEFAULT_IMAGE_NAME=tetherdns
 set DEFAULT_TAG=latest
 

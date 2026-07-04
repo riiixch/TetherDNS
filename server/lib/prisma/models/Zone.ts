@@ -189,7 +189,7 @@ export type ZoneGroupByOutputType = {
   _max: ZoneMaxAggregateOutputType | null
 }
 
-type GetZoneGroupByPayload<T extends ZoneGroupByArgs> = Prisma.PrismaPromise<
+export type GetZoneGroupByPayload<T extends ZoneGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ZoneGroupByOutputType, T['by']> &
       {

@@ -203,7 +203,7 @@ export type ApiTokenGroupByOutputType = {
   _max: ApiTokenMaxAggregateOutputType | null
 }
 
-type GetApiTokenGroupByPayload<T extends ApiTokenGroupByArgs> = Prisma.PrismaPromise<
+export type GetApiTokenGroupByPayload<T extends ApiTokenGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ApiTokenGroupByOutputType, T['by']> &
       {

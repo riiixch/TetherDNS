@@ -210,7 +210,7 @@ export type UpdateLogGroupByOutputType = {
   _max: UpdateLogMaxAggregateOutputType | null
 }
 
-type GetUpdateLogGroupByPayload<T extends UpdateLogGroupByArgs> = Prisma.PrismaPromise<
+export type GetUpdateLogGroupByPayload<T extends UpdateLogGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<UpdateLogGroupByOutputType, T['by']> &
       {

@@ -22,7 +22,13 @@ FROM node:24-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-RUN apk add --no-cache openssl
+RUN apk add --no-cache openssl libc6-compat wget ca-certificates && \
+    ARCH=$(uname -m) && \
+    if [ "$ARCH" = "x86_64" ]; then CF_ARCH="amd64"; \
+    elif [ "$ARCH" = "aarch64" ]; then CF_ARCH="arm64"; \
+    else CF_ARCH="amd64"; fi && \
+    wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-${CF_ARCH} -O /usr/local/bin/cloudflared && \
+    chmod +x /usr/local/bin/cloudflared
 
 COPY --from=builder /app/.output ./.output
 COPY --from=builder /app/prisma ./prisma
