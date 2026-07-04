@@ -27,7 +27,7 @@
   </a>
 </p>
 
-**TetherDNS** คือเว็บแอปพลิเคชันแบบ Self-hosted ระดับองค์กร สำหรับจัดการ DNS Records ของ Cloudflare และอัปเดต Dynamic DNS (DDNS) อัตโนมัติ เปลี่ยนการตั้งค่าเครือข่ายที่ซับซ้อนให้กลายเป็นเรื่องง่าย ภายใต้ UI ระดับพรีเมียมในธีม **Ocean Deep Tech**
+**TetherDNS** คือเว็บแอปพลิเคชันแบบ Self-hosted ระดับองค์กร สำหรับจัดการ DNS Records ของ Cloudflare, อัปเดต Dynamic DNS (DDNS) อัตโนมัติ และควบคุมการรันระบบ Cloudflare Tunnels (Zero Trust) ในตัว เปลี่ยนการตั้งค่าเครือข่ายและการควบคุมเส้นทางโดเมนที่ซับซ้อนให้กลายเป็นเรื่องง่าย ภายใต้ UI ระดับพรีเมียมในธีม **Ocean Deep Tech**
 
 [English](README.md) • [ภาษาไทย](README-TH.md)
 
@@ -133,6 +133,11 @@ graph TD
     subgraph "Service Layer"
         CFService["☁️ Cloudflare SDK"]
         IPService["📍 IP Detection Service"]
+        TunnelService["☁️ Tunnel Service"]
+    end
+
+    subgraph "Daemon Layer"
+        Cloudflared["🐳 cloudflared daemon"]
     end
 
     subgraph "Data Layer"
@@ -144,11 +149,14 @@ graph TD
     Middleware -->|"Authenticated"| API
     API --> Session
     API --> CFService
+    API --> TunnelService
     API --> Prisma
     Cron --> IPService
     Cron --> CFService
     Cron --> Prisma
-    CFService -->|"Cloudflare REST API v4"| Cloudflare["☁️ Cloudflare"]
+    TunnelService -->|"Spawns & Monitors (รันและควบคุม)"| Cloudflared
+    Cloudflared -->|"Zero Trust Tunnel"| Cloudflare["☁️ Cloudflare"]
+    CFService -->|"Cloudflare REST API v4"| Cloudflare
     Prisma --> SQLite
 ```
 
@@ -166,6 +174,7 @@ graph TD
 | **Charts** | [ApexCharts](https://apexcharts.com/) + `vue3-apexcharts` |
 | **i18n** | `@nuxtjs/i18n` v10 |
 | **Icons** | `heroicons` + `lucide` ผ่าน `@nuxt/icon` |
+| **Tunnel Daemon** | โปรแกรม [cloudflared](https://github.com/cloudflare/cloudflared) Zero Trust สำหรับรันอุโมงค์เชื่อมต่อ |
 
 ---
 
@@ -257,6 +266,9 @@ npm run dev
 
 Dev Server พร้อมใช้งานที่: **`http://localhost:3000`** พร้อม Hot Module Replacement (HMR)
 
+> **💡 หมายเหตุสำหรับการทดสอบ Cloudflare Tunnel ในเครื่อง:**
+> ฟีเจอร์ Tunnel จำเป็นต้องใช้โปรแกรม `cloudflared` ในเครื่อง ในขณะที่การรันบน Docker จะติดตั้งโปรแกรมนี้ให้อัตโนมัติ แต่สำหรับการพัฒนาและทดสอบในคอมพิวเตอร์ของคุณ (Windows/macOS/Linux) คุณจำเป็นต้องดาวน์โหลด `cloudflared` ของระบบปฏิบัติการนั้น ๆ และนำไปตั้งค่าไว้ใน System PATH ของเครื่องก่อน จึงจะสามารถกดรันอุโมงค์เบื้องหลัง (Daemon Run) เพื่อทดสอบแบบ Local ได้
+
 ---
 
 ## ⚙️ การตั้งค่า
@@ -340,7 +352,11 @@ services:
 3. ใส่ **ชื่อ** ที่จำง่ายสำหรับบัญชีนี้ (เช่น "Cloudflare ส่วนตัว")
 4. ใส่ Cloudflare **API Token**
    - ไปที่ [Cloudflare Dashboard → My Profile → API Tokens](https://dash.cloudflare.com/profile/api-tokens)
-   - สร้าง Token ที่มีสิทธิ์ **Zone:DNS:Edit** และ **Zone:Zone:Read**
+   - สร้าง Token แบบปรับแต่งเอง (Custom Token) โดยให้มีสิทธิ์เข้าถึงดังนี้:
+     - **Zone** → **DNS** → **Edit**
+     - **Zone** → **Zone** → **Read**
+     - **Account** → **Cloudflare Tunnel** → **Edit** *(จำเป็นสำหรับการจัดการ Tunnel)*
+     - **Account** → **Account Settings** → **Read**
 5. คลิก **Save** ระบบจะตรวจสอบ Token กับ Cloudflare API ทันที
 
 **การจัดการบัญชี:**
@@ -367,22 +383,42 @@ services:
 
 **การเพิ่ม Record:**
 1. คลิกปุ่ม **+ Add Record**
-2. เลือก **Type** (A, AAAA, CNAME ฯลฯ)
+2. เลือก **Routing Mode** (Static, DDNS หรือ Cloudflare Tunnel)
 3. ใส่ **Name** (เช่น `@` สำหรับ Root, `www`, `mail`)
-4. ใส่ **Content** (เช่น IP Address สำหรับ `A` Record, Hostname สำหรับ `CNAME`)
-5. ตั้งค่า **TTL** (Time To Live) ใช้ `1` สำหรับ "Auto"
-6. เปิด **Proxied** (☁️) หากต้องการใช้ Cloudflare Proxy
-7. คลิก **Save**
+4. ในกรณีที่เลือก **Static / DDNS Mode**: ให้กรอกข้อมูล **Content** (เช่น IP Address หรือโดเมนปลายทาง) และตั้งค่า **Proxied** (☁️)
+5. ในกรณีที่เลือก **Tunnel Mode**: ให้เลือก **Cloudflare Tunnel** ที่ทำงานอยู่ และระบุที่อยู่ของเครื่องปลายทางในเครือข่ายท้องถิ่นของคุณในส่วน **Local Target Address** (เช่น `http://localhost:8080`)
+6. คลิก **Save**
 
 **การแก้ไข Record:**
 1. คลิกไอคอน **✏️ Edit** ในแถว Record ที่ต้องการ
-2. แก้ไขข้อมูลและคลิก **Update**
+2. ปรับแก้ไขค่าต่าง ๆ (รวมทั้งสามารถเลือกสลับ Routing Mode ได้ทันที) และคลิก **Save**
 
 **การลบ Record:**
 1. คลิกไอคอน **🗑️ Delete** ในแถว Record
 2. ยืนยันการลบในกล่องโต้ตอบ
 
 > **⚠️ คำเตือน:** การลบจะถูกส่งไปยัง Cloudflare API ทันทีและไม่สามารถยกเลิกได้ผ่าน TetherDNS
+
+---
+
+### ☁️ ระบบ Cloudflare Tunnel (Zero Trust)
+
+TetherDNS มาพร้อมกับระบบรัน Daemon ของ `cloudflared` ภายในตัว เพื่อให้คุณสร้างอุโมงค์เชื่อมต่อแบบ Zero Trust ได้อย่างปลอดภัยและง่ายดายจากหน้า Dashboard เพื่อเปิดให้เข้าถึงแอปภายในบ้านหรือออฟฟิศของคุณโดยไม่ต้องทำ Port Forwarding หรือเปิดช่องทางรับส่งข้อมูลจากภายนอกเราเตอร์
+
+**การสร้าง Tunnel:**
+1. ไปที่แท็บ **Tunnels**
+2. คลิกปุ่ม **Create Tunnel**
+3. ตั้งชื่อ Tunnel ที่จดจำได้ง่าย (เช่น `homeserver-tunnel`)
+4. คลิก **Create** ระบบจะส่งคำขอเพื่อขึ้นทะเบียน Cloud-managed Tunnel บน Cloudflare ให้อัตโนมัติ
+
+**การเปิดรัน Tunnel:**
+- ค้นหา Tunnel ที่เพิ่งสร้างขึ้นในตารางรายการ และกดเปิดการทำงานสวิตช์ **Daemon Run** ให้มีสถานะเป็น **Active**
+- ตัวรัน Daemon ในระบบจะเรียกทำงานโปรเซส `cloudflared` ขึ้นมาทำงานเบื้องหลัง คุณสามารถคลิกดูบันทึกของตัวโปรเซสสด ๆ ได้ตลอดเวลาโดยกดปุ่ม **Logs**
+
+**การผูกเส้นทางเครือข่าย (Routing):**
+- เข้าไปที่ **DNS Zones** ใด ๆ ของคุณ ทำการเพิ่ม/แก้ไข DNS Record
+- สลับโหมด Routing Mode เป็น **Cloudflare Tunnel** จากนั้นเลือกชื่อ Tunnel ที่กำลังใช้งานและกรอกเส้นทางเครื่องภายในบ้าน (เช่น `http://localhost:3000`)
+- TetherDNS จะเปลี่ยน DNS Record ดังกล่าวให้ชี้ CNAME ไปยัง `<tunnel-id>.cfargotunnel.com` บน Cloudflare และบันทึกกฎเส้นทางการเข้าถึง (Ingress configuration rule) ไปยัง Tunnel daemon ทันที
 
 ---
 

@@ -27,7 +27,7 @@
   </a>
 </p>
 
-**TetherDNS** is a self-hosted, enterprise-ready web application for managing Cloudflare DNS records and automating Dynamic DNS (DDNS) updates. It turns complex network configurations into effortless control, all wrapped in a premium **Ocean Deep Tech** UI.
+**TetherDNS** is a self-hosted, enterprise-ready web application for managing Cloudflare DNS records, automating Dynamic DNS (DDNS) updates, and orchestrating embedded Cloudflare Tunnels (Zero Trust). It turns complex network routing and domain orchestration into effortless control, all wrapped in a premium **Ocean Deep Tech** UI.
 
 [English](README.md) • [ภาษาไทย](README-TH.md)
 
@@ -138,6 +138,11 @@ graph TD
     subgraph "Service Layer"
         CFService["☁️ Cloudflare SDK"]
         IPService["📍 IP Detection Service"]
+        TunnelService["☁️ Tunnel Service"]
+    end
+
+    subgraph "Daemon Layer"
+        Cloudflared["🐳 cloudflared daemon"]
     end
 
     subgraph "Data Layer"
@@ -149,11 +154,14 @@ graph TD
     Middleware -->|"Authenticated"| API
     API --> Session
     API --> CFService
+    API --> TunnelService
     API --> Prisma
     Cron --> IPService
     Cron --> CFService
     Cron --> Prisma
-    CFService -->|"Cloudflare REST API v4"| Cloudflare["☁️ Cloudflare"]
+    TunnelService -->|"Spawns & Monitors"| Cloudflared
+    Cloudflared -->|"Zero Trust Tunnel"| Cloudflare["☁️ Cloudflare"]
+    CFService -->|"Cloudflare REST API v4"| Cloudflare
     Prisma --> SQLite
 ```
 
@@ -171,6 +179,7 @@ graph TD
 | **Charts**               | [ApexCharts](https://apexcharts.com/) + `vue3-apexcharts`                                      |
 | **i18n**                 | `@nuxtjs/i18n` v10                                                                             |
 | **Icons**                | `heroicons` + `lucide` via `@nuxt/icon`                                                        |
+| **Tunnel Daemon**         | [cloudflared](https://github.com/cloudflare/cloudflared) Zero Trust binary                     |
 
 ---
 
@@ -273,6 +282,9 @@ npm run dev
 
 The dev server is available at: **`http://localhost:3000`** with hot module replacement (HMR) enabled.
 
+> **💡 Note for Cloudflare Tunnel local testing:**
+> The Tunnel feature relies on the `cloudflared` binary. While the production Docker container automatically installs it, you must download `cloudflared` for your host OS (Windows/macOS/Linux) and add it to your system PATH if you wish to run or test the background daemon (Daemon Run) during local development.
+
 ---
 
 ## ⚙️ Configuration
@@ -359,7 +371,11 @@ The **Accounts** page is where you manage your Cloudflare API credentials.
 3. Enter a friendly **Name** for the account (e.g., "Personal Cloudflare").
 4. Enter your Cloudflare **API Token**.
    - Go to [Cloudflare Dashboard → My Profile → API Tokens](https://dash.cloudflare.com/profile/api-tokens).
-   - Create a token with **Zone:DNS:Edit** and **Zone:Zone:Read** permissions.
+   - Create a token with the following permissions:
+     - **Zone** → **DNS** → **Edit**
+     - **Zone** → **Zone** → **Read**
+     - **Account** → **Cloudflare Tunnel** → **Edit** *(Required to manage Zero Trust Tunnels)*
+     - **Account** → **Account Settings** → **Read**
 5. Click **Save**. TetherDNS will validate the token against the Cloudflare API.
 
 **Managing Accounts:**
@@ -388,17 +404,16 @@ Inside a zone, you can view and manage all its DNS records.
 **Adding a Record:**
 
 1. Click the **+ Add Record** button.
-2. Select the **Type** (A, AAAA, CNAME, etc.).
+2. Select the **Routing Mode** (Static, DDNS, or Cloudflare Tunnel).
 3. Fill in the **Name** (e.g., `@` for root, `www`, `mail`).
-4. Fill in the **Content** (e.g., IP address for `A` records, hostname for `CNAME`).
-5. Set the **TTL** (Time To Live). Use `1` for "Auto".
-6. Toggle **Proxied** (☁️) if you want Cloudflare's proxy.
-7. Click **Save**.
+4. Under **Static / DDNS Mode**: Fill in the **Content** (IP address or hostname) and set **Proxied** (☁️).
+5. Under **Tunnel Mode**: Select your active **Cloudflare Tunnel** and enter the **Local Target Address** (e.g., `http://localhost:8080`).
+6. Click **Save**.
 
 **Editing a Record:**
 
 1. Click the **✏️ Edit** icon on any record row.
-2. Modify the fields and click **Update**.
+2. Modify the fields (including switching Routing Modes) and click **Save**.
 
 **Deleting a Record:**
 
@@ -406,6 +421,29 @@ Inside a zone, you can view and manage all its DNS records.
 2. Confirm the deletion in the dialog.
 
 > **⚠️ Warning:** Deletions are sent immediately to the Cloudflare API and cannot be undone through TetherDNS.
+
+---
+
+### ☁️ Cloudflare Tunnels (Zero Trust)
+
+TetherDNS includes an embedded `cloudflared` daemon, allowing you to establish secure Zero Trust Tunnels directly from your dashboard to expose local services without port forwarding.
+
+**Creating a Tunnel:**
+
+1. Navigate to the **Tunnels** tab.
+2. Click **Create Tunnel**.
+3. Provide a unique, recognizable **Tunnel Name** (e.g., `homeserver-tunnel`).
+4. Click **Create**. This will register a cloud-managed tunnel on Cloudflare.
+
+**Running a Tunnel:**
+
+- Find your tunnel in the list and toggle **Daemon Run** to **Active**.
+- The embedded daemon will launch in the background. You can click **Logs** at any time to view connection outputs and diagnostics.
+
+**Routing Traffic:**
+
+- Go to your **DNS Zones**, create/edit a record, set the **Routing Mode** to **Cloudflare Tunnel**, choose your active tunnel, and specify the local address (e.g., `http://localhost:3000`).
+- TetherDNS will configure the DNS record as a CNAME pointing to `<tunnel-id>.cfargotunnel.com` and write the ingress configuration rule for the tunnel daemon.
 
 ---
 
