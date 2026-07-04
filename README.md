@@ -90,6 +90,18 @@
 | **Webhook Endpoints**   | Generate unique, signed webhook URLs to trigger DDNS updates from routers, scripts, or automation tools   |
 | **IPv4 & IPv6 Support** | Detects and updates both IPv4 (`A`) and IPv6 (`AAAA`) records independently                               |
 
+### ☁️ Embedded Cloudflare Tunnel (Zero Trust)
+
+| Feature | Description |
+| --- | --- |
+| **Embedded Daemon Runner** | Auto-downloads and runs native `cloudflared` binary inside the Docker container, eliminating the need to pull separate sidecar containers. |
+| **Cloud-Managed Tunnels** | Full creation, deletion, log inspection, and runtime control of Cloud-managed Zero Trust Tunnels directly from the UI dashboard. |
+| **Flexible Routing Modes** | Instantly toggle any DNS record between: **Static (Manual)**, **Dynamic IP (DDNS)**, or **Cloudflare Tunnel (Zero Trust)** modes. |
+| **Daemon Auto-Start & Control** | Automatically detects active tunnels, starts their corresponding background daemons on system startup, and handles automated reconnection. |
+| **Real-time Logging Interface** | Stream and view live connection output from the `cloudflared` background daemon runner directly inside the web UI. |
+| **Two-way Integrity Sync** | Automated reconciliation checks for changes or deletions directly on the Cloudflare Dashboard and purges dangling database records. |
+
+
 ### 📊 Analytics & Logging
 
 | Feature                 | Description                                                                        |
