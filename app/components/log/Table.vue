@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 
 const { fetchLogs } = useLogs()
 const toast = useToast()
@@ -12,22 +12,6 @@ const pending = ref(true)
 const searchQuery = ref('')
 const statusFilter = ref('ALL')
 
-// Computed
-const columns = computed(() => [
-    { id: 'time', header: t('logs.col_time') },
-    { id: 'record', header: t('logs.col_record') },
-    { id: 'zone', header: t('logs.col_zone') },
-    { accessorKey: 'oldIp', header: t('logs.col_old_ip') },
-    { accessorKey: 'newIp', header: t('logs.col_new_ip') },
-    { id: 'status', header: t('logs.col_status') },
-])
-
-const filterOptions = computed(() => [
-    { label: t('logs.filter_status'), value: 'ALL' },
-    { label: t('common.success'), value: 'SUCCESS' },
-    { label: t('common.failed'), value: 'FAILED' }
-])
-
 // Actions
 const loadData = async () => {
     pending.value = true
@@ -38,7 +22,7 @@ const loadData = async () => {
             status: statusFilter.value === 'ALL' ? undefined : (statusFilter.value || undefined),
             search: searchQuery.value || undefined
         })
-        logs.value = res.data
+        logs.value = res.data || []
         pagination.value = res.pagination
     } catch (e: any) {
         toast.add({ title: t('logs.load_error'), description: e.message, color: 'error' })
@@ -53,160 +37,193 @@ watch([searchQuery, statusFilter], () => {
     loadData()
 })
 
-const { locale } = useI18n()
-
-const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleString(locale.value === 'th' ? 'th-TH' : 'en-US', {
-        year: 'numeric', month: 'short', day: 'numeric',
-        hour: '2-digit', minute: '2-digit', second: '2-digit'
-    })
-}
-
 const goPage = (p: number) => {
+    if (p < 1 || p > pagination.value.totalPages) return
     pagination.value.page = p
     loadData()
 }
 
-const onFilterChange = () => {
-    pagination.value.page = 1
-    loadData()
+const exportCSV = () => {
+    const rows = [['timestamp', 'hostname', 'from', 'to', 'status', 'message']]
+    logs.value.forEach(l => {
+        rows.push([
+            new Date(l.createdAt).toISOString(),
+            l.record?.name || 'unknown',
+            l.oldIp || '',
+            l.newIp || '',
+            l.status,
+            l.message || ''
+        ])
+    })
+    const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n')
+    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' })
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(blob)
+    a.download = 'tetherdns-updates.csv'
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    toast.add({ title: t('common.success'), description: 'CSV exported successfully', color: 'success' })
 }
 
-onMounted(() => loadData())
+const formatTime = (dateStr: string) => {
+    if (!dateStr) return '-'
+    const d = new Date(dateStr)
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+}
+
+const formatDate = (dateStr: string) => {
+    if (!dateStr) return '-'
+    const d = new Date(dateStr)
+    return d.toLocaleDateString([], { month: 'short', day: 'numeric' })
+}
+
+onMounted(() => {
+    loadData()
+})
 </script>
 
 <template>
-    <UCard :ui="{ header: 'px-4 sm:px-6 py-5', body: 'p-0 sm:p-0', footer: 'px-4 py-4' }"
-        class="bg-white dark:bg-slate-900 shadow-sm overflow-hidden ring-1 ring-slate-200 dark:ring-slate-800">
-        <template #header>
-            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div class="flex flex-col">
-                    <h2 class="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
-                        {{ $t('logs.title') }}
-                    </h2>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
-                        {{ $t('logs.subtitle') }}
-                    </p>
+    <div class="space-y-6">
+        <!-- Page Head matching ref.html -->
+        <section class="page-head">
+            <div class="ph-left">
+                <div class="ph-icon">
+                    <UIcon name="i-heroicons-arrow-path" class="w-6 h-6 text-[var(--cyan)]" />
                 </div>
-
-                <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-                    <!-- Status Filter -->
-                    <USelect v-model="statusFilter" :items="[
-                        { label: 'All Status', value: 'ALL' },
-                        { label: 'Success', value: 'SUCCESS' },
-                        { label: 'Error', value: 'ERROR' }
-                    ]" class="w-full sm:w-36" :ui="{ base: 'rounded-xl' }" size="sm" />
-
-                    <!-- Search Bar -->
-                    <UInput v-model="searchQuery" :placeholder="$t('common.search')" icon="i-heroicons-magnifying-glass"
-                        size="sm" class="w-full sm:w-64"
-                        :ui="{ root: 'rounded-xl shadow-sm transition-all focus-within:ring-2 focus-within:ring-primary-500' }" />
-                    
-                    <UButton icon="i-heroicons-arrow-path" color="neutral" variant="soft"
-                        class="rounded-xl font-bold w-full sm:w-auto justify-center px-4" size="sm" :loading="pending" @click="loadData">
-                        {{ $t('common.refresh') }}
-                    </UButton>
+                <div>
+                    <h1>{{ $t('logs.title') }}</h1>
+                    <p class="sub">{{ $t('logs.subtitle') }}</p>
                 </div>
             </div>
-        </template>
+            <div class="ph-right">
+                <button
+                    type="button"
+                    class="btn-ref ghost"
+                    :disabled="logs.length === 0"
+                    @click="exportCSV"
+                >
+                    <UIcon name="i-heroicons-arrow-down-tray" class="w-4 h-4" />
+                    <span>Export CSV</span>
+                </button>
+            </div>
+        </section>
 
-        <!-- Desktop Table View (lg and up) -->
-        <div class="hidden lg:block relative min-h-[400px]">
-            <UTable :data="logs" :columns="columns" :loading="pending" :ui="{
-                th: 'bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold whitespace-nowrap py-4 border-b border-slate-200 dark:border-slate-800 lg:text-sm uppercase tracking-wider',
-                td: 'py-4 lg:text-base text-slate-600 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800/60',
-                tr: 'hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors'
-            }">
-                <template #time-cell="{ row }">
-                    <span class="font-medium text-slate-500 tabular-nums">{{ formatDate(row.original.createdAt) }}</span>
-                </template>
-
-                <template #zone-cell="{ row }">
-                    <div class="flex items-center gap-2">
-                        <UIcon name="i-heroicons-globe-alt" class="w-4 h-4 text-blue-500" />
-                        <span class="font-bold text-slate-900 dark:text-white">{{ row.original.record?.zone?.name || 'N/A' }}</span>
-                    </div>
-                </template>
-
-                <template #record-cell="{ row }">
-                    <span class="font-mono text-sm px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700">
-                        {{ row.original.record?.name || 'N/A' }}
-                    </span>
-                </template>
-
-                <template #status-cell="{ row }">
-                    <UBadge :color="row.original.status === 'SUCCESS' ? 'success' : 'error'" variant="soft" size="xs"
-                        class="font-black uppercase tracking-widest px-2.5 rounded-lg">
-                        {{ row.original.status }}
-                    </UBadge>
-                </template>
-            </UTable>
-        </div>
-
-        <!-- Mobile/Tablet Card View (below lg) -->
-        <div class="lg:hidden p-4 space-y-4 bg-slate-50/50 dark:bg-slate-950/20 min-h-[400px]">
-            <template v-if="pending">
-                <div v-for="i in 3" :key="i" class="p-5 bg-white dark:bg-slate-900 rounded-3xl animate-pulse h-40 ring-1 ring-slate-200 dark:ring-slate-800"></div>
-            </template>
-            <template v-else-if="logs.length === 0">
-                <div class="py-20 text-center">
-                    <UIcon name="i-heroicons-document-magnifying-glass" class="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                    <p class="text-base font-bold text-slate-900 dark:text-white">{{ $t('logs.no_logs') }}</p>
+        <!-- Main Card -->
+        <div class="card toolbar-card">
+            <!-- Toolbar -->
+            <div class="toolbar flex flex-wrap items-center gap-3">
+                <div class="search">
+                    <UIcon name="i-heroicons-magnifying-glass" class="w-4 h-4 text-[var(--text3)]" />
+                    <input
+                        v-model="searchQuery"
+                        type="text"
+                        placeholder="Search hostname or IP..."
+                        autocomplete="off"
+                    />
                 </div>
-            </template>
-            <template v-else>
-                <div v-for="log in logs" :key="log.id"
-                    class="bg-white dark:bg-slate-900 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 space-y-4">
-                    <div class="flex items-start justify-between">
-                        <div class="flex flex-col">
-                            <span class="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-1">{{ formatDate(log.createdAt) }}</span>
-                            <div class="flex items-center gap-2">
-                                <UIcon name="i-heroicons-globe-alt" class="w-4 h-4 text-blue-500" />
-                                <h3 class="font-bold text-slate-900 dark:text-white truncate max-w-[200px]">{{ log.record?.zone?.name || 'N/A' }}</h3>
-                            </div>
-                        </div>
-                        <UBadge :color="log.status === 'SUCCESS' ? 'success' : 'error'" variant="soft" size="xs" class="font-black rounded-lg">
-                            {{ log.status }}
-                        </UBadge>
-                    </div>
 
-                    <div class="flex flex-col p-4 bg-slate-50/50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800/60 gap-3">
-                        <div class="flex justify-between items-center">
-                            <span class="text-[10px] uppercase font-black text-slate-400">Record</span>
-                            <span class="font-mono text-xs font-bold text-slate-700 dark:text-slate-200">{{ log.record?.name || 'N/A' }}</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-[10px] uppercase font-black text-slate-400">Update Content</span>
-                            <span class="font-mono text-xs font-bold text-primary-500">{{ log.newIp || '-' }}</span>
-                        </div>
-                    </div>
-                </div>
-            </template>
-        </div>
+                <select v-model="statusFilter" class="input select max-w-[140px]">
+                    <option value="ALL">All Status</option>
+                    <option value="SUCCESS">Success</option>
+                    <option value="FAILED">Failed</option>
+                </select>
 
-        <template #footer v-if="pagination.totalPages > 1 || pagination.page > 1">
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <span class="text-xs font-black text-slate-400 uppercase tracking-widest">
-                    {{ $t('logs.pagination', {
-                        page: pagination.page,
-                        totalPages: pagination.totalPages,
-                        total: pagination.total
-                    }) }}
+                <div class="spacer"></div>
+                <span class="chip green font-mono text-xs">
+                    {{ pagination.total }} Events
                 </span>
-                <div class="flex items-center gap-1.5">
-                    <UButton size="sm" color="neutral" variant="soft" class="rounded-xl font-bold px-4" icon="i-heroicons-chevron-left"
-                        :disabled="pagination.page <= 1" @click="goPage(pagination.page - 1)">
-                        {{ $t('common.prev') }}
-                    </UButton>
-                    <div class="w-10 h-8 flex items-center justify-center text-sm font-black text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
-                        {{ pagination.page }}
-                    </div>
-                    <UButton size="sm" color="neutral" variant="soft" class="rounded-xl font-bold px-4" icon="i-heroicons-chevron-right"
-                        :disabled="pagination.page >= pagination.totalPages" @click="goPage(pagination.page + 1)">
-                        {{ $t('common.next') }}
-                    </UButton>
+            </div>
+
+            <!-- Table -->
+            <div class="table-wrap overflow-x-auto">
+                <table class="rtable w-full">
+                    <thead>
+                        <tr>
+                            <th>{{ $t('logs.col_time') }}</th>
+                            <th>{{ $t('logs.col_record') }}</th>
+                            <th>IP Transition</th>
+                            <th>{{ $t('logs.col_status') }}</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template v-if="pending">
+                            <tr>
+                                <td colspan="5" class="text-center py-16">
+                                    <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 animate-spin text-[var(--cyan)] mx-auto mb-2" />
+                                    <p class="text-xs text-[var(--text3)]">Loading update logs...</p>
+                                </td>
+                            </tr>
+                        </template>
+                        <template v-else-if="logs.length === 0">
+                            <tr class="empty-row">
+                                <td colspan="5">
+                                    <div class="empty py-16 text-center flex flex-col items-center justify-center">
+                                        <UIcon name="i-heroicons-clock" class="w-10 h-10 text-[var(--text3)] mb-3" />
+                                        <div class="font-bold text-sm text-[var(--text)]">No update logs recorded</div>
+                                        <span class="text-xs text-[var(--text3)] mt-1">Logs will appear here once DDNS mutations occur</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                        <template v-else>
+                            <tr v-for="log in logs" :key="log.id">
+                                <td class="utime">
+                                    <span class="font-mono font-semibold">{{ formatTime(log.createdAt) }}</span>
+                                    <span class="u-date">{{ formatDate(log.createdAt) }}</span>
+                                </td>
+                                <td class="mono font-semibold text-[var(--text)]">
+                                    {{ log.record?.name || 'Unknown' }}
+                                </td>
+                                <td>
+                                    <div class="u-change mono inline-flex items-center gap-1.5">
+                                        <span class="opacity-70">{{ log.oldIp || '—' }}</span>
+                                        <UIcon name="i-heroicons-arrow-right" class="w-3 h-3 text-[var(--text3)]" />
+                                        <b :class="log.status === 'SUCCESS' ? 'text-[var(--green)]' : 'text-[var(--danger)]'">
+                                            {{ log.newIp || '—' }}
+                                        </b>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="pill" :class="log.status === 'SUCCESS' ? 'ok' : 'err'">
+                                        <span class="dot" :class="log.status === 'SUCCESS' ? 'ok' : 'failed'"></span>
+                                        {{ log.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="text-xs text-[var(--text3)] truncate max-w-xs block" :title="log.message">
+                                        {{ log.message || 'Auto DDNS sync' }}
+                                    </span>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Footer -->
+            <div class="table-foot flex items-center justify-between p-4 border-t border-[var(--border)] text-xs text-[var(--text3)]">
+                <span>Page {{ pagination.page }} of {{ pagination.totalPages || 1 }}</span>
+                <div class="flex items-center gap-1">
+                    <button
+                        type="button"
+                        class="icon-btn sm"
+                        :disabled="pagination.page <= 1"
+                        @click="goPage(pagination.page - 1)"
+                    >
+                        <UIcon name="i-heroicons-chevron-left" class="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                        type="button"
+                        class="icon-btn sm"
+                        :disabled="pagination.page >= pagination.totalPages"
+                        @click="goPage(pagination.page + 1)"
+                    >
+                        <UIcon name="i-heroicons-chevron-right" class="w-3.5 h-3.5" />
+                    </button>
                 </div>
             </div>
-        </template>
-    </UCard>
+        </div>
+    </div>
 </template>

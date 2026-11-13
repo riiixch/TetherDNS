@@ -6,6 +6,9 @@ export default defineNuxtConfig({
     },
     css: ['~/assets/css/main.css'],
     modules: ['@nuxt/ui', '@nuxtjs/i18n'],
+    ui: {
+        fonts: false
+    },
     i18n: {
         locales: [
             { code: 'en', file: 'en.json', name: 'English' },

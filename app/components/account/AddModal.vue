@@ -44,54 +44,68 @@ watch(isOpen, (val) => {
 <template>
     <UModal v-model:open="isOpen" :ui="{ content: 'sm:max-w-md' }">
         <template #content>
-            <UCard :ui="{ body: 'divide-y divide-slate-200 dark:divide-slate-800' }" class="ring-0">
-
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h3 class="text-base font-bold text-slate-900 dark:text-white">{{
-                                $t('accounts.add_modal_title') }}</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{
-                                $t('accounts.add_modal_desc') }}</p>
-                        </div>
-                        <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark" class="-my-1"
-                            @click="isOpen = false" />
+            <div class="card card-ref p-6 space-y-4">
+                <div class="flex items-center justify-between border-b border-[var(--border)] pb-3">
+                    <div>
+                        <h3 class="text-base font-bold text-[var(--text)]">{{ $t('accounts.add_modal_title') }}</h3>
+                        <p class="text-xs text-[var(--text3)] mt-0.5">{{ $t('accounts.add_modal_desc') }}</p>
                     </div>
-                </template>
+                    <button type="button" class="icon-btn sm" @click="isOpen = false">
+                        <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
+                    </button>
+                </div>
 
-                <form @submit.prevent="handleAdd" class="space-y-5 py-2">
-                    <UFormField :label="$t('accounts.label_field')" name="label">
-                        <UInput v-model="label" :placeholder="$t('accounts.label_placeholder')" class="w-full"
-                            :ui="{ root: 'rounded-xl h-10' }" autofocus />
-                        <template #help>
-                            <p class="text-[11px] text-slate-500 mt-1">{{ $t('accounts.label_hint') }}</p>
-                        </template>
-                    </UFormField>
+                <form @submit.prevent="handleAdd" class="space-y-4">
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-bold text-[var(--text2)] uppercase tracking-wider">
+                            {{ $t('accounts.label_field') }}
+                        </label>
+                        <input
+                            v-model="label"
+                            type="text"
+                            :placeholder="$t('accounts.label_placeholder')"
+                            class="input w-full"
+                            autofocus
+                        />
+                        <p class="text-[11px] text-[var(--text3)]">{{ $t('accounts.label_hint') }}</p>
+                    </div>
 
-                    <UFormField :label="$t('accounts.email_field')" name="email">
-                        <UInput v-model="email" type="email" :placeholder="$t('accounts.email_placeholder')"
-                            class="w-full" :ui="{ root: 'rounded-xl h-10' }" />
-                    </UFormField>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-bold text-[var(--text2)] uppercase tracking-wider">
+                            {{ $t('accounts.email_field') }}
+                        </label>
+                        <input
+                            v-model="email"
+                            type="email"
+                            :placeholder="$t('accounts.email_placeholder')"
+                            class="input w-full"
+                        />
+                    </div>
 
-                    <UFormField :label="$t('accounts.token_field')" name="apiToken">
-                        <UInput v-model="apiToken" type="password" :placeholder="$t('accounts.token_placeholder')"
-                            class="w-full" :ui="{ root: 'rounded-xl h-10' }" />
-                        <template #help>
-                            <p class="text-[11px] text-slate-500 mt-1">{{ $t('accounts.token_hint') }}</p>
-                        </template>
-                    </UFormField>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-bold text-[var(--text2)] uppercase tracking-wider">
+                            {{ $t('accounts.token_field') }}
+                        </label>
+                        <input
+                            v-model="apiToken"
+                            type="password"
+                            :placeholder="$t('accounts.token_placeholder')"
+                            class="input mono w-full"
+                        />
+                        <p class="text-[11px] text-[var(--text3)]">{{ $t('accounts.token_hint') }}</p>
+                    </div>
 
-                    <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-                        <UButton color="neutral" variant="ghost" class="rounded-xl font-bold" @click="isOpen = false">
+                    <div class="flex justify-end gap-2 pt-4 border-t border-[var(--border)]">
+                        <button type="button" class="btn-ref ghost" @click="isOpen = false">
                             {{ $t('common.cancel') }}
-                        </UButton>
-                        <UButton type="submit" color="primary" :loading="isLoading"
-                            class="rounded-xl font-bold px-6 shadow-sm">
-                            {{ $t('accounts.add_account') }}
-                        </UButton>
+                        </button>
+                        <button type="submit" class="btn-ref primary" :disabled="isLoading">
+                            <UIcon v-if="isLoading" name="i-heroicons-arrow-path" class="w-4 h-4 animate-spin" />
+                            <span>{{ $t('accounts.add_account') }}</span>
+                        </button>
                     </div>
                 </form>
-            </UCard>
+            </div>
         </template>
     </UModal>
 </template>

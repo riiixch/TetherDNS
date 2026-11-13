@@ -41,50 +41,74 @@ const handleSetup = async () => {
 </script>
 
 <template>
-    <UCard :ui="{ header: 'px-6 py-6 border-none', body: 'px-6 pb-8 pt-0' }"
-        class="w-full bg-white/70 dark:bg-slate-900/60 backdrop-blur-2xl border-slate-200/50 dark:border-slate-800/50 shadow-2xl rounded-3xl ring-1 ring-slate-200/50 dark:ring-slate-800/50">
-        <template #header>
-            <div class="flex items-center justify-center gap-2 mb-2">
-                <UIcon name="i-heroicons-sparkles-solid" class="w-5 h-5 text-amber-500" />
-                <h2 class="text-xl font-bold text-center text-slate-900 dark:text-white tracking-tight">{{
-                    $t('setup.title') }}</h2>
+    <div class="card card-ref p-6 sm:p-8 relative shadow-2xl">
+        <div class="mb-6 text-center">
+            <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-[rgba(18,224,138,0.1)] text-[var(--green)] mb-3">
+                <UIcon name="i-heroicons-sparkles" class="w-5 h-5" />
             </div>
-            <p class="text-xs text-slate-500 text-center font-medium">{{ $t('setup.subtitle') }}</p>
-        </template>
+            <h2 class="text-xl font-bold font-['Space_Grotesk'] tracking-tight text-[var(--text)]">
+                {{ $t('setup.title') }}
+            </h2>
+            <p class="text-xs text-[var(--text3)] mt-1.5 font-medium">
+                {{ $t('setup.subtitle') }}
+            </p>
+        </div>
 
-        <form @submit.prevent="handleSetup" class="space-y-5">
-            <UFormField :label="$t('auth.username_field')" name="username">
-                <UInput v-model="username" placeholder="admin" autofocus class="w-full"
-                    :ui="{ root: 'rounded-xl h-11' }" />
-            </UFormField>
+        <form @submit.prevent="handleSetup" class="space-y-4">
+            <div class="space-y-1.5">
+                <label class="block text-xs font-bold text-[var(--text2)] uppercase tracking-wider">
+                    {{ $t('auth.username_field') }}
+                </label>
+                <input
+                    v-model="username"
+                    type="text"
+                    placeholder="admin"
+                    autofocus
+                    class="input w-full"
+                />
+            </div>
 
-            <UFormField :label="$t('auth.password_field')" name="password">
-                <UInput v-model="password" type="password" placeholder="••••••••" class="w-full tracking-wider"
-                    :ui="{ root: 'rounded-xl h-11' }" />
-            </UFormField>
+            <div class="space-y-1.5">
+                <label class="block text-xs font-bold text-[var(--text2)] uppercase tracking-wider">
+                    {{ $t('auth.password_field') }}
+                </label>
+                <input
+                    v-model="password"
+                    type="password"
+                    placeholder="••••••••"
+                    class="input w-full tracking-wider"
+                />
+            </div>
 
-            <UFormField :label="$t('setup.confirm_password')" name="confirmPassword">
-                <UInput v-model="confirmPassword" type="password" placeholder="••••••••" class="w-full tracking-wider"
-                    :ui="{ root: 'rounded-xl h-11' }" />
-            </UFormField>
+            <div class="space-y-1.5">
+                <label class="block text-xs font-bold text-[var(--text2)] uppercase tracking-wider">
+                    {{ $t('setup.confirm_password') }}
+                </label>
+                <input
+                    v-model="confirmPassword"
+                    type="password"
+                    placeholder="••••••••"
+                    class="input w-full tracking-wider"
+                />
+            </div>
 
-            <div class="pt-2">
-                <UButton type="submit" color="primary" block :loading="isLoading"
-                    class="h-11 rounded-xl font-bold shadow-md shadow-primary-500/20">
-                    {{ $t('setup.save_continue') }}
-                    <template #trailing>
-                        <UIcon name="i-heroicons-arrow-right" class="w-4 h-4 ml-1" />
-                    </template>
-                </UButton>
+            <div class="pt-3">
+                <button
+                    type="submit"
+                    :disabled="isLoading"
+                    class="btn-ref primary w-full py-2.5 font-bold text-sm flex items-center justify-center gap-2"
+                >
+                    <UIcon v-if="isLoading" name="i-heroicons-arrow-path" class="w-4 h-4 animate-spin" />
+                    <span>{{ $t('setup.save_continue') }}</span>
+                    <UIcon name="i-heroicons-arrow-right" class="w-4 h-4 ml-1" />
+                </button>
+            </div>
 
-                <div class="mt-6 flex items-center justify-center gap-2">
-                    <div class="h-px w-4 bg-slate-200 dark:bg-slate-800"></div>
-                    <p class="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-400 dark:text-slate-500">
-                        Design by <span class="text-primary-500 dark:text-primary-400 hover:text-primary-600 dark:hover:text-primary-300 cursor-default transition-colors">RIIIXCH</span>
-                    </p>
-                    <div class="h-px w-4 bg-slate-200 dark:bg-slate-800"></div>
-                </div>
+            <div class="mt-8 pt-4 border-t border-[var(--border)] flex items-center justify-center gap-2">
+                <p class="text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--text3)]">
+                    Design by <span class="text-[var(--green)]">RIIXCH</span>
+                </p>
             </div>
         </form>
-    </UCard>
+    </div>
 </template>

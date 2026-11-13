@@ -1,39 +1,60 @@
-<template>
-  <div
-    class="min-h-screen relative flex items-center justify-center bg-slate-50 dark:bg-[#050505] text-slate-900 dark:text-slate-100 overflow-hidden font-sans selection:bg-primary-500/30">
+<script setup lang="ts">
+const colorMode = useColorMode()
 
-    <div class="absolute inset-0 pointer-events-none">
-      <div
-        class="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-500/20 dark:bg-primary-500/10 rounded-full blur-[100px] animate-pulse">
+const toggleTheme = () => {
+  colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
+}
+</script>
+
+<template>
+  <div class="min-h-screen relative flex items-center justify-center p-4 selection:bg-[rgba(18,224,138,0.25)] selection:text-[var(--text)] overflow-hidden font-sans">
+    <!-- Ambient glowing backdrop matching ref.html -->
+    <div class="ambient" aria-hidden="true">
+      <div class="blobs">
+        <div class="blob b1"></div>
+        <div class="blob b2"></div>
+        <div class="blob b3"></div>
       </div>
-      <div
-        class="absolute bottom-1/4 right-1/4 w-120 h-120 bg-blue-500/20 dark:bg-blue-500/10 rounded-full blur-[120px] mix-blend-multiply">
-      </div>
+      <div class="grid-bg"></div>
+      <div class="grain"></div>
     </div>
 
-    <div class="w-full max-w-104 p-6 mb-16 relative z-10">
-      <div class="text-center mb-10 flex flex-col items-center">
-        <div
-          class="w-16 h-16 mb-6 p-2 bg-white dark:bg-slate-900 rounded-2xl shadow-xl shadow-primary-500/10 border border-slate-200 dark:border-slate-800 relative group">
-          <div
-            class="absolute inset-0 rounded-2xl border-2 border-primary-500/50 opacity-0 group-hover:opacity-100 transition-opacity scale-105 pointer-events-none">
-          </div>
+    <!-- Top floating controls -->
+    <div class="absolute top-6 right-6 z-20 flex items-center gap-2">
+      <CommonLanguageSwitcher />
+      <button
+        type="button"
+        class="icon-btn"
+        aria-label="Toggle Theme"
+        @click="toggleTheme"
+      >
+        <ClientOnly>
+          <UIcon
+            :name="colorMode.value === 'dark' ? 'i-heroicons-sun-20-solid' : 'i-heroicons-moon-20-solid'"
+            class="w-4 h-4 text-[var(--text2)]"
+          />
+          <template #fallback>
+            <span class="w-4 h-4"></span>
+          </template>
+        </ClientOnly>
+      </button>
+    </div>
+
+    <div class="w-full max-w-[420px] relative z-10 py-10">
+      <div class="text-center mb-8 flex flex-col items-center">
+        <div class="w-14 h-14 mb-4 p-2 bg-[var(--surface2)] rounded-2xl shadow-xl border border-[var(--border)] relative group transition-transform hover:scale-105">
           <img src="~/assets/images/tetherdns_logo.png" alt="TetherDNS Logo" class="w-full h-full object-contain" />
         </div>
 
-        <h1 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white leading-none">
+        <h1 class="text-2xl sm:text-3xl font-bold font-['Space_Grotesk'] tracking-tight text-[var(--text)] leading-none">
           {{ $t('auth.title') }}
         </h1>
-        <p class="mt-3 text-sm font-medium text-slate-500 dark:text-slate-400 max-w-[16rem]">
+        <p class="mt-2 text-xs sm:text-sm font-medium text-[var(--text3)]">
           {{ $t('auth.subtitle') }}
         </p>
       </div>
 
       <slot />
-
-      <div class="mt-8 text-center">
-        <CommonLanguageSwitcher class="inline-flex" />
-      </div>
     </div>
   </div>
 </template>

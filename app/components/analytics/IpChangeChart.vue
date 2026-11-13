@@ -18,95 +18,127 @@ const colorMode = useColorMode()
 
 const isDark = computed(() => colorMode.value === 'dark')
 
+const datasetData = computed(() => analytics.value?.data?.datasets[0]?.data || [])
+const labels = computed(() => analytics.value?.data?.labels || [])
+
+const total = computed(() => datasetData.value.reduce((a, b) => a + b, 0))
+const peakLabel = computed(() => {
+    if (!datasetData.value.length) return '-'
+    let max = -1
+    let maxIdx = 0
+    datasetData.value.forEach((v, i) => {
+        if (v > max) {
+            max = v
+            maxIdx = i
+        }
+    })
+    return labels.value[maxIdx] || '-'
+})
+const avg = computed(() => {
+    const len = datasetData.value.length || 24
+    return (total.value / len).toFixed(1)
+})
+
 const chartOptions = computed(() => ({
     chart: {
         id: 'ip-changes-chart',
         toolbar: { show: false },
         animations: { enabled: true, easing: 'easeinout', speed: 800 },
         background: 'transparent',
-        fontFamily: 'inherit'
+        fontFamily: "'JetBrains Mono', 'Anuphan', sans-serif"
     },
     xaxis: {
-        categories: analytics.value?.data?.labels || [],
+        categories: labels.value,
         labels: {
-            style: { colors: isDark.value ? '#94a3b8' : '#64748b', fontWeight: 500 }
+            style: {
+                colors: isDark.value ? '#62728f' : '#64748b',
+                fontSize: '11px',
+                fontFamily: "'JetBrains Mono', monospace"
+            }
         },
         axisBorder: { show: false },
         axisTicks: { show: false }
     },
     yaxis: {
         labels: {
-            style: { colors: isDark.value ? '#94a3b8' : '#64748b', fontWeight: 500 }
+            style: {
+                colors: isDark.value ? '#62728f' : '#64748b',
+                fontSize: '11px',
+                fontFamily: "'JetBrains Mono', monospace"
+            }
         }
     },
     stroke: {
         curve: 'smooth' as const,
-        width: 3
+        width: 2.5
     },
-    colors: ['#3b82f6'], // Primary Blue
+    colors: ['#12e08a'],
     fill: {
         type: 'gradient',
         gradient: {
             shadeIntensity: 1,
-            opacityFrom: isDark.value ? 0.4 : 0.2,
+            opacityFrom: isDark.value ? 0.35 : 0.2,
             opacityTo: 0.0,
-            stops: [0, 100]
+            stops: [0, 95]
         }
     },
     grid: {
-        borderColor: isDark.value ? '#334155' : '#e2e8f0', // slate-700 : slate-200
-        strokeDashArray: 4,
-        padding: { top: 0, right: 0, bottom: 0, left: 10 }
+        borderColor: isDark.value ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)',
+        strokeDashArray: 3,
+        padding: { top: 10, right: 10, bottom: 0, left: 10 }
     },
     theme: {
-        mode: isDark.value ? 'dark' as const : 'light' as const
+        mode: isDark.value ? ('dark' as const) : ('light' as const)
     },
     tooltip: {
         theme: isDark.value ? 'dark' : 'light',
-        x: { show: true }
+        x: { show: true },
+        style: {
+            fontSize: '12px',
+            fontFamily: "'JetBrains Mono', monospace"
+        }
     },
     dataLabels: { enabled: false },
     markers: {
         size: 0,
-        colors: ['#3b82f6'],
-        strokeColors: isDark.value ? '#0f172a' : '#ffffff',
+        colors: ['#12e08a'],
+        strokeColors: isDark.value ? '#0c1322' : '#ffffff',
         strokeWidth: 2,
-        hover: { size: 6 }
+        hover: { size: 5 }
     }
 }))
 
 const series = computed(() => [
     {
         name: t('analytics.ip_changes'),
-        data: analytics.value?.data?.datasets[0]?.data || []
+        data: datasetData.value
     }
 ])
 </script>
 
 <template>
-    <UCard :ui="{ body: 'px-4 py-5 sm:p-6 h-full flex flex-col' }"
-        class="bg-white dark:bg-slate-900 ring-1 ring-slate-200 dark:ring-slate-800 shadow-sm h-full">
-
-        <div
-            class="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-slate-200 dark:border-slate-800 pb-4">
-            <div class="flex items-center gap-2">
-                <div class="p-1.5 bg-primary-50 dark:bg-primary-500/10 rounded-lg">
-                    <UIcon name="i-heroicons-chart-bar-solid" class="w-5 h-5 text-primary-500" />
-                </div>
-                <h3 class="text-sm font-bold uppercase tracking-widest text-slate-700 dark:text-slate-300">
-                    {{ $t('analytics.ip_changes') }}
-                </h3>
+    <div class="card chart-card flex flex-col h-full">
+        <div class="card-head">
+            <div class="card-title">
+                <UIcon name="i-heroicons-chart-bar" class="w-4 h-4 text-[var(--green)]" />
+                <span>{{ $t('analytics.ip_changes') }}</span>
             </div>
-            <UBadge variant="soft" color="primary" class="font-bold tracking-wide">24H Activity</UBadge>
+            <span class="chip green">24H ACTIVITY</span>
         </div>
 
-        <div class="flex-1 min-h-[300px] relative">
+        <div class="chart-meta">
+            <span class="meta-chip">Total <b>{{ total }}</b></span>
+            <span class="meta-chip">Peak <b>{{ peakLabel }}</b></span>
+            <span class="meta-chip">Avg <b>{{ avg }}</b></span>
+        </div>
+
+        <div class="flex-1 min-h-[260px] relative w-full pt-2">
             <div v-if="pending" class="absolute inset-0 flex items-center justify-center">
-                <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 animate-spin text-slate-400 dark:text-slate-500" />
+                <UIcon name="i-heroicons-arrow-path" class="w-7 h-7 animate-spin text-[var(--text3)]" />
             </div>
             <div v-else class="absolute inset-0">
                 <VueApexCharts type="area" height="100%" :options="chartOptions" :series="series" />
             </div>
         </div>
-    </UCard>
+    </div>
 </template>

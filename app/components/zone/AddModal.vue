@@ -55,52 +55,55 @@ watch(isOpen, (val) => {
 <template>
     <UModal v-model:open="isOpen" :ui="{ content: 'sm:max-w-md' }">
         <template #content>
-            <UCard :ui="{ body: 'divide-y divide-slate-200 dark:divide-slate-800' }" class="ring-0">
-
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h3 class="text-base font-bold text-slate-900 dark:text-white">{{
-                                $t('zones.add_modal_title') }}</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ $t('zones.add_modal_desc')
-                                }}</p>
-                        </div>
-                        <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark" class="-my-1"
-                            @click="isOpen = false" />
+            <div class="card card-ref p-6 space-y-4">
+                <div class="flex items-center justify-between border-b border-[var(--border)] pb-3">
+                    <div>
+                        <h3 class="text-base font-bold text-[var(--text)]">{{ $t('zones.add_modal_title') }}</h3>
+                        <p class="text-xs text-[var(--text3)] mt-0.5">{{ $t('zones.add_modal_desc') }}</p>
                     </div>
-                </template>
+                    <button type="button" class="icon-btn sm" @click="isOpen = false">
+                        <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
+                    </button>
+                </div>
 
-                <form @submit.prevent="handleAdd" class="space-y-5 py-2">
+                <form @submit.prevent="handleAdd" class="space-y-4">
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-bold text-[var(--text2)] uppercase tracking-wider">
+                            {{ $t('zones.account_field') }}
+                        </label>
+                        <select v-model="selectedAccountId" class="input select w-full">
+                            <option v-for="opt in accountOptions" :key="opt.value" :value="opt.value">
+                                {{ opt.label }}
+                            </option>
+                        </select>
+                        <p class="text-[11px] text-[var(--text3)]">{{ $t('zones.account_hint') }}</p>
+                    </div>
 
-                    <UFormField :label="$t('zones.account_field')" name="account">
-                        <USelect v-model="selectedAccountId" :items="accountOptions" value-key="value"
-                            :placeholder="$t('zones.account_placeholder')" class="w-full"
-                            :ui="{ base: 'rounded-xl h-10' }" />
-                        <template #help>
-                            <p class="text-[11px] text-slate-500 mt-1">{{ $t('zones.account_hint') }}</p>
-                        </template>
-                    </UFormField>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-bold text-[var(--text2)] uppercase tracking-wider">
+                            {{ $t('zones.domain_field') }}
+                        </label>
+                        <input
+                            v-model="domainName"
+                            type="text"
+                            :placeholder="$t('zones.domain_placeholder')"
+                            class="input mono w-full"
+                            autofocus
+                        />
+                        <p class="text-[11px] text-[var(--text3)]">{{ $t('zones.domain_hint') }}</p>
+                    </div>
 
-                    <UFormField :label="$t('zones.domain_field')" name="domain">
-                        <UInput v-model="domainName" :placeholder="$t('zones.domain_placeholder')" class="w-full"
-                            :ui="{ root: 'rounded-xl h-10' }" autofocus />
-                        <template #help>
-                            <p class="text-[11px] text-slate-500 mt-1">{{ $t('zones.domain_hint') }}</p>
-                        </template>
-                    </UFormField>
-
-                    <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-                        <UButton color="neutral" variant="ghost" class="rounded-xl font-bold" @click="isOpen = false">
+                    <div class="flex justify-end gap-2 pt-4 border-t border-[var(--border)]">
+                        <button type="button" class="btn-ref ghost" @click="isOpen = false">
                             {{ $t('common.cancel') }}
-                        </UButton>
-                        <UButton type="submit" color="primary" :loading="isLoading"
-                            class="rounded-xl font-bold px-6 shadow-sm">
-                            {{ $t('zones.add_zone') }}
-                        </UButton>
+                        </button>
+                        <button type="submit" class="btn-ref primary" :disabled="isLoading">
+                            <UIcon v-if="isLoading" name="i-heroicons-arrow-path" class="w-4 h-4 animate-spin" />
+                            <span>{{ $t('zones.add_zone') }}</span>
+                        </button>
                     </div>
-
                 </form>
-            </UCard>
+            </div>
         </template>
     </UModal>
 </template>

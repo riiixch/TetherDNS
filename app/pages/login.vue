@@ -47,57 +47,82 @@ const handleLogin = async () => {
 </script>
 
 <template>
-    <UCard :ui="{ header: 'px-6 py-6 border-none', body: 'px-6 pb-8 pt-0' }"
-        class="w-full bg-white/70 dark:bg-slate-900/60 backdrop-blur-2xl border-slate-200/50 dark:border-slate-800/50 shadow-2xl rounded-3xl ring-1 ring-slate-200/50 dark:ring-slate-800/50">
-        <template #header>
-            <h2 class="text-xl font-bold text-center text-slate-900 dark:text-white tracking-tight">
+    <div class="card card-ref p-6 sm:p-8 relative shadow-2xl">
+        <div class="mb-6 text-center">
+            <h2 class="text-xl font-bold font-['Space_Grotesk'] tracking-tight text-[var(--text)]">
                 {{ show2FA ? $t('auth.2fa_notice') : $t('auth.login_title') }}
             </h2>
-            <p class="text-xs text-slate-500 text-center mt-1.5 font-medium">
+            <p class="text-xs text-[var(--text3)] mt-1.5 font-medium">
                 {{ show2FA ? $t('auth.code_placeholder') : $t('auth.login_subtitle') }}
             </p>
-        </template>
+        </div>
 
-        <form @submit.prevent="handleLogin" class="space-y-5">
+        <form @submit.prevent="handleLogin" class="space-y-4">
             <template v-if="!show2FA">
-                <UFormField :label="$t('auth.username_field')" name="username">
-                    <UInput v-model="username" :placeholder="$t('auth.username_placeholder')" autofocus class="w-full"
-                        :ui="{ root: 'rounded-xl h-11' }" />
-                </UFormField>
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold text-[var(--text2)] uppercase tracking-wider">
+                        {{ $t('auth.username_field') }}
+                    </label>
+                    <input
+                        v-model="username"
+                        type="text"
+                        :placeholder="$t('auth.username_placeholder')"
+                        autofocus
+                        class="input w-full"
+                    />
+                </div>
 
-                <UFormField :label="$t('auth.password_field')" name="password">
-                    <UInput v-model="password" type="password" placeholder="••••••••" class="w-full tracking-wider"
-                        :ui="{ root: 'rounded-xl h-11' }" />
-                </UFormField>
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold text-[var(--text2)] uppercase tracking-wider">
+                        {{ $t('auth.password_field') }}
+                    </label>
+                    <input
+                        v-model="password"
+                        type="password"
+                        placeholder="••••••••"
+                        class="input w-full tracking-wider"
+                    />
+                </div>
             </template>
 
             <template v-else>
-                <UFormField name="totpCode">
-                    <UInput v-model="totpCode" placeholder="000000" autofocus
-                        class="w-full text-center tracking-[0.4em] text-2xl font-bold font-mono"
-                        :ui="{ root: 'rounded-2xl h-14' }" />
-                </UFormField>
+                <div class="space-y-2">
+                    <input
+                        v-model="totpCode"
+                        type="text"
+                        placeholder="000000"
+                        autofocus
+                        maxlength="6"
+                        class="input mono w-full text-center tracking-[0.4em] text-2xl font-bold py-3"
+                    />
+                </div>
             </template>
 
-            <div class="pt-2">
-                <UButton type="submit" color="primary" block :loading="isLoading"
-                    class="h-11 rounded-xl font-bold shadow-md shadow-primary-500/20">
-                    {{ show2FA ? $t('auth.verify_code') : $t('auth.login_button') }}
-                </UButton>
+            <div class="pt-3 space-y-3">
+                <button
+                    type="submit"
+                    :disabled="isLoading"
+                    class="btn-ref primary w-full py-2.5 font-bold text-sm flex items-center justify-center gap-2"
+                >
+                    <UIcon v-if="isLoading" name="i-heroicons-arrow-path" class="w-4 h-4 animate-spin" />
+                    <span>{{ show2FA ? $t('auth.verify_code') : $t('auth.login_button') }}</span>
+                </button>
 
-                <UButton v-if="show2FA" type="button" variant="ghost" color="neutral" block @click="show2FA = false"
-                    class="mt-3 rounded-xl font-medium">
+                <button
+                    v-if="show2FA"
+                    type="button"
+                    class="btn-ref ghost w-full py-2 text-xs font-semibold"
+                    @click="show2FA = false"
+                >
                     {{ $t('auth.back_to_login') }}
-                </UButton>
+                </button>
+            </div>
 
-                <div class="mt-6 flex items-center justify-center gap-2">
-                    <div class="h-px w-4 bg-slate-200 dark:bg-slate-800"></div>
-                    <p class="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-400 dark:text-slate-500">
-                        Design by <span class="text-primary-500 dark:text-primary-400 hover:text-primary-600 dark:hover:text-primary-300 cursor-default transition-colors">RIIIXCH</span>
-                    </p>
-                    <div class="h-px w-4 bg-slate-200 dark:bg-slate-800"></div>
-                </div>
+            <div class="mt-8 pt-4 border-t border-[var(--border)] flex items-center justify-center gap-2">
+                <p class="text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--text3)]">
+                    Design by <span class="text-[var(--green)]">RIIXCH</span>
+                </p>
             </div>
         </form>
-    </UCard>
+    </div>
 </template>
