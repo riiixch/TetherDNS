@@ -2,7 +2,8 @@
 setlocal enabledelayedexpansion
 
 :: --- ส่วนการตั้งค่า Default ---
-set DEFAULT_REGISTRY=10.0.0.101:5000
+@REM set DEFAULT_REGISTRY=10.0.0.101:5000
+set DEFAULT_REGISTRY=docker-private.riiixch.com
 set DEFAULT_IMAGE_NAME=tetherdns
 set DEFAULT_TAG=latest
 
@@ -17,7 +18,7 @@ echo [2] Build and Push to Registry
 set /p MODE="Choose mode (1 or 2) [2]: "
 if "%MODE%"=="" set MODE=2
 
-:: 2. รับค่าชื่อ Image
+:: 2. รับค่าชื่อ Imageq
 set /p IMAGE_NAME="Enter Image Name [%DEFAULT_IMAGE_NAME%]: "
 if "%IMAGE_NAME%"=="" set IMAGE_NAME=%DEFAULT_IMAGE_NAME%
 
@@ -25,7 +26,7 @@ if "%IMAGE_NAME%"=="" set IMAGE_NAME=%DEFAULT_IMAGE_NAME%
 set /p IMG_TAG="Enter Tag [%DEFAULT_TAG%]: "
 if "%IMG_TAG%"=="" set IMG_TAG=%DEFAULT_TAG%
 
-:: 4. รับค่า Registry (เฉพาะถ้าเลือก mode 2)
+:: 4. รับค่า Registry (เฉพาะถ้าเลือก mode 2)q
 if "%MODE%"=="2" (
     set /p REGISTRY="Enter Registry URL [%DEFAULT_REGISTRY%]: "
     if "!REGISTRY!"=="" set REGISTRY=%DEFAULT_REGISTRY%
