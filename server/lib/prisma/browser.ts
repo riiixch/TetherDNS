@@ -43,6 +43,16 @@ export type ApiToken = Prisma.ApiTokenModel
  */
 export type DnsRecord = Prisma.DnsRecordModel
 /**
+ * Model HealthCheck
+ * 
+ */
+export type HealthCheck = Prisma.HealthCheckModel
+/**
+ * Model HealthCheckLog
+ * 
+ */
+export type HealthCheckLog = Prisma.HealthCheckLogModel
+/**
  * Model CloudflareTunnel
  * 
  */

@@ -9,8 +9,11 @@ export default defineEventHandler(async (event) => {
     }
 
     try {
-        // Find local zone to get accountId
-        const localZone = await prisma.zone.findUnique({ where: { cfZoneId: zoneId } })
+        const isNumeric = /^\d+$/.test(zoneId)
+        // Find local zone by numeric ID or Cloudflare Zone ID
+        const localZone = isNumeric
+            ? await prisma.zone.findFirst({ where: { OR: [{ id: parseInt(zoneId, 10) }, { cfZoneId: zoneId }] } })
+            : await prisma.zone.findUnique({ where: { cfZoneId: zoneId } })
 
         if (!localZone) {
             throw createError({ statusCode: 404, statusMessage: 'Zone not found in local database.' })

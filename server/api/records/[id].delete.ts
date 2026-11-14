@@ -35,8 +35,9 @@ export default defineEventHandler(async (event) => {
         const oldTunnelId = record.tunnelId
         const oldRoutingMode = record.routingMode
 
-        // Delete update logs first then the record
+        // Delete update logs and health check records first then the record
         await prisma.updateLog.deleteMany({ where: { recordId: record.id } })
+        await prisma.healthCheck.deleteMany({ where: { recordId: record.id } })
         await prisma.dnsRecord.delete({ where: { id: record.id } })
 
         // Sync tunnel configuration to remove this record's hostname if it was tunnel mode

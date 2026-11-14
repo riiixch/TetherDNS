@@ -40,6 +40,8 @@ export type NotificationChannelMinAggregateOutputType = {
   label: string | null
   config: string | null
   enabled: boolean | null
+  events: string | null
+  lastUsedAt: Date | null
   createdAt: Date | null
 }
 
@@ -49,6 +51,8 @@ export type NotificationChannelMaxAggregateOutputType = {
   label: string | null
   config: string | null
   enabled: boolean | null
+  events: string | null
+  lastUsedAt: Date | null
   createdAt: Date | null
 }
 
@@ -58,6 +62,8 @@ export type NotificationChannelCountAggregateOutputType = {
   label: number
   config: number
   enabled: number
+  events: number
+  lastUsedAt: number
   createdAt: number
   _all: number
 }
@@ -77,6 +83,8 @@ export type NotificationChannelMinAggregateInputType = {
   label?: true
   config?: true
   enabled?: true
+  events?: true
+  lastUsedAt?: true
   createdAt?: true
 }
 
@@ -86,6 +94,8 @@ export type NotificationChannelMaxAggregateInputType = {
   label?: true
   config?: true
   enabled?: true
+  events?: true
+  lastUsedAt?: true
   createdAt?: true
 }
 
@@ -95,6 +105,8 @@ export type NotificationChannelCountAggregateInputType = {
   label?: true
   config?: true
   enabled?: true
+  events?: true
+  lastUsedAt?: true
   createdAt?: true
   _all?: true
 }
@@ -191,6 +203,8 @@ export type NotificationChannelGroupByOutputType = {
   label: string
   config: string
   enabled: boolean
+  events: string
+  lastUsedAt: Date | null
   createdAt: Date
   _count: NotificationChannelCountAggregateOutputType | null
   _avg: NotificationChannelAvgAggregateOutputType | null
@@ -223,6 +237,8 @@ export type NotificationChannelWhereInput = {
   label?: Prisma.StringFilter<"NotificationChannel"> | string
   config?: Prisma.StringFilter<"NotificationChannel"> | string
   enabled?: Prisma.BoolFilter<"NotificationChannel"> | boolean
+  events?: Prisma.StringFilter<"NotificationChannel"> | string
+  lastUsedAt?: Prisma.DateTimeNullableFilter<"NotificationChannel"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"NotificationChannel"> | Date | string
 }
 
@@ -232,6 +248,8 @@ export type NotificationChannelOrderByWithRelationInput = {
   label?: Prisma.SortOrder
   config?: Prisma.SortOrder
   enabled?: Prisma.SortOrder
+  events?: Prisma.SortOrder
+  lastUsedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -244,6 +262,8 @@ export type NotificationChannelWhereUniqueInput = Prisma.AtLeast<{
   label?: Prisma.StringFilter<"NotificationChannel"> | string
   config?: Prisma.StringFilter<"NotificationChannel"> | string
   enabled?: Prisma.BoolFilter<"NotificationChannel"> | boolean
+  events?: Prisma.StringFilter<"NotificationChannel"> | string
+  lastUsedAt?: Prisma.DateTimeNullableFilter<"NotificationChannel"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"NotificationChannel"> | Date | string
 }, "id">
 
@@ -253,6 +273,8 @@ export type NotificationChannelOrderByWithAggregationInput = {
   label?: Prisma.SortOrder
   config?: Prisma.SortOrder
   enabled?: Prisma.SortOrder
+  events?: Prisma.SortOrder
+  lastUsedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.NotificationChannelCountOrderByAggregateInput
   _avg?: Prisma.NotificationChannelAvgOrderByAggregateInput
@@ -270,6 +292,8 @@ export type NotificationChannelScalarWhereWithAggregatesInput = {
   label?: Prisma.StringWithAggregatesFilter<"NotificationChannel"> | string
   config?: Prisma.StringWithAggregatesFilter<"NotificationChannel"> | string
   enabled?: Prisma.BoolWithAggregatesFilter<"NotificationChannel"> | boolean
+  events?: Prisma.StringWithAggregatesFilter<"NotificationChannel"> | string
+  lastUsedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"NotificationChannel"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"NotificationChannel"> | Date | string
 }
 
@@ -278,6 +302,8 @@ export type NotificationChannelCreateInput = {
   label: string
   config: string
   enabled?: boolean
+  events?: string
+  lastUsedAt?: Date | string | null
   createdAt?: Date | string
 }
 
@@ -287,6 +313,8 @@ export type NotificationChannelUncheckedCreateInput = {
   label: string
   config: string
   enabled?: boolean
+  events?: string
+  lastUsedAt?: Date | string | null
   createdAt?: Date | string
 }
 
@@ -295,6 +323,8 @@ export type NotificationChannelUpdateInput = {
   label?: Prisma.StringFieldUpdateOperationsInput | string
   config?: Prisma.StringFieldUpdateOperationsInput | string
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  events?: Prisma.StringFieldUpdateOperationsInput | string
+  lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -304,6 +334,8 @@ export type NotificationChannelUncheckedUpdateInput = {
   label?: Prisma.StringFieldUpdateOperationsInput | string
   config?: Prisma.StringFieldUpdateOperationsInput | string
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  events?: Prisma.StringFieldUpdateOperationsInput | string
+  lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -313,6 +345,8 @@ export type NotificationChannelCreateManyInput = {
   label: string
   config: string
   enabled?: boolean
+  events?: string
+  lastUsedAt?: Date | string | null
   createdAt?: Date | string
 }
 
@@ -321,6 +355,8 @@ export type NotificationChannelUpdateManyMutationInput = {
   label?: Prisma.StringFieldUpdateOperationsInput | string
   config?: Prisma.StringFieldUpdateOperationsInput | string
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  events?: Prisma.StringFieldUpdateOperationsInput | string
+  lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -330,6 +366,8 @@ export type NotificationChannelUncheckedUpdateManyInput = {
   label?: Prisma.StringFieldUpdateOperationsInput | string
   config?: Prisma.StringFieldUpdateOperationsInput | string
   enabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  events?: Prisma.StringFieldUpdateOperationsInput | string
+  lastUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -339,6 +377,8 @@ export type NotificationChannelCountOrderByAggregateInput = {
   label?: Prisma.SortOrder
   config?: Prisma.SortOrder
   enabled?: Prisma.SortOrder
+  events?: Prisma.SortOrder
+  lastUsedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -352,6 +392,8 @@ export type NotificationChannelMaxOrderByAggregateInput = {
   label?: Prisma.SortOrder
   config?: Prisma.SortOrder
   enabled?: Prisma.SortOrder
+  events?: Prisma.SortOrder
+  lastUsedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -361,6 +403,8 @@ export type NotificationChannelMinOrderByAggregateInput = {
   label?: Prisma.SortOrder
   config?: Prisma.SortOrder
   enabled?: Prisma.SortOrder
+  events?: Prisma.SortOrder
+  lastUsedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -376,6 +420,8 @@ export type NotificationChannelSelect<ExtArgs extends runtime.Types.Extensions.I
   label?: boolean
   config?: boolean
   enabled?: boolean
+  events?: boolean
+  lastUsedAt?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["notificationChannel"]>
 
@@ -385,6 +431,8 @@ export type NotificationChannelSelectCreateManyAndReturn<ExtArgs extends runtime
   label?: boolean
   config?: boolean
   enabled?: boolean
+  events?: boolean
+  lastUsedAt?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["notificationChannel"]>
 
@@ -394,6 +442,8 @@ export type NotificationChannelSelectUpdateManyAndReturn<ExtArgs extends runtime
   label?: boolean
   config?: boolean
   enabled?: boolean
+  events?: boolean
+  lastUsedAt?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["notificationChannel"]>
 
@@ -403,10 +453,12 @@ export type NotificationChannelSelectScalar = {
   label?: boolean
   config?: boolean
   enabled?: boolean
+  events?: boolean
+  lastUsedAt?: boolean
   createdAt?: boolean
 }
 
-export type NotificationChannelOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "type" | "label" | "config" | "enabled" | "createdAt", ExtArgs["result"]["notificationChannel"]>
+export type NotificationChannelOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "type" | "label" | "config" | "enabled" | "events" | "lastUsedAt" | "createdAt", ExtArgs["result"]["notificationChannel"]>
 
 export type $NotificationChannelPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "NotificationChannel"
@@ -417,6 +469,8 @@ export type $NotificationChannelPayload<ExtArgs extends runtime.Types.Extensions
     label: string
     config: string
     enabled: boolean
+    events: string
+    lastUsedAt: Date | null
     createdAt: Date
   }, ExtArgs["result"]["notificationChannel"]>
   composites: {}
@@ -846,6 +900,8 @@ export interface NotificationChannelFieldRefs {
   readonly label: Prisma.FieldRef<"NotificationChannel", 'String'>
   readonly config: Prisma.FieldRef<"NotificationChannel", 'String'>
   readonly enabled: Prisma.FieldRef<"NotificationChannel", 'Boolean'>
+  readonly events: Prisma.FieldRef<"NotificationChannel", 'String'>
+  readonly lastUsedAt: Prisma.FieldRef<"NotificationChannel", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"NotificationChannel", 'DateTime'>
 }
     

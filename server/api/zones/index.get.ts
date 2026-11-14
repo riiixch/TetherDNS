@@ -17,7 +17,7 @@ export default defineEventHandler(async () => {
 
                     await prisma.zone.upsert({
                         where: { cfZoneId: zone.id },
-                        update: { name: zone.name },
+                        update: { name: zone.name, accountId: account.id },
                         create: { cfZoneId: zone.id, name: zone.name, accountId: account.id }
                     })
                 }

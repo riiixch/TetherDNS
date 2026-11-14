@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
+import type { ApexOptions } from 'apexcharts'
 
 interface AnalyticsData {
     data: {
@@ -17,8 +18,9 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
-const { data: analytics, pending: fetchPending } = await useFetch<AnalyticsData>('/api/analytics/ip-changes', {
-    default: () => props.initialData as AnalyticsData
+const { data: analytics, pending: fetchPending } = useFetch<AnalyticsData>('/api/analytics/ip-changes', {
+    default: () => props.initialData as AnalyticsData,
+    immediate: !props.initialData
 })
 const colorMode = useColorMode()
 
@@ -48,7 +50,7 @@ const avg = computed(() => {
     return (total.value / len).toFixed(1)
 })
 
-const chartOptions = computed(() => ({
+const chartOptions = computed<ApexOptions>(() => ({
     chart: {
         id: 'ip-changes-chart',
         toolbar: { show: false },
@@ -100,7 +102,7 @@ const chartOptions = computed(() => ({
         mode: isDark.value ? ('dark' as const) : ('light' as const)
     },
     tooltip: {
-        theme: isDark.value ? 'dark' : 'light',
+        theme: isDark.value ? ('dark' as const) : ('light' as const),
         x: { show: true },
         style: {
             fontSize: '12px',
@@ -146,7 +148,9 @@ const series = computed(() => [
                 <UIcon name="i-heroicons-arrow-path" class="w-7 h-7 animate-spin text-[var(--text3)]" />
             </div>
             <div v-else class="absolute inset-0">
-                <VueApexCharts type="area" height="100%" :options="chartOptions" :series="series" />
+                <ClientOnly>
+                    <VueApexCharts type="area" height="100%" :options="chartOptions" :series="series" />
+                </ClientOnly>
             </div>
         </div>
     </div>

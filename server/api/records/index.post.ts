@@ -13,7 +13,10 @@ export default defineEventHandler(async (event) => {
     }
 
     try {
-        const zone = await prisma.zone.findUnique({ where: { cfZoneId: body.cfZoneId } })
+        const isNumeric = /^\d+$/.test(body.cfZoneId)
+        const zone = isNumeric 
+            ? await prisma.zone.findFirst({ where: { OR: [{ cfZoneId: body.cfZoneId }, { id: parseInt(body.cfZoneId) }] } })
+            : await prisma.zone.findUnique({ where: { cfZoneId: body.cfZoneId } })
         if (!zone) throw createError({ statusCode: 404, statusMessage: 'Zone not found' })
         if (!zone.accountId) throw createError({ statusCode: 400, statusMessage: 'Zone has no linked account' })
 
@@ -36,7 +39,7 @@ export default defineEventHandler(async (event) => {
 
         // Create on Cloudflare
         const created = await cf.dns.records.create({
-            zone_id: body.cfZoneId,
+            zone_id: zone.cfZoneId,
             type: targetType,
             name: body.name,
             content: targetContent,

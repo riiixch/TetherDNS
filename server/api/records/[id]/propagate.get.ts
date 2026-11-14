@@ -1,5 +1,5 @@
 import { prisma } from '../../../utils/prisma'
-import { resolve4, resolve6, setServers } from 'dns/promises'
+import { Resolver } from 'dns/promises'
 
 const RESOLVERS = [
     { name: 'Google', ip: '8.8.8.8' },
@@ -23,10 +23,11 @@ export default defineEventHandler(async (event) => {
         const results = await Promise.all(
             RESOLVERS.map(async (resolver) => {
                 try {
-                    setServers([resolver.ip])
+                    const rInstance = new Resolver()
+                    rInstance.setServers([resolver.ip])
                     const addresses = record.type === 'A'
-                        ? await resolve4(record.name)
-                        : await resolve6(record.name)
+                        ? await rInstance.resolve4(record.name)
+                        : await rInstance.resolve6(record.name)
 
                     let isPropagated = false
                     if (record.proxied) {

@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 
 const { fetchAccounts, deleteAccount } = useAccounts()
+const { startLoading, stopLoading } = useAppLoading()
 const toast = useToast()
 const { t } = useI18n()
 
@@ -78,8 +79,10 @@ const formatDate = (dateStr: string) => {
     })
 }
 
-onMounted(() => {
-    loadData()
+onMounted(async () => {
+    startLoading(t('accounts.loading') || 'Loading Accounts...', t('accounts.subtitle') || 'Cloudflare API Integrations')
+    await loadData()
+    stopLoading(250)
 })
 </script>
 

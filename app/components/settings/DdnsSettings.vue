@@ -66,24 +66,26 @@ const handleReset = () => {
             <!-- Theme Row -->
             <div class="set-row">
                 <div class="set-label">Visual Theme / ธีมหน้าต่าง</div>
-                <div class="seg">
-                    <button
-                        type="button"
-                        :class="{ on: colorMode.value === 'dark' }"
-                        @click="colorMode.preference = 'dark'"
-                    >
-                        <UIcon name="i-heroicons-moon" class="w-3.5 h-3.5 mr-1" />
-                        Dark
-                    </button>
-                    <button
-                        type="button"
-                        :class="{ on: colorMode.value === 'light' }"
-                        @click="colorMode.preference = 'light'"
-                    >
-                        <UIcon name="i-heroicons-sun" class="w-3.5 h-3.5 mr-1" />
-                        Light
-                    </button>
-                </div>
+                <ClientOnly>
+                    <div class="seg">
+                        <button
+                            type="button"
+                            :class="{ on: colorMode.value === 'dark' }"
+                            @click="colorMode.preference = 'dark'"
+                        >
+                            <UIcon name="i-heroicons-moon" class="w-3.5 h-3.5 mr-1" />
+                            Dark
+                        </button>
+                        <button
+                            type="button"
+                            :class="{ on: colorMode.value === 'light' }"
+                            @click="colorMode.preference = 'light'"
+                        >
+                            <UIcon name="i-heroicons-sun" class="w-3.5 h-3.5 mr-1" />
+                            Light
+                        </button>
+                    </div>
+                </ClientOnly>
             </div>
         </div>
 

@@ -1,11 +1,10 @@
 import { prisma } from '../../../utils/prisma'
-import { getUserSession } from '../../../utils/session'
 import crypto from 'crypto'
 
 export default defineEventHandler(async (event) => {
-    const session = await getUserSession(event)
+    const userId = event.context.userId
 
-    if (!session.data.userId) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
+    if (!userId) throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
 
     const body = await readBody(event)
     if (!body.name) throw createError({ statusCode: 400, statusMessage: 'Token name required' })
@@ -17,7 +16,7 @@ export default defineEventHandler(async (event) => {
         data: {
             name: body.name,
             tokenHash,
-            userId: session.data.userId
+            userId
         }
     })
 

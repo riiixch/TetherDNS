@@ -19,8 +19,7 @@ const tabs = computed(() => [
     { label: t('settings.tab_users'), icon: 'i-heroicons-users', value: 'users' }
 ])
 
-// Global Page Loading State
-const isPageLoading = ref(true)
+const { startLoading, stopLoading, isLoading } = useAppLoading()
 
 // Settings
 const ddnsInterval = ref('5')
@@ -78,20 +77,75 @@ const addChannel = async (payload: any) => {
 
     const config: any = {}
     if (payload.type === 'discord' || payload.type === 'webhook') {
-        if (!payload.webhookUrl) { toast.add({ title: t('common.failed'), description: t('settings.err_webhook'), color: 'error' }); throw new Error() }
+        if (!payload.webhookUrl) {
+            toast.add({ title: t('common.failed'), description: t('settings.err_webhook'), color: 'error' })
+            throw new Error()
+        }
         config.webhookUrl = payload.webhookUrl
+        if (payload.botName) config.botName = payload.botName
+        if (payload.avatarUrl) config.avatarUrl = payload.avatarUrl
+        if (payload.mentionRole) config.mentionRole = payload.mentionRole
+    } else if (payload.type === 'telegram') {
+        if (!payload.botToken || !payload.chatId) {
+            toast.add({ title: t('common.failed'), description: 'Bot Token and Chat ID are required', color: 'error' })
+            throw new Error()
+        }
+        config.botToken = payload.botToken
+        config.chatId = payload.chatId
+        if (payload.topicId) config.topicId = payload.topicId
+        config.silentMode = !!payload.silentMode
+    } else if (payload.type === 'email') {
+        if (!payload.user || !payload.pass) {
+            toast.add({ title: t('common.failed'), description: 'Email address and App Password are required', color: 'error' })
+            throw new Error()
+        }
+        config.provider = payload.provider || 'gmail'
+        config.user = payload.user
+        config.pass = payload.pass
+        config.toAddress = payload.toAddress || payload.user
+        config.host = payload.host || 'smtp.gmail.com'
+        config.port = Number(payload.port) || 465
+        config.fromName = payload.fromName || 'TetherDNS Guardian'
     } else if (payload.type === 'line') {
-        if (!payload.lineToken) { toast.add({ title: t('common.failed'), description: t('settings.err_line'), color: 'error' }); throw new Error() }
+        if (!payload.lineToken) {
+            toast.add({ title: t('common.failed'), description: t('settings.err_line'), color: 'error' })
+            throw new Error()
+        }
         config.token = payload.lineToken
     }
 
     try {
-        await $fetch('/api/notifications', { method: 'POST', body: { type: payload.type, label: payload.label, config } })
+        await $fetch('/api/notifications', {
+            method: 'POST',
+            body: {
+                type: payload.type,
+                label: payload.label,
+                events: payload.events,
+                config
+            }
+        })
         toast.add({ title: t('common.success'), description: t('common.success'), color: 'success' })
         loadChannels()
     } catch (e: any) {
         toast.add({ title: t('common.failed'), description: e.data?.statusMessage || e.message, color: 'error' })
         throw e
+    }
+}
+
+const toggleChannel = async (channel: any) => {
+    try {
+        await $fetch(`/api/notifications/${channel.id}`, {
+            method: 'PATCH',
+            body: { enabled: !channel.enabled }
+        })
+        channel.enabled = !channel.enabled
+        toast.add({
+            title: t('common.success'),
+            description: channel.enabled ? `${channel.label} enabled` : `${channel.label} disabled`,
+            color: 'success'
+        })
+    } catch (e: any) {
+        toast.add({ title: t('common.failed'), description: e.data?.statusMessage || e.message, color: 'error' })
     }
 }
 
@@ -151,7 +205,7 @@ const deleteUser = async (id: number) => {
 }
 
 onMounted(async () => {
-    isPageLoading.value = true
+    startLoading('Loading System Configuration...', t('settings.subtitle') || 'Manage Administrative Access')
     try {
         await Promise.allSettled([
             loadSettings(),
@@ -159,23 +213,16 @@ onMounted(async () => {
             loadUsers()
         ])
     } finally {
-        setTimeout(() => {
-            isPageLoading.value = false
-        }, 300)
+        stopLoading(300)
     }
 })
 </script>
 
 <template>
-    <div class="space-y-6 flex flex-col h-full pb-10">
-        <!-- Full-page cybernetic loader while settings data loads -->
-        <CommonLoadingScreen
-            v-if="isPageLoading"
-            fullscreen
-            message="Loading System Configuration..."
-            :progress="null"
-        />
-
+    <div
+        class="space-y-6 flex flex-col h-full pb-10 transition-opacity duration-300"
+        :class="{ 'opacity-0': isLoading, 'opacity-100': !isLoading }"
+    >
         <!-- Page Head matching ref.html -->
         <section class="page-head">
             <div class="ph-left">
@@ -199,20 +246,21 @@ onMounted(async () => {
         <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
             <!-- Sidebar navigation -->
             <aside class="w-full lg:w-64 lg:sticky lg:top-24 shrink-0 space-y-3">
-                <div class="card card-ref p-2 space-y-1">
-                    <button
-                        v-for="tab in tabs"
-                        :key="tab.value"
-                        type="button"
-                        class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-left"
-                        :class="selectedTab === tab.value
-                            ? 'bg-[rgba(18,224,138,0.12)] text-[var(--green)] border border-[rgba(18,224,138,0.3)] shadow-sm'
-                            : 'text-[var(--text2)] hover:text-[var(--text)] hover:bg-[var(--surface2)] border border-transparent'"
-                        @click="selectedTab = tab.value"
-                    >
-                        <UIcon :name="tab.icon" class="w-4 h-4 opacity-80" />
-                        <span>{{ tab.label }}</span>
-                    </button>
+                <div class="settings-sidebar">
+                    <nav class="settings-nav-list">
+                        <button
+                            v-for="tab in tabs"
+                            :key="tab.value"
+                            type="button"
+                            class="settings-nav-item"
+                            :class="{ active: selectedTab === tab.value }"
+                            @click="selectedTab = tab.value"
+                        >
+                            <UIcon :name="tab.icon" class="nav-item-icon" />
+                            <span class="flex-1">{{ tab.label }}</span>
+                            <span class="nav-item-indicator"></span>
+                        </button>
+                    </nav>
                 </div>
 
                 <div class="px-3 py-1">
@@ -254,6 +302,7 @@ onMounted(async () => {
                                 @add="addChannel"
                                 @delete="deleteChannel"
                                 @test="testChannel"
+                                @toggle="toggleChannel"
                             />
                             <UserSettings
                                 v-else-if="selectedTab === 'users'"

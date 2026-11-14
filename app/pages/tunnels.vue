@@ -7,6 +7,7 @@ useHead({ title: 'Cloudflare Tunnels | TetherDNS' })
 definePageMeta({ layout: 'default' })
 
 const toast = useToast()
+const { startLoading, stopLoading } = useAppLoading()
 const accounts = ref<any[]>([])
 const selectedAccountId = ref<number | null>(null)
 const tunnels = ref<any[]>([])
@@ -147,8 +148,10 @@ const showLogs = (tunnel: any) => {
     isLogsModalOpen.value = true
 }
 
-onMounted(() => {
-    fetchAccounts()
+onMounted(async () => {
+    startLoading('Loading Cloudflare Tunnels...', 'Zero Trust Network Tunnels')
+    await fetchAccounts()
+    stopLoading(250)
 })
 </script>
 
@@ -272,7 +275,7 @@ onMounted(() => {
                             </div>
                             <div>
                                 <small>CREATED</small>
-                                <b class="text-xs">{{ new Date(tunnel.createdAt).toLocaleDateString() }}</b>
+                                <b class="text-xs">{{ tunnel.createdAt ? new Date(tunnel.createdAt).toLocaleDateString() : '-' }}</b>
                             </div>
                         </div>
                     </div>

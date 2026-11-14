@@ -60,6 +60,7 @@ const deleteToken = async (id: number) => {
 const { locale } = useI18n()
 
 const formatDate = (dateStr: string) => {
+    if (!dateStr) return '-'
     return new Date(dateStr).toLocaleDateString(locale.value === 'th' ? 'th-TH' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric' })
 }
 
@@ -85,13 +86,13 @@ onMounted(() => loadTokens())
             </div>
 
             <!-- Token Table -->
-            <div class="overflow-x-auto -mx-6 -mb-6">
+            <div class="overflow-x-auto w-full">
                 <table v-if="!loading && tokens.length > 0" class="rtable-ref">
                     <thead>
                         <tr>
-                            <th>{{ $t('api_tokens.col_name') }}</th>
-                            <th>{{ $t('api_tokens.col_created') }}</th>
-                            <th style="text-align: right;"></th>
+                            <th class="w-1/2 min-w-[180px]">{{ $t('api_tokens.col_name') }}</th>
+                            <th class="w-2/5 min-w-[140px]">{{ $t('api_tokens.col_created') }}</th>
+                            <th class="w-20 text-right"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -100,12 +101,12 @@ onMounted(() => loadTokens())
                                 <span class="font-bold text-[var(--text)]">{{ tok.name }}</span>
                             </td>
                             <td>
-                                <span class="text-xs text-[var(--text2)]">{{ formatDate(tok.createdAt) }}</span>
+                                <span class="text-xs text-[var(--text2)] font-mono">{{ formatDate(tok.createdAt) }}</span>
                             </td>
-                            <td style="text-align: right;">
+                            <td class="text-right">
                                 <button
                                     type="button"
-                                    class="icon-btn sm text-[var(--danger)] hover:bg-[rgba(251,94,122,0.15)]"
+                                    class="icon-btn sm text-[var(--danger)] hover:bg-[rgba(251,94,122,0.15)] inline-flex items-center justify-center"
                                     @click="deleteToken(tok.id)"
                                 >
                                     <UIcon name="i-heroicons-trash" class="w-4 h-4" />

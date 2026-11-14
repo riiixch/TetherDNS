@@ -402,6 +402,8 @@ export const ModelName = {
   User: 'User',
   ApiToken: 'ApiToken',
   DnsRecord: 'DnsRecord',
+  HealthCheck: 'HealthCheck',
+  HealthCheckLog: 'HealthCheckLog',
   CloudflareTunnel: 'CloudflareTunnel',
   UpdateLog: 'UpdateLog',
   Settings: 'Settings',
@@ -422,7 +424,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "cloudflareAccount" | "zone" | "user" | "apiToken" | "dnsRecord" | "cloudflareTunnel" | "updateLog" | "settings" | "notificationChannel" | "auditLog"
+    modelProps: "cloudflareAccount" | "zone" | "user" | "apiToken" | "dnsRecord" | "healthCheck" | "healthCheckLog" | "cloudflareTunnel" | "updateLog" | "settings" | "notificationChannel" | "auditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -793,6 +795,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.DnsRecordCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.DnsRecordCountAggregateOutputType> | number
+        }
+      }
+    }
+    HealthCheck: {
+      payload: Prisma.$HealthCheckPayload<ExtArgs>
+      fields: Prisma.HealthCheckFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.HealthCheckFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthCheckPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.HealthCheckFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthCheckPayload>
+        }
+        findFirst: {
+          args: Prisma.HealthCheckFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthCheckPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.HealthCheckFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthCheckPayload>
+        }
+        findMany: {
+          args: Prisma.HealthCheckFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthCheckPayload>[]
+        }
+        create: {
+          args: Prisma.HealthCheckCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthCheckPayload>
+        }
+        createMany: {
+          args: Prisma.HealthCheckCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.HealthCheckCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthCheckPayload>[]
+        }
+        delete: {
+          args: Prisma.HealthCheckDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthCheckPayload>
+        }
+        update: {
+          args: Prisma.HealthCheckUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthCheckPayload>
+        }
+        deleteMany: {
+          args: Prisma.HealthCheckDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.HealthCheckUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.HealthCheckUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthCheckPayload>[]
+        }
+        upsert: {
+          args: Prisma.HealthCheckUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthCheckPayload>
+        }
+        aggregate: {
+          args: Prisma.HealthCheckAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateHealthCheck>
+        }
+        groupBy: {
+          args: Prisma.HealthCheckGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.HealthCheckGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.HealthCheckCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.HealthCheckCountAggregateOutputType> | number
+        }
+      }
+    }
+    HealthCheckLog: {
+      payload: Prisma.$HealthCheckLogPayload<ExtArgs>
+      fields: Prisma.HealthCheckLogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.HealthCheckLogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthCheckLogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.HealthCheckLogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthCheckLogPayload>
+        }
+        findFirst: {
+          args: Prisma.HealthCheckLogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthCheckLogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.HealthCheckLogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthCheckLogPayload>
+        }
+        findMany: {
+          args: Prisma.HealthCheckLogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthCheckLogPayload>[]
+        }
+        create: {
+          args: Prisma.HealthCheckLogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthCheckLogPayload>
+        }
+        createMany: {
+          args: Prisma.HealthCheckLogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.HealthCheckLogCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthCheckLogPayload>[]
+        }
+        delete: {
+          args: Prisma.HealthCheckLogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthCheckLogPayload>
+        }
+        update: {
+          args: Prisma.HealthCheckLogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthCheckLogPayload>
+        }
+        deleteMany: {
+          args: Prisma.HealthCheckLogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.HealthCheckLogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.HealthCheckLogUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthCheckLogPayload>[]
+        }
+        upsert: {
+          args: Prisma.HealthCheckLogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HealthCheckLogPayload>
+        }
+        aggregate: {
+          args: Prisma.HealthCheckLogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateHealthCheckLog>
+        }
+        groupBy: {
+          args: Prisma.HealthCheckLogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.HealthCheckLogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.HealthCheckLogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.HealthCheckLogCountAggregateOutputType> | number
         }
       }
     }
@@ -1266,6 +1416,47 @@ export const DnsRecordScalarFieldEnum = {
 export type DnsRecordScalarFieldEnum = (typeof DnsRecordScalarFieldEnum)[keyof typeof DnsRecordScalarFieldEnum]
 
 
+export const HealthCheckScalarFieldEnum = {
+  id: 'id',
+  recordId: 'recordId',
+  enabled: 'enabled',
+  probeType: 'probeType',
+  probeTarget: 'probeTarget',
+  expectedStatus: 'expectedStatus',
+  intervalSeconds: 'intervalSeconds',
+  timeoutSeconds: 'timeoutSeconds',
+  failureThreshold: 'failureThreshold',
+  successThreshold: 'successThreshold',
+  backupIp: 'backupIp',
+  backupProxied: 'backupProxied',
+  currentStatus: 'currentStatus',
+  consecutiveFails: 'consecutiveFails',
+  consecutivePasses: 'consecutivePasses',
+  lastCheckAt: 'lastCheckAt',
+  lastFailoverAt: 'lastFailoverAt',
+  lastLatencyMs: 'lastLatencyMs',
+  autoFailback: 'autoFailback',
+  originalIp: 'originalIp',
+  originalProxied: 'originalProxied',
+  createdAt: 'createdAt'
+} as const
+
+export type HealthCheckScalarFieldEnum = (typeof HealthCheckScalarFieldEnum)[keyof typeof HealthCheckScalarFieldEnum]
+
+
+export const HealthCheckLogScalarFieldEnum = {
+  id: 'id',
+  healthCheckId: 'healthCheckId',
+  status: 'status',
+  statusCode: 'statusCode',
+  latencyMs: 'latencyMs',
+  errorMessage: 'errorMessage',
+  createdAt: 'createdAt'
+} as const
+
+export type HealthCheckLogScalarFieldEnum = (typeof HealthCheckLogScalarFieldEnum)[keyof typeof HealthCheckLogScalarFieldEnum]
+
+
 export const CloudflareTunnelScalarFieldEnum = {
   id: 'id',
   tunnelId: 'tunnelId',
@@ -1308,6 +1499,8 @@ export const NotificationChannelScalarFieldEnum = {
   label: 'label',
   config: 'config',
   enabled: 'enabled',
+  events: 'events',
+  lastUsedAt: 'lastUsedAt',
   createdAt: 'createdAt'
 } as const
 
@@ -1538,6 +1731,8 @@ export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   apiToken?: Prisma.ApiTokenOmit
   dnsRecord?: Prisma.DnsRecordOmit
+  healthCheck?: Prisma.HealthCheckOmit
+  healthCheckLog?: Prisma.HealthCheckLogOmit
   cloudflareTunnel?: Prisma.CloudflareTunnelOmit
   updateLog?: Prisma.UpdateLogOmit
   settings?: Prisma.SettingsOmit

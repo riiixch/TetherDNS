@@ -278,6 +278,7 @@ export type DnsRecordWhereInput = {
   zoneId?: Prisma.IntFilter<"DnsRecord"> | number
   zone?: Prisma.XOR<Prisma.ZoneScalarRelationFilter, Prisma.ZoneWhereInput>
   updateLogs?: Prisma.UpdateLogListRelationFilter
+  healthCheck?: Prisma.XOR<Prisma.HealthCheckNullableScalarRelationFilter, Prisma.HealthCheckWhereInput> | null
 }
 
 export type DnsRecordOrderByWithRelationInput = {
@@ -295,6 +296,7 @@ export type DnsRecordOrderByWithRelationInput = {
   zoneId?: Prisma.SortOrder
   zone?: Prisma.ZoneOrderByWithRelationInput
   updateLogs?: Prisma.UpdateLogOrderByRelationAggregateInput
+  healthCheck?: Prisma.HealthCheckOrderByWithRelationInput
 }
 
 export type DnsRecordWhereUniqueInput = Prisma.AtLeast<{
@@ -315,6 +317,7 @@ export type DnsRecordWhereUniqueInput = Prisma.AtLeast<{
   zoneId?: Prisma.IntFilter<"DnsRecord"> | number
   zone?: Prisma.XOR<Prisma.ZoneScalarRelationFilter, Prisma.ZoneWhereInput>
   updateLogs?: Prisma.UpdateLogListRelationFilter
+  healthCheck?: Prisma.XOR<Prisma.HealthCheckNullableScalarRelationFilter, Prisma.HealthCheckWhereInput> | null
 }, "id" | "cfRecordId" | "updateToken">
 
 export type DnsRecordOrderByWithAggregationInput = {
@@ -368,6 +371,7 @@ export type DnsRecordCreateInput = {
   updateToken?: string | null
   zone: Prisma.ZoneCreateNestedOneWithoutRecordsInput
   updateLogs?: Prisma.UpdateLogCreateNestedManyWithoutRecordInput
+  healthCheck?: Prisma.HealthCheckCreateNestedOneWithoutRecordInput
 }
 
 export type DnsRecordUncheckedCreateInput = {
@@ -384,6 +388,7 @@ export type DnsRecordUncheckedCreateInput = {
   updateToken?: string | null
   zoneId: number
   updateLogs?: Prisma.UpdateLogUncheckedCreateNestedManyWithoutRecordInput
+  healthCheck?: Prisma.HealthCheckUncheckedCreateNestedOneWithoutRecordInput
 }
 
 export type DnsRecordUpdateInput = {
@@ -399,6 +404,7 @@ export type DnsRecordUpdateInput = {
   updateToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zone?: Prisma.ZoneUpdateOneRequiredWithoutRecordsNestedInput
   updateLogs?: Prisma.UpdateLogUpdateManyWithoutRecordNestedInput
+  healthCheck?: Prisma.HealthCheckUpdateOneWithoutRecordNestedInput
 }
 
 export type DnsRecordUncheckedUpdateInput = {
@@ -415,6 +421,7 @@ export type DnsRecordUncheckedUpdateInput = {
   updateToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoneId?: Prisma.IntFieldUpdateOperationsInput | number
   updateLogs?: Prisma.UpdateLogUncheckedUpdateManyWithoutRecordNestedInput
+  healthCheck?: Prisma.HealthCheckUncheckedUpdateOneWithoutRecordNestedInput
 }
 
 export type DnsRecordCreateManyInput = {
@@ -572,6 +579,20 @@ export type DnsRecordUncheckedUpdateManyWithoutZoneNestedInput = {
   deleteMany?: Prisma.DnsRecordScalarWhereInput | Prisma.DnsRecordScalarWhereInput[]
 }
 
+export type DnsRecordCreateNestedOneWithoutHealthCheckInput = {
+  create?: Prisma.XOR<Prisma.DnsRecordCreateWithoutHealthCheckInput, Prisma.DnsRecordUncheckedCreateWithoutHealthCheckInput>
+  connectOrCreate?: Prisma.DnsRecordCreateOrConnectWithoutHealthCheckInput
+  connect?: Prisma.DnsRecordWhereUniqueInput
+}
+
+export type DnsRecordUpdateOneRequiredWithoutHealthCheckNestedInput = {
+  create?: Prisma.XOR<Prisma.DnsRecordCreateWithoutHealthCheckInput, Prisma.DnsRecordUncheckedCreateWithoutHealthCheckInput>
+  connectOrCreate?: Prisma.DnsRecordCreateOrConnectWithoutHealthCheckInput
+  upsert?: Prisma.DnsRecordUpsertWithoutHealthCheckInput
+  connect?: Prisma.DnsRecordWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DnsRecordUpdateToOneWithWhereWithoutHealthCheckInput, Prisma.DnsRecordUpdateWithoutHealthCheckInput>, Prisma.DnsRecordUncheckedUpdateWithoutHealthCheckInput>
+}
+
 export type DnsRecordCreateNestedOneWithoutUpdateLogsInput = {
   create?: Prisma.XOR<Prisma.DnsRecordCreateWithoutUpdateLogsInput, Prisma.DnsRecordUncheckedCreateWithoutUpdateLogsInput>
   connectOrCreate?: Prisma.DnsRecordCreateOrConnectWithoutUpdateLogsInput
@@ -598,6 +619,7 @@ export type DnsRecordCreateWithoutZoneInput = {
   localAddress?: string | null
   updateToken?: string | null
   updateLogs?: Prisma.UpdateLogCreateNestedManyWithoutRecordInput
+  healthCheck?: Prisma.HealthCheckCreateNestedOneWithoutRecordInput
 }
 
 export type DnsRecordUncheckedCreateWithoutZoneInput = {
@@ -613,6 +635,7 @@ export type DnsRecordUncheckedCreateWithoutZoneInput = {
   localAddress?: string | null
   updateToken?: string | null
   updateLogs?: Prisma.UpdateLogUncheckedCreateNestedManyWithoutRecordInput
+  healthCheck?: Prisma.HealthCheckUncheckedCreateNestedOneWithoutRecordInput
 }
 
 export type DnsRecordCreateOrConnectWithoutZoneInput = {
@@ -658,6 +681,84 @@ export type DnsRecordScalarWhereInput = {
   zoneId?: Prisma.IntFilter<"DnsRecord"> | number
 }
 
+export type DnsRecordCreateWithoutHealthCheckInput = {
+  cfRecordId: string
+  name: string
+  type: string
+  content: string
+  isAutoUpdate?: boolean
+  proxied?: boolean
+  routingMode?: string
+  tunnelId?: string | null
+  localAddress?: string | null
+  updateToken?: string | null
+  zone: Prisma.ZoneCreateNestedOneWithoutRecordsInput
+  updateLogs?: Prisma.UpdateLogCreateNestedManyWithoutRecordInput
+}
+
+export type DnsRecordUncheckedCreateWithoutHealthCheckInput = {
+  id?: number
+  cfRecordId: string
+  name: string
+  type: string
+  content: string
+  isAutoUpdate?: boolean
+  proxied?: boolean
+  routingMode?: string
+  tunnelId?: string | null
+  localAddress?: string | null
+  updateToken?: string | null
+  zoneId: number
+  updateLogs?: Prisma.UpdateLogUncheckedCreateNestedManyWithoutRecordInput
+}
+
+export type DnsRecordCreateOrConnectWithoutHealthCheckInput = {
+  where: Prisma.DnsRecordWhereUniqueInput
+  create: Prisma.XOR<Prisma.DnsRecordCreateWithoutHealthCheckInput, Prisma.DnsRecordUncheckedCreateWithoutHealthCheckInput>
+}
+
+export type DnsRecordUpsertWithoutHealthCheckInput = {
+  update: Prisma.XOR<Prisma.DnsRecordUpdateWithoutHealthCheckInput, Prisma.DnsRecordUncheckedUpdateWithoutHealthCheckInput>
+  create: Prisma.XOR<Prisma.DnsRecordCreateWithoutHealthCheckInput, Prisma.DnsRecordUncheckedCreateWithoutHealthCheckInput>
+  where?: Prisma.DnsRecordWhereInput
+}
+
+export type DnsRecordUpdateToOneWithWhereWithoutHealthCheckInput = {
+  where?: Prisma.DnsRecordWhereInput
+  data: Prisma.XOR<Prisma.DnsRecordUpdateWithoutHealthCheckInput, Prisma.DnsRecordUncheckedUpdateWithoutHealthCheckInput>
+}
+
+export type DnsRecordUpdateWithoutHealthCheckInput = {
+  cfRecordId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  isAutoUpdate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  proxied?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  routingMode?: Prisma.StringFieldUpdateOperationsInput | string
+  tunnelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  localAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updateToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zone?: Prisma.ZoneUpdateOneRequiredWithoutRecordsNestedInput
+  updateLogs?: Prisma.UpdateLogUpdateManyWithoutRecordNestedInput
+}
+
+export type DnsRecordUncheckedUpdateWithoutHealthCheckInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  cfRecordId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  isAutoUpdate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  proxied?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  routingMode?: Prisma.StringFieldUpdateOperationsInput | string
+  tunnelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  localAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updateToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoneId?: Prisma.IntFieldUpdateOperationsInput | number
+  updateLogs?: Prisma.UpdateLogUncheckedUpdateManyWithoutRecordNestedInput
+}
+
 export type DnsRecordCreateWithoutUpdateLogsInput = {
   cfRecordId: string
   name: string
@@ -670,6 +771,7 @@ export type DnsRecordCreateWithoutUpdateLogsInput = {
   localAddress?: string | null
   updateToken?: string | null
   zone: Prisma.ZoneCreateNestedOneWithoutRecordsInput
+  healthCheck?: Prisma.HealthCheckCreateNestedOneWithoutRecordInput
 }
 
 export type DnsRecordUncheckedCreateWithoutUpdateLogsInput = {
@@ -685,6 +787,7 @@ export type DnsRecordUncheckedCreateWithoutUpdateLogsInput = {
   localAddress?: string | null
   updateToken?: string | null
   zoneId: number
+  healthCheck?: Prisma.HealthCheckUncheckedCreateNestedOneWithoutRecordInput
 }
 
 export type DnsRecordCreateOrConnectWithoutUpdateLogsInput = {
@@ -715,6 +818,7 @@ export type DnsRecordUpdateWithoutUpdateLogsInput = {
   localAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updateToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zone?: Prisma.ZoneUpdateOneRequiredWithoutRecordsNestedInput
+  healthCheck?: Prisma.HealthCheckUpdateOneWithoutRecordNestedInput
 }
 
 export type DnsRecordUncheckedUpdateWithoutUpdateLogsInput = {
@@ -730,6 +834,7 @@ export type DnsRecordUncheckedUpdateWithoutUpdateLogsInput = {
   localAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updateToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoneId?: Prisma.IntFieldUpdateOperationsInput | number
+  healthCheck?: Prisma.HealthCheckUncheckedUpdateOneWithoutRecordNestedInput
 }
 
 export type DnsRecordCreateManyZoneInput = {
@@ -758,6 +863,7 @@ export type DnsRecordUpdateWithoutZoneInput = {
   localAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updateToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updateLogs?: Prisma.UpdateLogUpdateManyWithoutRecordNestedInput
+  healthCheck?: Prisma.HealthCheckUpdateOneWithoutRecordNestedInput
 }
 
 export type DnsRecordUncheckedUpdateWithoutZoneInput = {
@@ -773,6 +879,7 @@ export type DnsRecordUncheckedUpdateWithoutZoneInput = {
   localAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updateToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updateLogs?: Prisma.UpdateLogUncheckedUpdateManyWithoutRecordNestedInput
+  healthCheck?: Prisma.HealthCheckUncheckedUpdateOneWithoutRecordNestedInput
 }
 
 export type DnsRecordUncheckedUpdateManyWithoutZoneInput = {
@@ -835,6 +942,7 @@ export type DnsRecordSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   zoneId?: boolean
   zone?: boolean | Prisma.ZoneDefaultArgs<ExtArgs>
   updateLogs?: boolean | Prisma.DnsRecord$updateLogsArgs<ExtArgs>
+  healthCheck?: boolean | Prisma.DnsRecord$healthCheckArgs<ExtArgs>
   _count?: boolean | Prisma.DnsRecordCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["dnsRecord"]>
 
@@ -889,6 +997,7 @@ export type DnsRecordOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 export type DnsRecordInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   zone?: boolean | Prisma.ZoneDefaultArgs<ExtArgs>
   updateLogs?: boolean | Prisma.DnsRecord$updateLogsArgs<ExtArgs>
+  healthCheck?: boolean | Prisma.DnsRecord$healthCheckArgs<ExtArgs>
   _count?: boolean | Prisma.DnsRecordCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type DnsRecordIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -903,6 +1012,7 @@ export type $DnsRecordPayload<ExtArgs extends runtime.Types.Extensions.InternalA
   objects: {
     zone: Prisma.$ZonePayload<ExtArgs>
     updateLogs: Prisma.$UpdateLogPayload<ExtArgs>[]
+    healthCheck: Prisma.$HealthCheckPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1313,6 +1423,7 @@ export interface Prisma__DnsRecordClient<T, Null = never, ExtArgs extends runtim
   readonly [Symbol.toStringTag]: "PrismaPromise"
   zone<T extends Prisma.ZoneDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ZoneDefaultArgs<ExtArgs>>): Prisma.Prisma__ZoneClient<runtime.Types.Result.GetResult<Prisma.$ZonePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   updateLogs<T extends Prisma.DnsRecord$updateLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DnsRecord$updateLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UpdateLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  healthCheck<T extends Prisma.DnsRecord$healthCheckArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DnsRecord$healthCheckArgs<ExtArgs>>): Prisma.Prisma__HealthCheckClient<runtime.Types.Result.GetResult<Prisma.$HealthCheckPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1774,6 +1885,25 @@ export type DnsRecord$updateLogsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.UpdateLogScalarFieldEnum | Prisma.UpdateLogScalarFieldEnum[]
+}
+
+/**
+ * DnsRecord.healthCheck
+ */
+export type DnsRecord$healthCheckArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the HealthCheck
+   */
+  select?: Prisma.HealthCheckSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the HealthCheck
+   */
+  omit?: Prisma.HealthCheckOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.HealthCheckInclude<ExtArgs> | null
+  where?: Prisma.HealthCheckWhereInput
 }
 
 /**

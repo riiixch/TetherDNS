@@ -38,7 +38,10 @@ export default defineNitroPlugin((nitroApp) => {
             // 2. Fetch records that need auto-update
             const recordsToUpdate = await prisma.dnsRecord.findMany({
                 where: { isAutoUpdate: true },
-                include: { zone: { include: { account: true } } },
+                include: {
+                    zone: { include: { account: true } },
+                    healthCheck: true
+                },
             })
 
             // 3. Compare and Update
@@ -51,6 +54,18 @@ export default defineNitroPlugin((nitroApp) => {
                     targetIp = currentIpv6
                 } else {
                     continue // Skip non-A/AAAA records or if IP not available
+                }
+
+                // If health failover is active, preserve Cloudflare backup IP and update snapshot for auto-failback
+                if (record.healthCheck?.enabled && record.healthCheck?.currentStatus === 'FAILOVER_ACTIVE') {
+                    if (record.healthCheck.originalIp !== targetIp) {
+                        console.log(`[DDNS Cron] Failover is active for ${record.name}. Updating saved primary IP to ${targetIp} without overriding backup IP.`)
+                        await prisma.healthCheck.update({
+                            where: { id: record.healthCheck.id },
+                            data: { originalIp: targetIp }
+                        })
+                    }
+                    continue
                 }
 
                 if (record.content !== targetIp) {
@@ -90,7 +105,7 @@ export default defineNitroPlugin((nitroApp) => {
                             title: '✅ DDNS IP Updated',
                             message: `Record: ${record.name}\nOld IP: ${record.content}\nNew IP: ${targetIp}`,
                             color: 'success'
-                        })
+                        }).catch(e => console.error('[DDNS Cron] Notification error:', e))
                     } catch (error: any) {
                         console.error(`[DDNS Cron] Error updating ${record.name}:`, error.message)
 
@@ -99,6 +114,7 @@ export default defineNitroPlugin((nitroApp) => {
                                 oldIp: record.content,
                                 newIp: targetIp,
                                 status: 'FAILED',
+                                message: error.message || 'DDNS update failed',
                                 recordId: record.id,
                             },
                         })
@@ -106,7 +122,7 @@ export default defineNitroPlugin((nitroApp) => {
                             title: '❌ DDNS Update Failed',
                             message: `Record: ${record.name}\nError: ${error.message}`,
                             color: 'error'
-                        })
+                        }).catch(e => console.error('[DDNS Cron] Notification error:', e))
                     }
                 }
             }

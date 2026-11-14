@@ -8,19 +8,24 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 400, statusMessage: 'type, label, and config are required' })
     }
 
-    if (!['discord', 'line', 'webhook'].includes(body.type)) {
-        throw createError({ statusCode: 400, statusMessage: 'type must be discord, line, or webhook' })
+    const allowedTypes = ['discord', 'telegram', 'email', 'line', 'webhook']
+    if (!allowedTypes.includes(body.type)) {
+        throw createError({ statusCode: 400, statusMessage: `type must be one of: ${allowedTypes.join(', ')}` })
     }
 
     try {
         const encryptedConfig = encrypt(JSON.stringify(body.config))
+        const events = Array.isArray(body.events)
+            ? JSON.stringify(body.events)
+            : JSON.stringify(['DDNS', 'FAILOVER', 'TUNNEL', 'SECURITY'])
 
         const channel = await prisma.notificationChannel.create({
             data: {
                 type: body.type,
                 label: body.label,
                 config: encryptedConfig,
-                enabled: true,
+                events,
+                enabled: body.enabled !== undefined ? Boolean(body.enabled) : true,
             }
         })
 

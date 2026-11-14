@@ -64,8 +64,47 @@ model DnsRecord {
     
     updateToken  String?     @unique
     zoneId       Int
-    zone         Zone        @relation(fields: [zoneId], references: [id])
+    zone         Zone         @relation(fields: [zoneId], references: [id])
     updateLogs   UpdateLog[]
+    healthCheck  HealthCheck?
+}
+
+model HealthCheck {
+    id                Int              @id @default(autoincrement())
+    recordId          Int              @unique
+    record            DnsRecord        @relation(fields: [recordId], references: [id], onDelete: Cascade)
+    enabled           Boolean          @default(true)
+    probeType         String           @default("HTTP") // "HTTP" | "TCP" | "PING"
+    probeTarget       String           // e.g. "https://app.example.com/health" or "192.168.1.100:8080"
+    expectedStatus    Int?             @default(200)
+    intervalSeconds   Int              @default(60)
+    timeoutSeconds    Int              @default(5)
+    failureThreshold  Int              @default(3)
+    successThreshold  Int              @default(2)
+    backupIp          String           // Failover target IP
+    backupProxied     Boolean          @default(true)
+    currentStatus     String           @default("HEALTHY") // "HEALTHY" | "DEGRADED" | "DOWN" | "FAILOVER_ACTIVE"
+    consecutiveFails  Int              @default(0)
+    consecutivePasses Int              @default(0)
+    lastCheckAt       DateTime?
+    lastFailoverAt    DateTime?
+    lastLatencyMs     Int?
+    autoFailback      Boolean          @default(true)
+    originalIp        String?          // Saved primary IP while failover is active
+    originalProxied   Boolean?         // Saved primary proxied state
+    history           HealthCheckLog[]
+    createdAt         DateTime         @default(now())
+}
+
+model HealthCheckLog {
+    id            Int         @id @default(autoincrement())
+    healthCheckId Int
+    healthCheck   HealthCheck @relation(fields: [healthCheckId], references: [id], onDelete: Cascade)
+    status        String      // "PASS" | "FAIL"
+    statusCode    Int?
+    latencyMs     Int
+    errorMessage  String?
+    createdAt     DateTime    @default(now())
 }
 
 model CloudflareTunnel {
@@ -98,12 +137,14 @@ model Settings {
 }
 
 model NotificationChannel {
-    id        Int      @id @default(autoincrement())
-    type      String // "discord" | "line" | "email"
-    label     String
-    config    String // encrypted JSON
-    enabled   Boolean  @default(true)
-    createdAt DateTime @default(now())
+    id         Int       @id @default(autoincrement())
+    type       String    // "discord" | "telegram" | "email" | "line" | "webhook"
+    label      String
+    config     String    // encrypted JSON
+    enabled    Boolean   @default(true)
+    events     String    @default("[\"DDNS\",\"FAILOVER\",\"TUNNEL\",\"SECURITY\"]")
+    lastUsedAt DateTime?
+    createdAt  DateTime  @default(now())
 }
 
 model AuditLog {

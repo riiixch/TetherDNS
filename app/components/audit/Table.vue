@@ -2,6 +2,7 @@
 import { ref, onMounted, watch, computed } from 'vue'
 
 const { t } = useI18n()
+const { startLoading, stopLoading } = useAppLoading()
 const toast = useToast()
 
 // State
@@ -16,6 +17,7 @@ const searchQuery = ref('')
 
 const categories = [
     { key: 'all', label: 'All' },
+    { key: 'security', label: 'Security' },
     { key: 'record', label: 'Records' },
     { key: 'account', label: 'Accounts' },
     { key: 'system', label: 'System' },
@@ -24,6 +26,7 @@ const categories = [
 
 const getCatFromAction = (action: string) => {
     const act = (action || '').toUpperCase()
+    if (act.includes('SECURITY') || act.includes('WAF') || act.includes('ATTACK')) return 'security'
     if (act.includes('RECORD') || act.includes('ZONE') || act.includes('DDNS') || act.includes('PROXY')) return 'record'
     if (act.includes('ACCOUNT') || act.includes('USER') || act.includes('AUTH') || act.includes('LOGIN')) return 'account'
     if (act.includes('IP') || act.includes('TUNNEL')) return 'network'
@@ -32,10 +35,49 @@ const getCatFromAction = (action: string) => {
 
 const getCatIcon = (cat: string) => {
     switch (cat) {
+        case 'security': return 'i-heroicons-shield-exclamation'
         case 'record': return 'i-heroicons-rectangle-stack'
         case 'account': return 'i-heroicons-user-group'
         case 'network': return 'i-heroicons-signal'
         default: return 'i-heroicons-cog-6-tooth'
+    }
+}
+
+const formatAction = (act: string) => {
+    if (!act) return 'performed an action on'
+    const a = act.toUpperCase()
+    if (a === 'UPDATE_RECORD') return 'updated'
+    if (a === 'CREATE_RECORD') return 'created'
+    if (a === 'DELETE_RECORD') return 'deleted'
+    if (a === 'TOGGLE_DDNS') return 'toggled DDNS on'
+    if (a === 'TOGGLE_PROXY') return 'toggled proxy on'
+    return a.toLowerCase().replace(/_/g, ' ')
+}
+
+const formatTarget = (target: string) => {
+    if (!target) return ''
+    return target.replace(/^Record:\s*/i, '')
+}
+
+const getDetailSummary = (rawDetails: any) => {
+    if (!rawDetails) return null
+    let obj = rawDetails
+    if (typeof rawDetails === 'string') {
+        try {
+            obj = JSON.parse(rawDetails)
+        } catch {
+            return { text: rawDetails }
+        }
+    }
+    const d = obj?.updateDetails || obj
+    if (!d || typeof d !== 'object') {
+        return typeof d === 'string' ? { text: d } : null
+    }
+    return {
+        ip: d.content || d.ip || d.newIp || null,
+        proxied: d.proxied !== undefined ? d.proxied : undefined,
+        ddns: d.isAutoUpdate || d.routingMode === 'ddns' || false,
+        text: d.message || d.label || (d.zone ? `Zone: ${d.zone}` : null)
     }
 }
 
@@ -74,7 +116,11 @@ watch(searchQuery, () => {
     loadLogs()
 })
 
-onMounted(() => loadLogs())
+onMounted(async () => {
+    startLoading(t('audit.loading') || 'Loading Audit Logs...', t('audit.subtitle') || 'Security & Audit Logs')
+    await loadLogs()
+    stopLoading(250)
+})
 
 const timeAgo = (dateStr: string) => {
     if (!dateStr) return '-'
@@ -109,12 +155,12 @@ const timeAgo = (dateStr: string) => {
         </section>
 
         <!-- Category filter chips matching ref.html -->
-        <div class="filter-chips flex items-center gap-2 overflow-x-auto pb-1">
+        <div class="filter-chips flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
             <button
                 v-for="cat in categories"
                 :key="cat.key"
                 type="button"
-                class="fchip"
+                class="fchip flex-none"
                 :class="{ on: activeCategory === cat.key }"
                 @click="activeCategory = cat.key"
             >
@@ -123,11 +169,11 @@ const timeAgo = (dateStr: string) => {
         </div>
 
         <!-- Main Card -->
-        <div class="card toolbar-card">
+        <div class="card toolbar-card overflow-hidden">
             <!-- Search toolbar -->
-            <div class="toolbar">
-                <div class="search">
-                    <UIcon name="i-heroicons-magnifying-glass" class="w-4 h-4 text-[var(--text3)]" />
+            <div class="toolbar flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                <div class="search w-full sm:max-w-xs">
+                    <UIcon name="i-heroicons-magnifying-glass" class="w-4 h-4 text-[var(--text3)] flex-none" />
                     <input
                         v-model="searchQuery"
                         type="text"
@@ -135,14 +181,15 @@ const timeAgo = (dateStr: string) => {
                         autocomplete="off"
                     />
                 </div>
-                <div class="spacer"></div>
-                <span class="chip green font-mono text-xs">
-                    {{ total }} Audit Entries
-                </span>
+                <div class="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
+                    <span class="chip green font-mono text-xs">
+                        {{ total }} Audit Entries
+                    </span>
+                </div>
             </div>
 
             <!-- Audit Items List -->
-            <div class="au-list divide-y divide-[var(--border)]">
+            <div class="au-list divide-y divide-[var(--border)] overflow-hidden">
                 <template v-if="pending">
                     <div class="p-16 text-center">
                         <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 animate-spin text-[var(--green)] mx-auto mb-2" />
@@ -160,22 +207,40 @@ const timeAgo = (dateStr: string) => {
                     <div
                         v-for="a in filteredLogs"
                         :key="a.id"
-                        class="au-item flex items-center gap-3 p-4 hover:bg-[var(--surface2)] transition-colors"
+                        class="au-item flex items-start gap-3 p-3.5 sm:p-4 hover:bg-[var(--surface2)] transition-colors overflow-hidden"
                     >
-                        <span class="au-ic flex-none" :class="getCatFromAction(a.action)">
+                        <span class="au-ic flex-none mt-0.5" :class="getCatFromAction(a.action)">
                             <UIcon :name="getCatIcon(getCatFromAction(a.action))" class="w-4 h-4" />
                         </span>
-                        <div class="au-main flex-1 min-w-0">
-                            <span class="au-text text-xs text-[var(--text)]">
-                                <b>{{ a.user?.username || 'admin' }}</b>
-                                <span class="mx-1 text-[var(--text2)]">{{ a.action.toLowerCase().replace(/_/g, ' ') }}</span>
-                                <span v-if="a.target" class="mono font-semibold text-[var(--cyan)]">{{ a.target }}</span>
-                                <span v-if="a.details" class="text-[var(--text3)] ml-1">({{ a.details }})</span>
-                            </span>
+                        <div class="au-main flex-1 min-w-0 space-y-1.5 overflow-hidden">
+                            <div class="au-text text-xs text-[var(--text)] leading-relaxed break-words">
+                                <span class="font-bold text-[var(--text)]">{{ a.user?.username || 'admin' }}</span>
+                                <span class="mx-1 text-[var(--text2)]">{{ formatAction(a.action) }}</span>
+                                <span class="mono font-bold text-[var(--cyan)] break-all">{{ formatTarget(a.target) }}</span>
+                            </div>
+
+                            <!-- Human-readable detail chips -->
+                            <div v-if="getDetailSummary(a.details)" class="flex items-center gap-1.5 flex-wrap text-[11px] font-mono pt-0.5">
+                                <span v-if="getDetailSummary(a.details)?.ip" class="chip green text-[10.5px]">
+                                    IP: {{ getDetailSummary(a.details)?.ip }}
+                                </span>
+                                <span v-if="getDetailSummary(a.details)?.proxied !== undefined" class="chip text-[10.5px]">
+                                    {{ getDetailSummary(a.details)?.proxied ? 'Proxied' : 'DNS Only' }}
+                                </span>
+                                <span v-if="getDetailSummary(a.details)?.ddns" class="chip amber text-[10.5px]">
+                                    DDNS
+                                </span>
+                                <span v-if="getDetailSummary(a.details)?.text" class="chip text-[10.5px]">
+                                    {{ getDetailSummary(a.details)?.text }}
+                                </span>
+                            </div>
+
+                            <!-- Timestamp -->
+                            <div class="au-time text-[10.5px] text-[var(--text3)] flex items-center gap-1 font-mono pt-0.5">
+                                <UIcon name="i-heroicons-clock" class="w-3.5 h-3.5 opacity-60" />
+                                <span>{{ timeAgo(a.createdAt) }}</span>
+                            </div>
                         </div>
-                        <span class="au-time text-[11px] text-[var(--text3)] whitespace-nowrap flex-none">
-                            {{ timeAgo(a.createdAt) }}
-                        </span>
                     </div>
                 </template>
             </div>

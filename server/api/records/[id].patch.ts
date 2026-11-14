@@ -28,7 +28,18 @@ export default defineEventHandler(async (event) => {
         let tunnelId = body.tunnelId !== undefined ? body.tunnelId : record.tunnelId
         let localAddress = body.localAddress !== undefined ? body.localAddress : record.localAddress
 
+        let isAutoUpdate = typeof body.isAutoUpdate === 'boolean'
+            ? body.isAutoUpdate
+            : (body.routingMode !== undefined ? body.routingMode === 'ddns' : record.isAutoUpdate)
+
+        if (isAutoUpdate && routingMode !== 'tunnel') {
+            routingMode = 'ddns'
+        } else if (!isAutoUpdate && routingMode === 'ddns') {
+            routingMode = 'static'
+        }
+
         if (routingMode === 'tunnel') {
+            isAutoUpdate = false
             const finalTunnelId = tunnelId || oldTunnelId
             if (!finalTunnelId || !localAddress) {
                 throw createError({ statusCode: 400, statusMessage: 'tunnelId and localAddress are required for tunnel routing mode' })
@@ -63,7 +74,7 @@ export default defineEventHandler(async (event) => {
             routingMode,
             tunnelId: routingMode === 'tunnel' ? (tunnelId || oldTunnelId) : null,
             localAddress: routingMode === 'tunnel' ? localAddress : null,
-            isAutoUpdate: routingMode === 'ddns'
+            isAutoUpdate
         }
         if (body.name) dbUpdate.name = body.name
 
@@ -80,6 +91,14 @@ export default defineEventHandler(async (event) => {
         // Sync new tunnel if we are in tunnel mode
         if (routingMode === 'tunnel' && dbUpdate.tunnelId) {
             await syncTunnelConfiguration(record.zone.accountId, dbUpdate.tunnelId)
+        }
+
+        // Disable healthcheck if record was switched to tunnel mode or non-IP type
+        if (routingMode === 'tunnel' || (targetType !== 'A' && targetType !== 'AAAA')) {
+            await prisma.healthCheck.updateMany({
+                where: { recordId: record.id },
+                data: { enabled: false }
+            })
         }
 
         if (event.context.userId) {

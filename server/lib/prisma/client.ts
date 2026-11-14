@@ -13,13 +13,7 @@
 import * as process from 'node:process'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
-try {
-  globalThis['__dirname'] = (typeof import.meta !== 'undefined' && import.meta.url && !import.meta.url.includes('_entry.js'))
-    ? path.dirname(fileURLToPath(import.meta.url))
-    : process.cwd()
-} catch {
-  globalThis['__dirname'] = process.cwd()
-}
+globalThis['__dirname'] = path.dirname(fileURLToPath(import.meta.url))
 
 import * as runtime from "@prisma/client/runtime/client"
 import * as $Enums from "./enums.js"
@@ -72,6 +66,16 @@ export type ApiToken = Prisma.ApiTokenModel
  * 
  */
 export type DnsRecord = Prisma.DnsRecordModel
+/**
+ * Model HealthCheck
+ * 
+ */
+export type HealthCheck = Prisma.HealthCheckModel
+/**
+ * Model HealthCheckLog
+ * 
+ */
+export type HealthCheckLog = Prisma.HealthCheckLogModel
 /**
  * Model CloudflareTunnel
  * 

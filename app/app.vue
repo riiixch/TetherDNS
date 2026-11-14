@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { isLoading, loadingMessage, loadingProgress } = useAppLoading()
+const { isLoading, loadingTitle, loadingSubtitle, loadingMessage, loadingProgress } = useAppLoading()
 
 useHead({
     titleTemplate: (titleChunk) => {
@@ -29,17 +29,20 @@ useHead({
         <!-- Sleek top edge progress indicator during route transitions -->
         <NuxtLoadingIndicator color="#12e08a" :height="3" :duration="2000" />
 
-        <!-- High-tech global loading screen overlay when active -->
+        <!-- High-tech global loading screen overlay for all pages -->
         <Transition
-            enter-active-class="transition duration-300 ease-out"
-            enter-from-class="opacity-0 scale-95"
-            enter-to-class="opacity-100 scale-100"
-            leave-active-class="transition duration-200 ease-in"
-            leave-from-class="opacity-100 scale-100"
-            leave-to-class="opacity-0 scale-95"
+            enter-active-class="transition duration-200 ease-out"
+            enter-from-class="opacity-0"
+            enter-to-class="opacity-100"
+            leave-active-class="transition duration-350 ease-in"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0 pointer-events-none"
         >
             <CommonLoadingScreen
                 v-if="isLoading"
+                :fullscreen="true"
+                :title="loadingTitle"
+                :subtitle="loadingSubtitle"
                 :message="loadingMessage"
                 :progress="loadingProgress"
             />

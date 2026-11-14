@@ -73,7 +73,7 @@ const timeAgo = (dateStr: string) => {
 <template>
     <section class="stats">
         <!-- Accounts -->
-        <div class="stat card">
+        <div class="stat card cursor-pointer transition-transform hover:-translate-y-0.5" @click="navigateTo('/accounts')">
             <div class="stat-top">
                 <span class="stat-ic green">
                     <UIcon name="i-heroicons-user-group" class="w-4 h-4" />
@@ -85,7 +85,7 @@ const timeAgo = (dateStr: string) => {
         </div>
 
         <!-- Zones -->
-        <div class="stat card">
+        <div class="stat card cursor-pointer transition-transform hover:-translate-y-0.5" @click="navigateTo('/zones')">
             <div class="stat-top">
                 <span class="stat-ic cyan">
                     <UIcon name="i-heroicons-globe-alt" class="w-4 h-4" />
@@ -97,7 +97,7 @@ const timeAgo = (dateStr: string) => {
         </div>
 
         <!-- Records -->
-        <div class="stat card">
+        <div class="stat card cursor-pointer transition-transform hover:-translate-y-0.5" @click="navigateTo('/zones')">
             <div class="stat-top">
                 <span class="stat-ic violet">
                     <UIcon name="i-heroicons-rectangle-stack" class="w-4 h-4" />
@@ -109,7 +109,7 @@ const timeAgo = (dateStr: string) => {
         </div>
 
         <!-- DDNS -->
-        <div class="stat card">
+        <div class="stat card cursor-pointer transition-transform hover:-translate-y-0.5" @click="navigateTo('/zones')">
             <div class="stat-top">
                 <span class="stat-ic amber">
                     <UIcon name="i-heroicons-bolt" class="w-4 h-4" />

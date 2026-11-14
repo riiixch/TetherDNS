@@ -13,20 +13,20 @@ export const useRecords = () => {
         })
     }
 
-    const updateRecord = async (recordId: number, data: Record<string, any>) => {
+    const updateRecord = async (recordId: number | string, data: Record<string, any>) => {
         return await $fetch(`/api/records/${recordId}`, {
             method: 'PATCH',
             body: data
         })
     }
 
-    const deleteRecord = async (recordId: number) => {
+    const deleteRecord = async (recordId: number | string) => {
         return await $fetch(`/api/records/${recordId}`, {
             method: 'DELETE'
         })
     }
 
-    const toggleAutoUpdate = async (recordId: number, isAutoUpdate: boolean) => {
+    const toggleAutoUpdate = async (recordId: number | string, isAutoUpdate: boolean) => {
         return await $fetch(`/api/records/${recordId}`, {
             method: 'PATCH',
             body: { isAutoUpdate }

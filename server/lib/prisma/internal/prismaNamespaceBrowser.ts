@@ -56,6 +56,8 @@ export const ModelName = {
   User: 'User',
   ApiToken: 'ApiToken',
   DnsRecord: 'DnsRecord',
+  HealthCheck: 'HealthCheck',
+  HealthCheckLog: 'HealthCheckLog',
   CloudflareTunnel: 'CloudflareTunnel',
   UpdateLog: 'UpdateLog',
   Settings: 'Settings',
@@ -140,6 +142,47 @@ export const DnsRecordScalarFieldEnum = {
 export type DnsRecordScalarFieldEnum = (typeof DnsRecordScalarFieldEnum)[keyof typeof DnsRecordScalarFieldEnum]
 
 
+export const HealthCheckScalarFieldEnum = {
+  id: 'id',
+  recordId: 'recordId',
+  enabled: 'enabled',
+  probeType: 'probeType',
+  probeTarget: 'probeTarget',
+  expectedStatus: 'expectedStatus',
+  intervalSeconds: 'intervalSeconds',
+  timeoutSeconds: 'timeoutSeconds',
+  failureThreshold: 'failureThreshold',
+  successThreshold: 'successThreshold',
+  backupIp: 'backupIp',
+  backupProxied: 'backupProxied',
+  currentStatus: 'currentStatus',
+  consecutiveFails: 'consecutiveFails',
+  consecutivePasses: 'consecutivePasses',
+  lastCheckAt: 'lastCheckAt',
+  lastFailoverAt: 'lastFailoverAt',
+  lastLatencyMs: 'lastLatencyMs',
+  autoFailback: 'autoFailback',
+  originalIp: 'originalIp',
+  originalProxied: 'originalProxied',
+  createdAt: 'createdAt'
+} as const
+
+export type HealthCheckScalarFieldEnum = (typeof HealthCheckScalarFieldEnum)[keyof typeof HealthCheckScalarFieldEnum]
+
+
+export const HealthCheckLogScalarFieldEnum = {
+  id: 'id',
+  healthCheckId: 'healthCheckId',
+  status: 'status',
+  statusCode: 'statusCode',
+  latencyMs: 'latencyMs',
+  errorMessage: 'errorMessage',
+  createdAt: 'createdAt'
+} as const
+
+export type HealthCheckLogScalarFieldEnum = (typeof HealthCheckLogScalarFieldEnum)[keyof typeof HealthCheckLogScalarFieldEnum]
+
+
 export const CloudflareTunnelScalarFieldEnum = {
   id: 'id',
   tunnelId: 'tunnelId',
@@ -182,6 +225,8 @@ export const NotificationChannelScalarFieldEnum = {
   label: 'label',
   config: 'config',
   enabled: 'enabled',
+  events: 'events',
+  lastUsedAt: 'lastUsedAt',
   createdAt: 'createdAt'
 } as const
 

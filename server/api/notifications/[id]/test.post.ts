@@ -1,5 +1,10 @@
 import { prisma } from '../../../utils/prisma'
 import { decrypt } from '../../../utils/decrypt'
+import { sendDiscord } from '../../../utils/sendDiscord'
+import { sendTelegram } from '../../../utils/sendTelegram'
+import { sendEmail } from '../../../utils/sendEmail'
+import { sendLine } from '../../../utils/sendLine'
+import { sendWebhook } from '../../../utils/sendWebhook'
 
 export default defineEventHandler(async (event) => {
     const id = getRouterParam(event, 'id')
@@ -11,34 +16,39 @@ export default defineEventHandler(async (event) => {
 
         const config = JSON.parse(decrypt(channel.config))
 
-        switch (channel.type) {
-            case 'discord':
-                await fetch(config.webhookUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        embeds: [{
-                            title: '🔔 Test Notification',
-                            description: 'Cloudflare DDNS Manager notification is working!',
-                            color: 0x5865f2,
-                            timestamp: new Date().toISOString()
-                        }]
-                    })
-                })
-                break
-            case 'line':
-                await fetch('https://notify-api.line.me/api/notify', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'Authorization': `Bearer ${config.token}`
-                    },
-                    body: `message=\n🔔 Test Notification\nCloudflare DDNS Manager notification is working!`
-                })
-                break
+        const testPayload = {
+            title: '🔔 Test Notification',
+            message: 'TetherDNS notification pipeline is operating smoothly!',
+            color: 'success' as const,
+            eventType: 'SECURITY' as const,
+            fields: [
+                { name: 'Channel', value: channel.label },
+                { name: 'Provider', value: channel.type.toUpperCase() },
+                { name: 'Status', value: 'Active & Verified' }
+            ]
         }
 
-        return { success: true, message: 'Test notification sent!' }
+        switch (channel.type) {
+            case 'discord':
+                await sendDiscord(config, testPayload)
+                break
+            case 'telegram':
+                await sendTelegram(config, testPayload)
+                break
+            case 'email':
+                await sendEmail(config, testPayload)
+                break
+            case 'line':
+                await sendLine(config.token, testPayload)
+                break
+            case 'webhook':
+                await sendWebhook(config.webhookUrl, testPayload)
+                break
+            default:
+                throw new Error(`Unsupported channel type: ${channel.type}`)
+        }
+
+        return { success: true, message: `Test notification sent successfully via ${channel.type.toUpperCase()}!` }
     } catch (error: any) {
         throw createError({ statusCode: 500, statusMessage: error.message || 'Failed to send test notification' })
     }

@@ -2,6 +2,7 @@
 import { ref, onMounted, computed, watch } from 'vue'
 
 const { fetchLogs } = useLogs()
+const { startLoading, stopLoading } = useAppLoading()
 const toast = useToast()
 const { t } = useI18n()
 
@@ -78,8 +79,10 @@ const formatDate = (dateStr: string) => {
     return d.toLocaleDateString([], { month: 'short', day: 'numeric' })
 }
 
-onMounted(() => {
-    loadData()
+onMounted(async () => {
+    startLoading(t('logs.loading') || 'Loading Update Logs...', t('logs.subtitle') || 'DDNS Automation Trails')
+    await loadData()
+    stopLoading(250)
 })
 </script>
 
@@ -135,8 +138,8 @@ onMounted(() => {
                 </span>
             </div>
 
-            <!-- Table -->
-            <div class="table-wrap overflow-x-auto">
+            <!-- Desktop Table (hidden on mobile < 768px) -->
+            <div class="table-wrap overflow-x-auto hidden md:block">
                 <table class="rtable w-full">
                     <thead>
                         <tr>
@@ -200,6 +203,56 @@ onMounted(() => {
                         </template>
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Mobile Logs Cards List (shown only on mobile < 768px) -->
+            <div class="logs-mobile-list block md:hidden divide-y divide-[var(--border)]">
+                <template v-if="pending">
+                    <div class="text-center py-12">
+                        <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 animate-spin text-[var(--cyan)] mx-auto mb-2" />
+                        <p class="text-xs text-[var(--text3)]">Loading update logs...</p>
+                    </div>
+                </template>
+                <template v-else-if="logs.length === 0">
+                    <div class="empty py-12 text-center flex flex-col items-center justify-center p-4">
+                        <UIcon name="i-heroicons-clock" class="w-10 h-10 text-[var(--text3)] mb-3" />
+                        <div class="font-bold text-sm text-[var(--text)]">No update logs recorded</div>
+                        <span class="text-xs text-[var(--text3)] mt-1">Logs will appear here once DDNS mutations occur</span>
+                    </div>
+                </template>
+                <template v-else>
+                    <div
+                        v-for="log in logs"
+                        :key="log.id"
+                        class="log-mobile-card p-4 space-y-2.5 transition-colors hover:bg-[var(--surface2)]"
+                    >
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="mono font-bold text-sm text-[var(--text)] truncate" :title="log.record?.name">
+                                {{ log.record?.name || 'Unknown' }}
+                            </span>
+                            <span class="pill text-[10px] flex-none" :class="log.status === 'SUCCESS' ? 'ok' : 'err'">
+                                <span class="dot" :class="log.status === 'SUCCESS' ? 'ok' : 'failed'"></span>
+                                {{ log.status }}
+                            </span>
+                        </div>
+
+                        <!-- IP Transition row -->
+                        <div class="flex items-center justify-between text-xs text-[var(--text2)] bg-[var(--surface2)] px-3 py-1.5 rounded-lg font-mono">
+                            <div class="inline-flex items-center gap-1.5 truncate">
+                                <span class="opacity-70 text-[11px]">{{ log.oldIp || '—' }}</span>
+                                <UIcon name="i-heroicons-arrow-right" class="w-3 h-3 text-[var(--text3)] flex-none" />
+                                <b class="text-[11px]" :class="log.status === 'SUCCESS' ? 'text-[var(--green)]' : 'text-[var(--danger)]'">
+                                    {{ log.newIp || '—' }}
+                                </b>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between text-[11px] text-[var(--text3)] pt-0.5">
+                            <span class="truncate max-w-[200px]" :title="log.message">{{ log.message || 'Auto DDNS sync' }}</span>
+                            <span class="font-mono flex-none">{{ formatTime(log.createdAt) }} · {{ formatDate(log.createdAt) }}</span>
+                        </div>
+                    </div>
+                </template>
             </div>
 
             <!-- Pagination Footer -->

@@ -29,6 +29,7 @@ const add = async () => {
 const { locale } = useI18n()
 
 const formatDate = (dateStr: string) => {
+    if (!dateStr) return '-'
     return new Date(dateStr).toLocaleDateString(locale.value === 'th' ? 'th-TH' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric' })
 }
 </script>
@@ -52,13 +53,13 @@ const formatDate = (dateStr: string) => {
             </div>
 
             <!-- Table -->
-            <div class="overflow-x-auto -mx-6 -mb-6">
+            <div class="overflow-x-auto w-full">
                 <table v-if="!loading && users.length > 0" class="rtable-ref">
                     <thead>
                         <tr>
-                            <th>{{ $t('settings.col_username') }}</th>
-                            <th>{{ $t('settings.col_created') }}</th>
-                            <th style="text-align: right;"></th>
+                            <th class="w-1/2 min-w-[180px]">{{ $t('settings.col_username') }}</th>
+                            <th class="w-2/5 min-w-[140px]">{{ $t('settings.col_created') }}</th>
+                            <th class="w-20 text-right"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -66,19 +67,19 @@ const formatDate = (dateStr: string) => {
                             <td>
                                 <div class="flex items-center gap-2">
                                     <span class="font-bold text-[var(--text)]">{{ u.username }}</span>
-                                    <span v-if="currentUser?.id === u.id" class="badge badge-ok">
+                                    <span v-if="currentUser?.id === u.id" class="chip green text-[10px]">
                                         {{ $t('settings.you') }}
                                     </span>
                                 </div>
                             </td>
                             <td>
-                                <span class="text-xs text-[var(--text2)]">{{ formatDate(u.createdAt) }}</span>
+                                <span class="text-xs text-[var(--text2)] font-mono">{{ formatDate(u.createdAt) }}</span>
                             </td>
-                            <td style="text-align: right;">
+                            <td class="text-right">
                                 <button
                                     v-if="currentUser?.id !== u.id"
                                     type="button"
-                                    class="icon-btn sm text-[var(--danger)] hover:bg-[rgba(251,94,122,0.15)]"
+                                    class="icon-btn sm text-[var(--danger)] hover:bg-[rgba(251,94,122,0.15)] inline-flex items-center justify-center"
                                     @click="emit('delete', u.id)"
                                 >
                                     <UIcon name="i-heroicons-trash" class="w-4 h-4" />

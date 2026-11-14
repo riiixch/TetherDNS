@@ -11,13 +11,16 @@ export default defineEventHandler(async (event) => {
 
     try {
         // Find the zone and its account
-        const zone = await prisma.zone.findUnique({ where: { cfZoneId } })
+        const isNumeric = /^\d+$/.test(cfZoneId)
+        const zone = isNumeric 
+            ? await prisma.zone.findFirst({ where: { OR: [{ cfZoneId }, { id: parseInt(cfZoneId) }] } })
+            : await prisma.zone.findUnique({ where: { cfZoneId } })
         if (!zone) throw createError({ statusCode: 404, statusMessage: 'Zone not found' })
         if (!zone.accountId) throw createError({ statusCode: 400, statusMessage: 'Zone has no linked account' })
 
         // Sync from Cloudflare
         const cf = await createCloudflareClient(zone.accountId)
-        const cfRecords = await cf.dns.records.list({ zone_id: cfZoneId })
+        const cfRecords = await cf.dns.records.list({ zone_id: zone.cfZoneId })
 
         const relevantRecords = cfRecords.result
         const cfRecordIds = new Set(relevantRecords.map(r => r.id).filter(Boolean))
@@ -31,6 +34,7 @@ export default defineEventHandler(async (event) => {
         const recordsToDelete = localRecords.filter(r => !cfRecordIds.has(r.cfRecordId))
         for (const localRec of recordsToDelete) {
             await prisma.updateLog.deleteMany({ where: { recordId: localRec.id } })
+            await prisma.healthCheck.deleteMany({ where: { recordId: localRec.id } })
             await prisma.dnsRecord.delete({ where: { id: localRec.id } })
         }
 
@@ -61,7 +65,7 @@ export default defineEventHandler(async (event) => {
         // Return from DB
         const records = await prisma.dnsRecord.findMany({
             where: { zoneId: zone.id },
-            include: { zone: true },
+            include: { zone: true, healthCheck: true },
             orderBy: { name: 'asc' }
         })
 

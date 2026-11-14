@@ -6,6 +6,12 @@ export default defineNuxtConfig({
     },
     css: ['~/assets/css/main.css'],
     modules: ['@nuxt/ui', '@nuxtjs/i18n'],
+    colorMode: {
+        preference: 'dark',
+        fallback: 'dark',
+        classSuffix: '',
+        dataValue: 'theme'
+    },
     ui: {
         fonts: false
     },

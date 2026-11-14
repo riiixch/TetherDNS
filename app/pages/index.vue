@@ -8,9 +8,8 @@ definePageMeta({ layout: 'default' })
 
 const { fetchLogs } = useLogs()
 const { fetchZones } = useZones()
+const { startLoading, stopLoading, isLoading } = useAppLoading()
 
-// Global Page Loading State
-const isPageLoading = ref(true)
 const initialStats = ref<any>(null)
 const initialAnalytics = ref<any>(null)
 
@@ -43,7 +42,7 @@ const loadZones = async () => {
 }
 
 const initDashboard = async () => {
-    isPageLoading.value = true
+    startLoading(t('dashboard.loading_dashboard') || 'Loading Dashboard...', t('dashboard.subtitle') || 'Cloudflare DDNS & Edge Manager')
     try {
         await Promise.allSettled([
             loadRecentLogs(),
@@ -54,10 +53,7 @@ const initDashboard = async () => {
     } catch (e) {
         console.error('Failed to initialize dashboard', e)
     } finally {
-        // Smooth timeout to ensure fluid transition and avoid micro-flicker
-        setTimeout(() => {
-            isPageLoading.value = false
-        }, 400)
+        stopLoading(350)
     }
 }
 
@@ -102,28 +98,10 @@ onMounted(() => {
 
 <template>
     <div class="relative w-full">
-        <!-- Full Page Loading Screen for Dashboard Initial Entry -->
-        <Transition
-            enter-active-class="transition duration-200 ease-out"
-            enter-from-class="opacity-0"
-            enter-to-class="opacity-100"
-            leave-active-class="transition duration-400 ease-in"
-            leave-from-class="opacity-100"
-            leave-to-class="opacity-0 pointer-events-none"
-        >
-            <CommonLoadingScreen
-                v-if="isPageLoading"
-                :fullscreen="true"
-                title="TetherDNS"
-                :subtitle="$t('dashboard.subtitle')"
-                :message="$t('dashboard.loading_dashboard')"
-            />
-        </Transition>
-
         <!-- Main Dashboard Content Container -->
         <div
             class="space-y-6 lg:space-y-8 flex flex-col h-full pb-10 transition-opacity duration-300"
-            :class="{ 'opacity-0': isPageLoading, 'opacity-100': !isPageLoading }"
+            :class="{ 'opacity-0': isLoading, 'opacity-100': !isLoading }"
         >
             <!-- Page Header matching ref.html -->
             <section class="page-head">
@@ -245,9 +223,9 @@ onMounted(() => {
                 <div v-else class="divide-y divide-[var(--border)]">
                     <div
                         v-for="z in zones.slice(0, 4)"
-                        :key="z.id"
+                        :key="z.cfZoneId || z.id"
                         class="hz-row cursor-pointer group"
-                        @click="navigateTo(`/zones/${z.id}`)"
+                        @click="navigateTo(`/zones/${z.cfZoneId || z.id}`)"
                     >
                         <div class="hz-name">
                             <span class="dot ok"></span>

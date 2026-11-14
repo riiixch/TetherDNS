@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 
 const { fetchZones, deleteZone } = useZones()
 const { fetchAccounts } = useAccounts()
+const { startLoading, stopLoading } = useAppLoading()
 const toast = useToast()
 const { t } = useI18n()
 
@@ -22,6 +23,20 @@ const importLoading = ref(false)
 const deleteModalOpen = ref(false)
 const deletingZone = ref<any>(null)
 const deleteLoading = ref(false)
+const copiedZoneId = ref<string | null>(null)
+
+const copyZoneId = async (id: string) => {
+    try {
+        await navigator.clipboard.writeText(id)
+        copiedZoneId.value = id
+        toast.add({ title: t('common.success'), description: 'Zone ID copied to clipboard', color: 'success' })
+        setTimeout(() => {
+            if (copiedZoneId.value === id) copiedZoneId.value = null
+        }, 1500)
+    } catch {
+        /* ignore */
+    }
+}
 
 // Computed
 const filteredZones = computed(() => {
@@ -100,8 +115,10 @@ const exportJson = () => {
     window.open('/api/records/export', '_blank')
 }
 
-onMounted(() => {
-    loadData()
+onMounted(async () => {
+    startLoading(t('zones.loading') || 'Loading DNS Zones...', t('zones.subtitle') || 'Cloudflare Managed Zones')
+    await loadData()
+    stopLoading(250)
 })
 </script>
 
@@ -184,8 +201,8 @@ onMounted(() => {
                 </span>
             </div>
 
-            <!-- Table -->
-            <div class="table-wrap overflow-x-auto">
+            <!-- Desktop Table (hidden on mobile <768px) -->
+            <div class="table-wrap overflow-x-auto hidden md:block">
                 <table class="rtable w-full">
                     <thead>
                         <tr>
@@ -274,6 +291,85 @@ onMounted(() => {
                         </template>
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Mobile Zone Cards List (shown only on mobile < 768px) -->
+            <div class="zone-mobile-list block md:hidden divide-y divide-[var(--border)]">
+                <template v-if="pending">
+                    <div class="text-center py-12">
+                        <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 animate-spin text-[var(--cyan)] mx-auto mb-2" />
+                        <p class="text-xs text-[var(--text3)]">Loading DNS zones...</p>
+                    </div>
+                </template>
+                <template v-else-if="filteredZones.length === 0">
+                    <div class="empty py-12 text-center flex flex-col items-center justify-center p-4">
+                        <UIcon name="i-heroicons-globe-alt" class="w-10 h-10 text-[var(--text3)] mb-3" />
+                        <div class="font-bold text-sm text-[var(--text)]">No zones found</div>
+                        <span class="text-xs text-[var(--text3)] mt-1">Try syncing from Cloudflare or add a new zone</span>
+                    </div>
+                </template>
+                <template v-else>
+                    <div
+                        v-for="zone in filteredZones"
+                        :key="zone.id"
+                        class="zone-mobile-card p-4 space-y-3 transition-colors hover:bg-[var(--surface2)]"
+                    >
+                        <!-- Top: Name & Active Pill -->
+                        <div class="flex items-center justify-between gap-2">
+                            <NuxtLink
+                                :to="`/zones/${zone.cfZoneId}`"
+                                class="flex items-center gap-2.5 font-bold text-sm text-[var(--text)] hover:text-[var(--green)] transition-colors group min-w-0"
+                            >
+                                <div class="w-8 h-8 rounded-lg bg-[rgba(45,212,238,0.1)] text-[var(--cyan)] flex items-center justify-center flex-none">
+                                    <UIcon name="i-heroicons-globe-alt" class="w-4 h-4" />
+                                </div>
+                                <span class="mono truncate font-bold text-sm">{{ zone.name }}</span>
+                            </NuxtLink>
+                            <span class="pill ok text-[10px] flex-none">
+                                <span class="dot ok"></span>
+                                ACTIVE
+                            </span>
+                        </div>
+
+                        <!-- Zone ID & Copy -->
+                        <div class="flex items-center justify-between text-xs text-[var(--text3)] bg-[var(--surface2)] px-3 py-1.5 rounded-lg font-mono">
+                            <span class="text-[11px] truncate mr-2">ID: {{ zone.cfZoneId }}</span>
+                            <button
+                                type="button"
+                                class="mini-copy text-[var(--text2)] hover:text-[var(--green)] flex-none"
+                                title="Copy Zone ID"
+                                @click="copyZoneId(zone.cfZoneId)"
+                            >
+                                <UIcon :name="copiedZoneId === zone.cfZoneId ? 'i-heroicons-check' : 'i-heroicons-clipboard-document'" class="w-3.5 h-3.5" />
+                            </button>
+                        </div>
+
+                        <!-- Meta & Actions -->
+                        <div class="flex items-center justify-between pt-1 gap-2">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="chip text-[11px]">{{ zone.account?.label || 'Account' }}</span>
+                                <span class="chip green text-[11px]">{{ zone._count?.records || 0 }} Records</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 flex-none">
+                                <NuxtLink
+                                    :to="`/zones/${zone.cfZoneId}`"
+                                    class="btn-ref ghost sm flex items-center gap-1"
+                                >
+                                    <UIcon name="i-heroicons-arrow-top-right-on-square" class="w-3.5 h-3.5" />
+                                    <span>Manage</span>
+                                </NuxtLink>
+                                <button
+                                    type="button"
+                                    class="icon-btn sm danger"
+                                    title="Delete Zone"
+                                    @click="openDeleteModal(zone)"
+                                >
+                                    <UIcon name="i-heroicons-trash" class="w-3.5 h-3.5" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </template>
             </div>
         </div>
 

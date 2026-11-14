@@ -23,7 +23,10 @@ export default defineEventHandler(async (event) => {
 
     const record = await prisma.dnsRecord.findUnique({
         where: { updateToken: token },
-        include: { zone: true }
+        include: {
+            zone: true,
+            healthCheck: true
+        }
     })
 
     if (!record) {
@@ -31,6 +34,21 @@ export default defineEventHandler(async (event) => {
     }
 
     try {
+        // If Failover is currently active, preserve Cloudflare backup IP and update snapshot
+        if (record.healthCheck?.enabled && record.healthCheck?.currentStatus === 'FAILOVER_ACTIVE') {
+            if (record.healthCheck.originalIp !== ip) {
+                await prisma.healthCheck.update({
+                    where: { id: record.healthCheck.id },
+                    data: { originalIp: ip }
+                })
+            }
+            return {
+                success: true,
+                message: 'Failover is active. Primary IP saved for automatic failback upon recovery.',
+                ip
+            }
+        }
+
         if (record.content === ip) {
             return { success: true, message: 'IP is already up to date', ip }
         }
