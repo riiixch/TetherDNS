@@ -49,7 +49,8 @@ echo ----------------------------------------
 echo.
 
 :: ถามเพื่อยืนยันก่อนเริ่ม
-set /p CONFIRM="Confirm to proceed? (y/n): "
+set /p CONFIRM="Confirm to proceed? (y/n) [y]: "
+if "%CONFIRM%"=="" set CONFIRM=y
 if /i "%CONFIRM%" NEQ "y" (
     echo [Cancelled] Exiting...
     pause

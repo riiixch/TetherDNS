@@ -8,9 +8,9 @@
         "generate": "nuxt generate",
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare",
-        "prisma:gen": "npx prisma generate",
-        "prisma:push": "npx prisma db push",
-        "prisma:reset": "npx prisma migrate reset",
+        "prisma:gen": "prisma generate",
+        "prisma:push": "prisma db push --accept-data-loss",
+        "prisma:reset": "prisma migrate reset",
         "update:check": "npx npm-check-updates",
         "update:install": "npx npm-check-updates -u && npm install"
     },

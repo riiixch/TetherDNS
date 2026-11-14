@@ -36,11 +36,11 @@ COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 
 # ★ แก้ไขตรงนี้: สั่ง install prisma เพื่อให้ npx สร้างไฟล์ .bin ให้สมบูรณ์ 
 # และใช้ npm cache clean --force ต่อท้ายทันทีเพื่อลบขยะทิ้ง (ไม่กินพื้นที่เพิ่ม)
-RUN npm install prisma @libsql/client @libsql/linux-x64-musl --no-save && \
+RUN npm install prisma@7.10.1 @libsql/client @libsql/linux-x64-musl --no-save && \
     npm cache clean --force
 
 EXPOSE 3000
 ENV PORT=3000
 ENV HOST=0.0.0.0
 
-CMD ["sh", "-c", "npx prisma db push && node .output/server/index.mjs"]
+CMD ["sh", "-c", "./node_modules/.bin/prisma db push --accept-data-loss && node .output/server/index.mjs"]
