@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 
 const { t } = useI18n()
 
@@ -15,12 +15,6 @@ const isAddOpen = ref(false)
 const newUserPayload = ref({ username: '', password: '' })
 const isAdding = ref(false)
 
-const columns = computed(() => [
-    { accessorKey: 'username', header: t('settings.col_username') },
-    { accessorKey: 'createdAt', header: t('settings.col_created') },
-    { id: 'actions', header: '' },
-])
-
 const add = async () => {
     isAdding.value = true
     try {
@@ -35,100 +29,134 @@ const add = async () => {
 const { locale } = useI18n()
 
 const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString(locale.value, { year: 'numeric', month: 'short', day: 'numeric' })
+    return new Date(dateStr).toLocaleDateString(locale.value === 'th' ? 'th-TH' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric' })
 }
 </script>
 
 <template>
-    <UCard :ui="{ header: 'px-5 sm:px-6 py-5', body: 'p-0 sm:p-0' }"
-        class="bg-white dark:bg-slate-900 shadow-sm overflow-hidden ring-1 ring-slate-200 dark:ring-slate-800">
-        <template #header>
-            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div class="flex items-center gap-3">
-                    <div class="p-1.5 bg-primary-50 dark:bg-primary-500/10 rounded-lg">
-                        <UIcon name="i-heroicons-users-solid" class="w-5 h-5 text-primary-500" />
-                    </div>
-                    <div>
-                        <h2 class="text-lg font-bold text-slate-900 dark:text-white tracking-tight">{{
-                            $t('settings.users_title') }}</h2>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ $t('settings.users_subtitle') }}
-                        </p>
-                    </div>
+    <div class="space-y-6">
+        <div class="card set-card overflow-hidden">
+            <div class="card-head flex items-center justify-between pb-4 border-b border-[var(--border)]">
+                <div class="card-title">
+                    <UIcon name="i-heroicons-users" class="w-4 h-4 text-[var(--cyan)]" />
+                    <span>{{ $t('settings.users_title') }}</span>
                 </div>
-                <UButton icon="i-heroicons-plus" color="primary"
-                    class="rounded-xl font-bold px-4 shadow-sm w-full md:w-auto justify-center"
-                    @click="isAddOpen = true">
-                    {{ $t('settings.add_user') }}
-                </UButton>
+                <button
+                    type="button"
+                    class="btn-ref primary sm"
+                    @click="isAddOpen = true"
+                >
+                    <UIcon name="i-heroicons-plus" class="w-4 h-4" />
+                    <span>{{ $t('settings.add_user') }}</span>
+                </button>
             </div>
-        </template>
 
-        <div class="overflow-x-auto">
-            <UTable :data="users" :columns="columns" :loading="loading" :ui="{
-                th: 'bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold whitespace-nowrap py-3.5 border-b border-slate-200 dark:border-slate-800',
-                td: 'py-3 text-sm text-slate-600 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800/60',
-                tr: 'hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors'
-            }">
-                <template #username-cell="{ row }">
-                    <div class="flex items-center gap-2.5">
-                        <span class="font-semibold text-slate-900 dark:text-white">{{ row.original.username }}</span>
-                        <UBadge v-if="currentUser?.id === row.original.id" color="primary" variant="subtle" size="xs"
-                            class="font-bold uppercase tracking-widest">
-                            {{ $t('settings.you') }}
-                        </UBadge>
+            <!-- Table -->
+            <div class="overflow-x-auto -mx-6 -mb-6">
+                <table v-if="!loading && users.length > 0" class="rtable-ref">
+                    <thead>
+                        <tr>
+                            <th>{{ $t('settings.col_username') }}</th>
+                            <th>{{ $t('settings.col_created') }}</th>
+                            <th style="text-align: right;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="u in users" :key="u.id">
+                            <td>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-bold text-[var(--text)]">{{ u.username }}</span>
+                                    <span v-if="currentUser?.id === u.id" class="badge badge-ok">
+                                        {{ $t('settings.you') }}
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="text-xs text-[var(--text2)]">{{ formatDate(u.createdAt) }}</span>
+                            </td>
+                            <td style="text-align: right;">
+                                <button
+                                    v-if="currentUser?.id !== u.id"
+                                    type="button"
+                                    class="icon-btn sm text-[var(--danger)] hover:bg-[rgba(251,94,122,0.15)]"
+                                    @click="emit('delete', u.id)"
+                                >
+                                    <UIcon name="i-heroicons-trash" class="w-4 h-4" />
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div v-if="!loading && users.length === 0" class="flex flex-col items-center justify-center py-12 text-center">
+                    <div class="w-12 h-12 rounded-full bg-[var(--surface2)] flex items-center justify-center mb-3">
+                        <UIcon name="i-heroicons-users" class="w-6 h-6 text-[var(--text3)]" />
                     </div>
-                </template>
-                <template #createdAt-cell="{ row }">
-                    <span class="text-slate-500 dark:text-slate-400 text-xs font-medium">{{
-                        formatDate(row.original.createdAt) }}</span>
-                </template>
-                <template #actions-cell="{ row }">
-                    <div class="flex justify-end">
-                        <UButton size="xs" color="error" variant="ghost" icon="i-heroicons-trash"
-                            class="rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
-                            :disabled="currentUser?.id === row.original.id" @click="emit('delete', row.original.id)" />
-                    </div>
-                </template>
-            </UTable>
+                    <p class="text-xs text-[var(--text2)]">No users found</p>
+                </div>
+
+                <div v-if="loading" class="flex items-center justify-center py-12">
+                    <UIcon name="i-heroicons-arrow-path" class="w-6 h-6 animate-spin text-[var(--green)]" />
+                </div>
+            </div>
         </div>
 
+        <!-- Add User Modal -->
         <UModal v-model:open="isAddOpen" :ui="{ content: 'sm:max-w-md' }">
             <template #content>
-                <UCard class="ring-0">
-                    <template #header>
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-base font-bold text-slate-900 dark:text-white">{{
-                                $t('settings.add_user_modal') }}</h3>
-                            <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark" class="-my-1"
-                                @click="isAddOpen = false" />
+                <div class="card card-ref p-6 space-y-4">
+                    <div class="flex items-center justify-between border-b border-[var(--border)] pb-3">
+                        <h3 class="font-bold text-base text-[var(--text)] flex items-center gap-2">
+                            <UIcon name="i-heroicons-user-plus" class="w-5 h-5 text-[var(--green)]" />
+                            <span>{{ $t('settings.add_user_modal') }}</span>
+                        </h3>
+                        <button type="button" class="icon-btn sm" @click="isAddOpen = false">
+                            <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
+                        </button>
+                    </div>
+
+                    <form @submit.prevent="add" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-[var(--text2)] mb-1">
+                                {{ $t('settings.username') }}
+                            </label>
+                            <input
+                                v-model="newUserPayload.username"
+                                type="text"
+                                required
+                                autofocus
+                                class="w-full text-xs font-medium py-2.5 px-3 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] focus:outline-none focus:border-[var(--green)]"
+                            />
                         </div>
-                    </template>
 
-                    <form @submit.prevent="add" class="space-y-5 py-2">
-                        <UFormField :label="$t('settings.username')" name="username">
-                            <UInput v-model="newUserPayload.username" :placeholder="$t('settings.username')"
-                                class="w-full" :ui="{ root: 'rounded-xl' }" autofocus />
-                        </UFormField>
+                        <div>
+                            <label class="block text-xs font-bold text-[var(--text2)] mb-1">
+                                {{ $t('settings.password') }}
+                            </label>
+                            <input
+                                v-model="newUserPayload.password"
+                                type="password"
+                                required
+                                class="w-full text-xs font-medium py-2.5 px-3 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] focus:outline-none focus:border-[var(--green)]"
+                            />
+                        </div>
 
-                        <UFormField :label="$t('settings.password')" name="password">
-                            <UInput v-model="newUserPayload.password" type="password"
-                                :placeholder="$t('settings.password')" class="w-full" :ui="{ root: 'rounded-xl' }" />
-                        </UFormField>
-
-                        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-                            <UButton color="neutral" variant="ghost" class="rounded-xl font-bold"
-                                @click="isAddOpen = false">
+                        <div class="flex justify-end gap-2 pt-3 border-t border-[var(--border)]">
+                            <button type="button" class="btn-ref ghost" @click="isAddOpen = false">
                                 {{ $t('common.cancel') }}
-                            </UButton>
-                            <UButton type="submit" color="primary" :loading="isAdding"
-                                class="rounded-xl font-bold px-6 shadow-sm"
-                                :disabled="!newUserPayload.username || !newUserPayload.password">
-                                {{ $t('settings.create_user') }}
-                            </UButton>
+                            </button>
+                            <button
+                                type="submit"
+                                class="btn-ref primary"
+                                :disabled="isAdding"
+                            >
+                                <UIcon v-if="isAdding" name="i-heroicons-arrow-path" class="w-4 h-4 animate-spin" />
+                                <span>{{ $t('settings.add_user') }}</span>
+                            </button>
                         </div>
                     </form>
-                </UCard>
+                </div>
             </template>
         </UModal>
-    </UCard>
+    </div>
 </template>

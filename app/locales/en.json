@@ -67,6 +67,7 @@
     "dashboard": {
         "title": "Dashboard",
         "subtitle": "Monitor your Cloudflare accounts, DNS zones, and DDNS activities.",
+        "loading_dashboard": "Initializing Cloudflare DNS Runtime...",
         "stats_accounts": "Linked Accounts",
         "stats_zones": "Managed Zones",
         "stats_records": "Total Records",

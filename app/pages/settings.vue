@@ -19,6 +19,9 @@ const tabs = computed(() => [
     { label: t('settings.tab_users'), icon: 'i-heroicons-users', value: 'users' }
 ])
 
+// Global Page Loading State
+const isPageLoading = ref(true)
+
 // Settings
 const ddnsInterval = ref('5')
 const settingsLoading = ref(false)
@@ -147,15 +150,32 @@ const deleteUser = async (id: number) => {
     }
 }
 
-onMounted(() => {
-    loadSettings()
-    loadChannels()
-    loadUsers()
+onMounted(async () => {
+    isPageLoading.value = true
+    try {
+        await Promise.allSettled([
+            loadSettings(),
+            loadChannels(),
+            loadUsers()
+        ])
+    } finally {
+        setTimeout(() => {
+            isPageLoading.value = false
+        }, 300)
+    }
 })
 </script>
 
 <template>
     <div class="space-y-6 flex flex-col h-full pb-10">
+        <!-- Full-page cybernetic loader while settings data loads -->
+        <CommonLoadingScreen
+            v-if="isPageLoading"
+            fullscreen
+            message="Loading System Configuration..."
+            :progress="null"
+        />
+
         <!-- Page Head matching ref.html -->
         <section class="page-head">
             <div class="ph-left">

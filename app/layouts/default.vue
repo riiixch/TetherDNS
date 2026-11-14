@@ -8,7 +8,7 @@ const { user, logout } = useAuth()
 const route = useRoute()
 const colorMode = useColorMode()
 
-const isOpenMenu = ref(false)
+const isMobileMenuOpen = ref(false)
 const currentYear = new Date().getFullYear()
 
 const navLinks = [
@@ -63,11 +63,11 @@ const userMenuItems = ref<DropdownMenuItem[][]>([
             <div class="grain"></div>
         </div>
 
-        <!-- Sticky Header / Nav -->
-        <header class="nav">
+        <!-- Sticky Header / Nav matching ref.html -->
+        <header class="nav" :class="{ 'menu-open': isMobileMenuOpen }">
             <div class="nav-in wrap">
                 <!-- Brand logo & title -->
-                <NuxtLink to="/" class="brand group focus:outline-none">
+                <NuxtLink to="/" class="brand group focus:outline-none" @click="isMobileMenuOpen = false">
                     <div class="relative w-8 h-8 flex items-center justify-center rounded-xl bg-[var(--surface2)] border border-[var(--border)] group-hover:border-[var(--green)] transition-all">
                         <img src="~/assets/images/tetherdns_logo.png" alt="TetherDNS" class="w-6 h-6 object-contain" />
                     </div>
@@ -78,21 +78,32 @@ const userMenuItems = ref<DropdownMenuItem[][]>([
                 </NuxtLink>
 
                 <!-- System Operational status pill -->
-                <span class="status-pill hidden md:inline-flex">
+                <span class="status-pill">
                     <span class="pulse"></span>
                     {{ $t('nav.system_status_ok') }}
                 </span>
 
-                <!-- Desktop Navigation Links -->
-                <nav v-if="user" class="nav-links hidden xl:flex" id="navLinks">
+                <!-- Navigation Links (Inline on desktop, Dropdown below navbar on mobile) -->
+                <nav v-if="user" class="nav-links" id="navLinks">
                     <NuxtLink
                         v-for="link in navLinks"
                         :key="link.path"
                         :to="link.path"
                         :class="{ on: isActive(link.path) }"
+                        @click="isMobileMenuOpen = false"
                     >
                         {{ $t(link.name) }}
                     </NuxtLink>
+
+                    <!-- Mobile-only logout link inside dropdown -->
+                    <button
+                        type="button"
+                        class="nav-mobile-logout"
+                        @click="logout"
+                    >
+                        <UIcon name="i-heroicons-arrow-right-on-rectangle" class="w-4 h-4 text-[var(--danger)]" />
+                        <span class="text-[var(--danger)] font-semibold">{{ $t('nav.logout') }} ({{ user.username }})</span>
+                    </button>
                 </nav>
 
                 <!-- Header Actions Right -->
@@ -119,7 +130,7 @@ const userMenuItems = ref<DropdownMenuItem[][]>([
                     </button>
 
                     <!-- User Profile Dropdown (Desktop) -->
-                    <div v-if="user" class="hidden xl:block">
+                    <div v-if="user" class="desktop-avatar">
                         <UDropdownMenu :items="userMenuItems" placement="bottom-end">
                             <button
                                 type="button"
@@ -131,85 +142,18 @@ const userMenuItems = ref<DropdownMenuItem[][]>([
                         </UDropdownMenu>
                     </div>
 
-                    <!-- Mobile Menu Button -->
+                    <!-- Mobile Menu Button (ONLY shown on <=1000px screens via .menu-btn CSS) -->
                     <button
                         type="button"
-                        class="icon-btn xl:hidden"
-                        aria-label="Open Menu"
-                        @click="isOpenMenu = true"
+                        class="icon-btn menu-btn"
+                        aria-label="Toggle Menu"
+                        @click="isMobileMenuOpen = !isMobileMenuOpen"
                     >
-                        <UIcon name="i-heroicons-bars-3" class="w-5 h-5 text-[var(--text)]" />
+                        <UIcon :name="isMobileMenuOpen ? 'i-heroicons-x-mark' : 'i-heroicons-bars-3'" class="w-5 h-5 text-[var(--text)]" />
                     </button>
                 </div>
             </div>
         </header>
-
-        <!-- Mobile Drawer (Slideover) -->
-        <ClientOnly>
-            <USlideover
-                v-model:open="isOpenMenu"
-                side="right"
-                :title="$t('nav.menu')"
-            >
-                <template #header>
-                    <div class="flex items-center justify-between w-full p-4 border-b border-[var(--border)]">
-                        <div class="flex items-center gap-2.5">
-                            <img src="~/assets/images/tetherdns_logo.png" alt="TetherDNS Logo" class="w-7 h-7" />
-                            <span class="font-bold text-lg font-['Space_Grotesk'] tracking-tight">TetherDNS</span>
-                        </div>
-                        <button type="button" class="icon-btn sm" @click="isOpenMenu = false">
-                            <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
-                        </button>
-                    </div>
-                </template>
-
-                <template #body>
-                    <div class="flex flex-col gap-6 p-4">
-                        <div v-if="user" class="flex items-center gap-3 p-3 rounded-xl bg-[var(--surface2)] border border-[var(--border)]">
-                            <div class="avatar-btn cursor-default">
-                                {{ user.username.charAt(0).toUpperCase() }}
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="font-bold text-sm text-[var(--text)]">{{ user.username }}</span>
-                                <span class="text-[10px] text-[var(--text3)] uppercase tracking-wider font-semibold">{{ $t('common.you') }}</span>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col gap-1.5">
-                            <NuxtLink
-                                v-for="link in navLinks"
-                                :key="link.path"
-                                :to="link.path"
-                                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all"
-                                :class="isActive(link.path)
-                                    ? 'bg-[rgba(18,224,138,0.12)] text-[var(--green)] border border-[rgba(18,224,138,0.3)]'
-                                    : 'text-[var(--text2)] hover:text-[var(--text)] hover:bg-[var(--surface2)] border border-transparent'"
-                                @click="isOpenMenu = false"
-                            >
-                                <UIcon :name="link.icon" class="w-5 h-5 opacity-80" />
-                                <span>{{ $t(link.name) }}</span>
-                            </NuxtLink>
-                        </div>
-                    </div>
-                </template>
-
-                <template #footer>
-                    <div class="p-4 border-t border-[var(--border)] space-y-3">
-                        <UButton
-                            v-if="user"
-                            block
-                            color="error"
-                            variant="soft"
-                            icon="i-heroicons-arrow-right-on-rectangle"
-                            class="font-semibold rounded-xl"
-                            @click="logout"
-                        >
-                            {{ $t('nav.logout') }}
-                        </UButton>
-                    </div>
-                </template>
-            </USlideover>
-        </ClientOnly>
 
         <!-- Main Workspace -->
         <main class="wrap flex-1 relative z-10 w-full" id="app">

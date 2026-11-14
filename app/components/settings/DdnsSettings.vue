@@ -32,7 +32,7 @@ const handleReset = () => {
 </script>
 
 <template>
-    <div class="settings-grid space-y-6">
+    <div class="settings-grid">
         <!-- 1. General Preferences Card -->
         <div class="card set-card">
             <div class="card-head" style="padding-bottom: 8px;">

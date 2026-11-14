@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 
 const { t } = useI18n()
 
-const props = defineProps<{
+defineProps<{
     channels: any[]
     loading: boolean
 }>()
@@ -16,13 +16,6 @@ const label = ref('')
 const webhookUrl = ref('')
 const lineToken = ref('')
 const isAdding = ref(false)
-
-const columns = computed(() => [
-    { accessorKey: 'label', header: t('settings.col_label') },
-    { id: 'type', header: t('settings.col_type') },
-    { id: 'enabled', header: t('settings.col_status') },
-    { id: 'actions', header: '' },
-])
 
 const add = async () => {
     isAdding.value = true
@@ -44,122 +37,168 @@ const add = async () => {
 </script>
 
 <template>
-    <UCard :ui="{ header: 'px-5 sm:px-6 py-5', body: 'p-0 sm:p-0' }"
-        class="bg-white dark:bg-slate-900 shadow-sm overflow-hidden ring-1 ring-slate-200 dark:ring-slate-800">
-        <template #header>
-            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div class="flex items-center gap-3">
-                    <div class="p-1.5 bg-primary-50 dark:bg-primary-500/10 rounded-lg">
-                        <UIcon name="i-heroicons-bell-solid" class="w-5 h-5 text-primary-500" />
-                    </div>
-                    <div>
-                        <h2 class="text-lg font-bold text-slate-900 dark:text-white tracking-tight">{{
-                            $t('settings.notif_title') }}</h2>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ $t('settings.notif_subtitle') }}
-                        </p>
-                    </div>
+    <div class="space-y-6">
+        <div class="card set-card overflow-hidden">
+            <div class="card-head flex items-center justify-between pb-4 border-b border-[var(--border)]">
+                <div class="card-title">
+                    <UIcon name="i-heroicons-bell" class="w-4 h-4 text-[var(--cyan)]" />
+                    <span>{{ $t('settings.notif_title') }}</span>
                 </div>
-                <UButton icon="i-heroicons-plus" color="primary"
-                    class="rounded-xl font-bold px-4 shadow-sm w-full md:w-auto justify-center"
-                    @click="isAddOpen = true">
-                    {{ $t('settings.add_channel') }}
-                </UButton>
+                <button
+                    type="button"
+                    class="btn-ref primary sm"
+                    @click="isAddOpen = true"
+                >
+                    <UIcon name="i-heroicons-plus" class="w-4 h-4" />
+                    <span>{{ $t('settings.add_channel') }}</span>
+                </button>
             </div>
-        </template>
 
-        <div class="overflow-x-auto">
-            <UTable v-if="!loading && channels.length > 0" :data="channels" :columns="columns" :loading="loading" :ui="{
-                th: 'bg-slate-50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold whitespace-nowrap py-3.5 border-b border-slate-200 dark:border-slate-800',
-                td: 'py-3 text-sm text-slate-600 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800/60',
-                tr: 'hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors'
-            }">
-                <template #label-cell="{ row }">
-                    <span class="font-semibold text-slate-900 dark:text-white">{{ row.original.label }}</span>
-                </template>
-                <template #type-cell="{ row }">
-                    <UBadge :color="row.original.type === 'discord' ? 'info' : 'success'" variant="subtle" size="xs"
-                        class="font-bold">
-                        {{ row.original.type === 'discord' ? 'Discord' : 'LINE' }}
-                    </UBadge>
-                </template>
-                <template #enabled-cell="{ row }">
-                    <UBadge :color="row.original.enabled ? 'success' : 'neutral'" variant="soft" size="xs"
-                        class="font-bold uppercase tracking-wider">
-                        {{ row.original.enabled ? $t('common.active') : $t('common.disabled') }}
-                    </UBadge>
-                </template>
-                <template #actions-cell="{ row }">
-                    <div class="flex justify-end gap-1.5">
-                        <UButton size="xs" color="neutral" variant="ghost" icon="i-heroicons-bell-alert"
-                            class="rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                            @click="emit('test', row.original)">
-                            <span class="sr-only">{{ $t('common.test') }}</span>
-                        </UButton>
-                        <UButton size="xs" color="error" variant="ghost" icon="i-heroicons-trash"
-                            class="rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
-                            @click="emit('delete', row.original.id)" />
+            <!-- Table -->
+            <div class="overflow-x-auto -mx-6 -mb-6">
+                <table v-if="!loading && channels.length > 0" class="rtable-ref">
+                    <thead>
+                        <tr>
+                            <th>{{ $t('settings.col_label') }}</th>
+                            <th>{{ $t('settings.col_type') }}</th>
+                            <th>{{ $t('settings.col_status') }}</th>
+                            <th style="text-align: right;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="ch in channels" :key="ch.id">
+                            <td>
+                                <span class="font-bold text-[var(--text)]">{{ ch.label }}</span>
+                            </td>
+                            <td>
+                                <span class="badge" :class="ch.type === 'discord' ? 't-CNAME' : 't-A'">
+                                    {{ ch.type === 'discord' ? 'Discord' : 'LINE' }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge" :class="ch.enabled ? 'badge-ok' : 'badge-crit'">
+                                    {{ ch.enabled ? $t('common.active') : $t('common.disabled') }}
+                                </span>
+                            </td>
+                            <td style="text-align: right;">
+                                <div class="inline-flex items-center gap-1">
+                                    <button
+                                        type="button"
+                                        class="icon-btn sm text-[var(--text2)] hover:text-[var(--text)] hover:bg-[var(--surface2)]"
+                                        :title="$t('common.test')"
+                                        @click="emit('test', ch)"
+                                    >
+                                        <UIcon name="i-heroicons-bell-alert" class="w-4 h-4" />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="icon-btn sm text-[var(--danger)] hover:bg-[rgba(251,94,122,0.15)]"
+                                        @click="emit('delete', ch.id)"
+                                    >
+                                        <UIcon name="i-heroicons-trash" class="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div v-if="!loading && channels.length === 0" class="flex flex-col items-center justify-center py-12 text-center">
+                    <div class="w-12 h-12 rounded-full bg-[var(--surface2)] flex items-center justify-center mb-3">
+                        <UIcon name="i-heroicons-bell-slash" class="w-6 h-6 text-[var(--text3)]" />
                     </div>
-                </template>
-            </UTable>
-
-            <div v-if="!loading && channels.length === 0"
-                class="flex flex-col items-center justify-center p-10 text-center">
-                <div
-                    class="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-3">
-                    <UIcon name="i-heroicons-bell-slash" class="w-6 h-6 text-slate-400" />
+                    <p class="text-xs text-[var(--text2)]">{{ $t('settings.no_notifs') }}</p>
                 </div>
-                <p class="text-sm font-medium text-slate-500">{{ $t('settings.no_notifs') }}</p>
+
+                <div v-if="loading" class="flex items-center justify-center py-12">
+                    <UIcon name="i-heroicons-arrow-path" class="w-6 h-6 animate-spin text-[var(--green)]" />
+                </div>
             </div>
         </div>
 
+        <!-- Add Channel Modal -->
         <UModal v-model:open="isAddOpen" :ui="{ content: 'sm:max-w-md' }">
             <template #content>
-                <UCard class="ring-0">
-                    <template #header>
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-base font-bold text-slate-900 dark:text-white">{{
-                                $t('settings.add_notif_modal') }}</h3>
-                            <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark" class="-my-1"
-                                @click="isAddOpen = false" />
+                <div class="card card-ref p-6 space-y-4">
+                    <div class="flex items-center justify-between border-b border-[var(--border)] pb-3">
+                        <h3 class="font-bold text-base text-[var(--text)] flex items-center gap-2">
+                            <UIcon name="i-heroicons-bell" class="w-5 h-5 text-[var(--green)]" />
+                            <span>{{ $t('settings.add_notif_modal') }}</span>
+                        </h3>
+                        <button type="button" class="icon-btn sm" @click="isAddOpen = false">
+                            <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
+                        </button>
+                    </div>
+
+                    <form @submit.prevent="add" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-[var(--text2)] mb-1">
+                                {{ $t('settings.type') }}
+                            </label>
+                            <select
+                                v-model="type"
+                                class="w-full text-xs font-medium py-2.5 px-3 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] focus:outline-none focus:border-[var(--green)]"
+                            >
+                                <option value="discord">{{ $t('settings.discord_webhook') }}</option>
+                                <option value="line">{{ $t('settings.line_notify') }}</option>
+                            </select>
                         </div>
-                    </template>
 
-                    <form @submit.prevent="add" class="space-y-5 py-2">
-                        <UFormField :label="$t('settings.type')" name="type">
-                            <USelect v-model="type" :items="[
-                                { label: $t('settings.discord_webhook'), value: 'discord' },
-                                { label: $t('settings.line_notify'), value: 'line' }
-                            ]" value-key="value" class="w-full" :ui="{ base: 'rounded-xl' }" />
-                        </UFormField>
+                        <div>
+                            <label class="block text-xs font-bold text-[var(--text2)] mb-1">
+                                {{ $t('settings.label') }}
+                            </label>
+                            <input
+                                v-model="label"
+                                type="text"
+                                placeholder="e.g. My Server Alerts"
+                                required
+                                class="w-full text-xs font-medium py-2.5 px-3 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] focus:outline-none focus:border-[var(--green)]"
+                            />
+                        </div>
 
-                        <UFormField :label="$t('settings.label')" name="label">
-                            <UInput v-model="label" placeholder="e.g. My Server Alerts" class="w-full"
-                                :ui="{ root: 'rounded-xl' }" />
-                        </UFormField>
+                        <div v-if="type === 'discord'">
+                            <label class="block text-xs font-bold text-[var(--text2)] mb-1">
+                                {{ $t('settings.webhook_url') }}
+                            </label>
+                            <input
+                                v-model="webhookUrl"
+                                type="url"
+                                placeholder="https://discord.com/api/webhooks/..."
+                                required
+                                class="w-full text-xs font-medium py-2.5 px-3 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] focus:outline-none focus:border-[var(--green)]"
+                            />
+                        </div>
 
-                        <UFormField v-if="type === 'discord'" :label="$t('settings.webhook_url')" name="webhookUrl">
-                            <UInput v-model="webhookUrl" placeholder="https://discord.com/api/webhooks/..."
-                                class="w-full" :ui="{ root: 'rounded-xl' }" />
-                        </UFormField>
+                        <div v-if="type === 'line'">
+                            <label class="block text-xs font-bold text-[var(--text2)] mb-1">
+                                {{ $t('settings.line_token') }}
+                            </label>
+                            <input
+                                v-model="lineToken"
+                                type="password"
+                                placeholder="Your LINE Notify token"
+                                required
+                                class="w-full text-xs font-medium py-2.5 px-3 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] focus:outline-none focus:border-[var(--green)]"
+                            />
+                        </div>
 
-                        <UFormField v-if="type === 'line'" :label="$t('settings.line_token')" name="lineToken">
-                            <UInput v-model="lineToken" type="password" placeholder="Your LINE Notify token"
-                                class="w-full" :ui="{ root: 'rounded-xl' }" />
-                        </UFormField>
-
-                        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-                            <UButton color="neutral" variant="ghost" class="rounded-xl font-bold"
-                                @click="isAddOpen = false">
+                        <div class="flex justify-end gap-2 pt-3 border-t border-[var(--border)]">
+                            <button type="button" class="btn-ref ghost" @click="isAddOpen = false">
                                 {{ $t('common.cancel') }}
-                            </UButton>
-                            <UButton type="submit" color="primary" :loading="isAdding"
-                                class="rounded-xl font-bold px-6 shadow-sm">
-                                {{ $t('settings.add_channel') }}
-                            </UButton>
+                            </button>
+                            <button
+                                type="submit"
+                                class="btn-ref primary"
+                                :disabled="isAdding"
+                            >
+                                <UIcon v-if="isAdding" name="i-heroicons-arrow-path" class="w-4 h-4 animate-spin" />
+                                <span>{{ $t('settings.add_channel') }}</span>
+                            </button>
                         </div>
                     </form>
-                </UCard>
+                </div>
             </template>
         </UModal>
-    </UCard>
+    </div>
 </template>

@@ -12,14 +12,23 @@ interface AnalyticsData {
     }
 }
 
+const props = defineProps<{
+    initialData?: AnalyticsData
+}>()
+
 const { t } = useI18n()
-const { data: analytics, pending } = await useFetch<AnalyticsData>('/api/analytics/ip-changes')
+const { data: analytics, pending: fetchPending } = await useFetch<AnalyticsData>('/api/analytics/ip-changes', {
+    default: () => props.initialData as AnalyticsData
+})
 const colorMode = useColorMode()
 
 const isDark = computed(() => colorMode.value === 'dark')
 
-const datasetData = computed(() => analytics.value?.data?.datasets[0]?.data || [])
-const labels = computed(() => analytics.value?.data?.labels || [])
+const activeData = computed(() => props.initialData || analytics.value)
+const isPending = computed(() => !props.initialData && fetchPending.value)
+
+const datasetData = computed(() => activeData.value?.data?.datasets[0]?.data || [])
+const labels = computed(() => activeData.value?.data?.labels || [])
 
 const total = computed(() => datasetData.value.reduce((a, b) => a + b, 0))
 const peakLabel = computed(() => {
@@ -133,7 +142,7 @@ const series = computed(() => [
         </div>
 
         <div class="flex-1 min-h-[260px] relative w-full pt-2">
-            <div v-if="pending" class="absolute inset-0 flex items-center justify-center">
+            <div v-if="isPending" class="absolute inset-0 flex items-center justify-center">
                 <UIcon name="i-heroicons-arrow-path" class="w-7 h-7 animate-spin text-[var(--text3)]" />
             </div>
             <div v-else class="absolute inset-0">

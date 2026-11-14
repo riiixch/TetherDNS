@@ -1,12 +1,23 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 
-const stats = ref<any>(null)
-const pending = ref(true)
+const props = defineProps<{
+    initialData?: any
+}>()
+
+const stats = ref<any>(props.initialData || null)
+const pending = ref(!props.initialData)
 const copied = ref(false)
 
 const toast = useToast()
 const { t } = useI18n()
+
+watch(() => props.initialData, (newVal) => {
+    if (newVal) {
+        stats.value = newVal
+        pending.value = false
+    }
+}, { immediate: true })
 
 const loadStats = async () => {
     pending.value = true
@@ -21,7 +32,9 @@ const loadStats = async () => {
 }
 
 onMounted(() => {
-    loadStats()
+    if (!props.initialData) {
+        loadStats()
+    }
 })
 
 defineExpose({ refresh: loadStats })

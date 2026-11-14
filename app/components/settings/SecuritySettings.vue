@@ -77,128 +77,155 @@ onMounted(() => loadStatus())
 </script>
 
 <template>
-    <UCard :ui="{ header: 'px-5 sm:px-6 py-5', body: 'p-5 sm:p-6' }"
-        class="bg-white dark:bg-slate-900 shadow-sm ring-1 ring-slate-200 dark:ring-slate-800">
-        <template #header>
-            <div class="flex items-center gap-3">
-                <div class="p-1.5 bg-primary-50 dark:bg-primary-500/10 rounded-lg">
-                    <UIcon name="i-heroicons-shield-check-solid" class="w-5 h-5 text-primary-500" />
+    <div class="space-y-6">
+        <div class="card set-card">
+            <div class="card-head" style="padding-bottom: 8px;">
+                <div class="card-title">
+                    <UIcon name="i-heroicons-shield-check" class="w-4 h-4 text-[var(--cyan)]" />
+                    <span>{{ $t('security.title') }}</span>
                 </div>
+            </div>
+
+            <div class="set-row">
                 <div>
-                    <h2 class="text-lg font-bold text-slate-900 dark:text-white tracking-tight">{{ $t('security.title')
-                    }}</h2>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ $t('security.subtitle') }}</p>
+                    <div class="set-label">{{ $t('security.totp_title') }}</div>
+                    <div class="set-hint">{{ $t('security.totp_desc') }}</div>
+                </div>
+
+                <div>
+                    <button
+                        v-if="!is2FAEnabled"
+                        type="button"
+                        class="btn-ref primary"
+                        :disabled="loading"
+                        @click="startSetup"
+                    >
+                        <UIcon v-if="loading" name="i-heroicons-arrow-path" class="w-4 h-4 animate-spin" />
+                        <span>{{ $t('security.enable_2fa') }}</span>
+                    </button>
+                    <button
+                        v-else
+                        type="button"
+                        class="btn-ref danger-ghost"
+                        :disabled="loading"
+                        @click="isDisableOpen = true"
+                    >
+                        <UIcon v-if="loading" name="i-heroicons-arrow-path" class="w-4 h-4 animate-spin" />
+                        <span>{{ $t('security.disable_2fa') }}</span>
+                    </button>
                 </div>
             </div>
-        </template>
-
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-2">
-            <div>
-                <h3 class="font-bold text-slate-900 dark:text-slate-100">{{ $t('security.totp_title') }}</h3>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-sm">{{ $t('security.totp_desc') }}</p>
-            </div>
-
-            <UButton v-if="!is2FAEnabled" :loading="loading" color="primary"
-                class="rounded-xl font-bold px-6 shadow-sm w-full sm:w-auto justify-center" @click="startSetup">
-                {{ $t('security.enable_2fa') }}
-            </UButton>
-            <UButton v-else :loading="loading" color="error" variant="soft"
-                class="rounded-xl font-bold px-6 w-full sm:w-auto justify-center" @click="isDisableOpen = true">
-                {{ $t('security.disable_2fa') }}
-            </UButton>
         </div>
 
+        <!-- Setup 2FA Modal -->
         <UModal v-model:open="isSetupOpen" :ui="{ content: 'sm:max-w-md' }">
             <template #content>
-                <UCard
-                    :ui="{ header: 'border-b border-slate-200 dark:border-slate-800', footer: 'border-t border-slate-200 dark:border-slate-800' }"
-                    class="ring-0">
-                    <template #header>
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-base font-bold text-slate-900 dark:text-white">{{ $t('security.setup_title')
-                            }}</h3>
-                            <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark" class="-my-1"
-                                @click="isSetupOpen = false" />
-                        </div>
-                    </template>
-
-                    <div v-if="setupLoading && !qrCodeUrl" class="flex justify-center py-10">
-                        <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 animate-spin text-primary-500" />
+                <div class="card card-ref p-6 space-y-4">
+                    <div class="flex items-center justify-between border-b border-[var(--border)] pb-3">
+                        <h3 class="font-bold text-base text-[var(--text)] flex items-center gap-2">
+                            <UIcon name="i-heroicons-shield-check" class="w-5 h-5 text-[var(--green)]" />
+                            <span>{{ $t('security.setup_title') }}</span>
+                        </h3>
+                        <button type="button" class="icon-btn sm" @click="isSetupOpen = false">
+                            <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
+                        </button>
                     </div>
 
-                    <form v-else @submit.prevent="verifySetup" class="space-y-6 py-2">
-                        <div
-                            class="flex flex-col items-center gap-4 bg-white p-4 rounded-xl w-fit mx-auto ring-1 ring-slate-200 shadow-sm">
-                            <img :src="qrCodeUrl" alt="2FA QR Code" class="w-48 h-48 object-contain" />
+                    <div v-if="setupLoading && !qrCodeUrl" class="flex justify-center py-10">
+                        <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 animate-spin text-[var(--green)]" />
+                    </div>
+
+                    <form v-else @submit.prevent="verifySetup" class="space-y-4">
+                        <div class="flex flex-col items-center gap-3 bg-white p-4 rounded-xl w-fit mx-auto shadow-sm">
+                            <img :src="qrCodeUrl" alt="2FA QR Code" class="w-44 h-44 object-contain" />
                         </div>
 
-                        <div class="text-center text-sm text-slate-600 dark:text-slate-400">
+                        <div class="text-center text-xs text-[var(--text2)]">
                             {{ $t('security.setup_desc') }} <br />
-                            <code
-                                class="text-primary-600 dark:text-primary-400 select-all font-mono mt-3 inline-block bg-slate-50 dark:bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-inner">
-                {{ setupSecret }}
-            </code>
+                            <code class="text-[var(--green)] select-all font-mono mt-2 inline-block bg-[var(--surface)] px-3 py-1.5 rounded-lg border border-[var(--border)]">
+                                {{ setupSecret }}
+                            </code>
                         </div>
 
-                        <UFormField :label="$t('security.auth_code')" name="token">
-                            <UInput v-model="setupToken" :placeholder="$t('security.code_placeholder')" autofocus
-                                class="w-full text-center tracking-[0.3em] text-xl font-bold font-mono"
-                                :ui="{ root: 'rounded-xl h-12' }" />
-                        </UFormField>
+                        <div>
+                            <label class="block text-xs font-bold text-[var(--text2)] mb-1">
+                                {{ $t('security.auth_code') }}
+                            </label>
+                            <input
+                                v-model="setupToken"
+                                type="text"
+                                :placeholder="$t('security.code_placeholder')"
+                                autofocus
+                                class="w-full text-center tracking-[0.3em] text-xl font-bold font-mono py-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] focus:outline-none focus:border-[var(--green)]"
+                            />
+                        </div>
 
-                        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-                            <UButton color="neutral" variant="ghost" class="rounded-xl font-bold"
-                                @click="isSetupOpen = false">
+                        <div class="flex justify-end gap-2 pt-3 border-t border-[var(--border)]">
+                            <button type="button" class="btn-ref ghost" @click="isSetupOpen = false">
                                 {{ $t('common.cancel') }}
-                            </UButton>
-                            <UButton type="submit" color="primary" :loading="setupLoading"
-                                class="rounded-xl font-bold px-6 shadow-sm" :disabled="setupToken.length < 6">
-                                {{ $t('security.verify_enable') }}
-                            </UButton>
+                            </button>
+                            <button
+                                type="submit"
+                                class="btn-ref primary"
+                                :disabled="setupLoading || setupToken.length < 6"
+                            >
+                                <UIcon v-if="setupLoading" name="i-heroicons-arrow-path" class="w-4 h-4 animate-spin" />
+                                <span>{{ $t('security.verify_enable') }}</span>
+                            </button>
                         </div>
                     </form>
-                </UCard>
+                </div>
             </template>
         </UModal>
 
+        <!-- Disable 2FA Modal -->
         <UModal v-model:open="isDisableOpen" :ui="{ content: 'sm:max-w-md' }">
             <template #content>
-                <UCard
-                    :ui="{ header: 'border-b border-slate-200 dark:border-slate-800', footer: 'border-t border-slate-200 dark:border-slate-800' }"
-                    class="ring-0">
-                    <template #header>
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-base font-bold text-red-600 dark:text-red-400">{{
-                                $t('security.disable_title') }}</h3>
-                            <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark" class="-my-1"
-                                @click="isDisableOpen = false" />
-                        </div>
-                    </template>
+                <div class="card card-ref p-6 space-y-4">
+                    <div class="flex items-center justify-between border-b border-[var(--border)] pb-3">
+                        <h3 class="font-bold text-base text-[var(--danger)] flex items-center gap-2">
+                            <UIcon name="i-heroicons-exclamation-triangle" class="w-5 h-5" />
+                            <span>{{ $t('security.disable_title') }}</span>
+                        </h3>
+                        <button type="button" class="icon-btn sm" @click="isDisableOpen = false">
+                            <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
+                        </button>
+                    </div>
 
-                    <form @submit.prevent="disable2FA" class="space-y-6 py-2">
-                        <p class="text-sm text-slate-600 dark:text-slate-300">
+                    <form @submit.prevent="disable2FA" class="space-y-4">
+                        <p class="text-xs text-[var(--text2)] leading-relaxed">
                             {{ $t('security.disable_desc') }}
                         </p>
 
-                        <UFormField :label="$t('security.auth_code')" name="token">
-                            <UInput v-model="disableToken" :placeholder="$t('security.code_placeholder')" autofocus
-                                class="w-full text-center tracking-[0.3em] text-xl font-bold font-mono"
-                                :ui="{ root: 'rounded-xl h-12' }" />
-                        </UFormField>
+                        <div>
+                            <label class="block text-xs font-bold text-[var(--text2)] mb-1">
+                                {{ $t('security.auth_code') }}
+                            </label>
+                            <input
+                                v-model="disableToken"
+                                type="text"
+                                :placeholder="$t('security.code_placeholder')"
+                                autofocus
+                                class="w-full text-center tracking-[0.3em] text-xl font-bold font-mono py-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] focus:outline-none focus:border-[var(--danger)]"
+                            />
+                        </div>
 
-                        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-                            <UButton color="neutral" variant="ghost" class="rounded-xl font-bold"
-                                @click="isDisableOpen = false">
+                        <div class="flex justify-end gap-2 pt-3 border-t border-[var(--border)]">
+                            <button type="button" class="btn-ref ghost" @click="isDisableOpen = false">
                                 {{ $t('common.cancel') }}
-                            </UButton>
-                            <UButton type="submit" color="error" :loading="disableLoading"
-                                class="rounded-xl font-bold px-6 shadow-sm" :disabled="disableToken.length < 6">
-                                {{ $t('security.disable_2fa') }}
-                            </UButton>
+                            </button>
+                            <button
+                                type="submit"
+                                class="btn-ref danger"
+                                :disabled="disableLoading || disableToken.length < 6"
+                            >
+                                <UIcon v-if="disableLoading" name="i-heroicons-arrow-path" class="w-4 h-4 animate-spin" />
+                                <span>{{ $t('security.disable_2fa') }}</span>
+                            </button>
                         </div>
                     </form>
-                </UCard>
+                </div>
             </template>
         </UModal>
-    </UCard>
+    </div>
 </template>

@@ -67,6 +67,7 @@
     "dashboard": {
         "title": "แดชบอร์ด",
         "subtitle": "ตรวจสอบบัญชี Cloudflare, โซน DNS และสถานะการทำงานของ DDNS",
+        "loading_dashboard": "กำลังเชื่อมต่อและประมวลผลข้อมูล Dashboard...",
         "stats_accounts": "บัญชีที่เชื่อมต่อ",
         "stats_zones": "โซนที่อยู่ใต้การจัดการ",
         "stats_records": "เรคคอร์ดทั้งหมด",

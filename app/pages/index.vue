@@ -9,6 +9,11 @@ definePageMeta({ layout: 'default' })
 const { fetchLogs } = useLogs()
 const { fetchZones } = useZones()
 
+// Global Page Loading State
+const isPageLoading = ref(true)
+const initialStats = ref<any>(null)
+const initialAnalytics = ref<any>(null)
+
 const recentLogs = ref<any[]>([])
 const pendingLogs = ref(true)
 const zones = ref<any[]>([])
@@ -34,6 +39,25 @@ const loadZones = async () => {
         zones.value = await fetchZones()
     } catch (e) {
         console.error('Failed to load zones', e)
+    }
+}
+
+const initDashboard = async () => {
+    isPageLoading.value = true
+    try {
+        await Promise.allSettled([
+            loadRecentLogs(),
+            loadZones(),
+            $fetch<{ data: any }>('/api/dashboard/stats').then(res => { initialStats.value = res?.data }),
+            $fetch<any>('/api/analytics/ip-changes').then(res => { initialAnalytics.value = res })
+        ])
+    } catch (e) {
+        console.error('Failed to initialize dashboard', e)
+    } finally {
+        // Smooth timeout to ensure fluid transition and avoid micro-flicker
+        setTimeout(() => {
+            isPageLoading.value = false
+        }, 400)
     }
 }
 
@@ -72,58 +96,80 @@ const timeAgo = (dateStr: string) => {
 }
 
 onMounted(() => {
-    loadRecentLogs()
-    loadZones()
+    initDashboard()
 })
 </script>
 
 <template>
-    <div class="space-y-6 lg:space-y-8 flex flex-col h-full pb-10">
-        <!-- Page Header matching ref.html -->
-        <section class="page-head">
-            <div class="ph-left">
-                <div class="ph-icon">
-                    <UIcon name="i-heroicons-squares-2x2-solid" class="w-6 h-6 text-[var(--green)]" />
-                </div>
-                <div>
-                    <h1>{{ $t('dashboard.title') }}</h1>
-                    <p class="sub">{{ $t('dashboard.subtitle') }}</p>
-                </div>
-            </div>
-            <div class="ph-right">
-                <span class="live-pill">
-                    <span class="pulse"></span>
-                    LIVE
-                </span>
-                <button
-                    type="button"
-                    class="btn-ref ghost"
-                    :disabled="isSyncing"
-                    @click="handleSync"
-                >
-                    <UIcon
-                        name="i-heroicons-arrow-path"
-                        class="w-4 h-4"
-                        :class="{ 'animate-spin': isSyncing }"
-                    />
-                    <span>{{ isSyncing ? 'Syncing...' : $t('common.refresh') }}</span>
-                </button>
-            </div>
-        </section>
+    <div class="relative w-full">
+        <!-- Full Page Loading Screen for Dashboard Initial Entry -->
+        <Transition
+            enter-active-class="transition duration-200 ease-out"
+            enter-from-class="opacity-0"
+            enter-to-class="opacity-100"
+            leave-active-class="transition duration-400 ease-in"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0 pointer-events-none"
+        >
+            <CommonLoadingScreen
+                v-if="isPageLoading"
+                :fullscreen="true"
+                title="TetherDNS"
+                :subtitle="$t('dashboard.subtitle')"
+                :message="$t('dashboard.loading_dashboard')"
+            />
+        </Transition>
 
-        <!-- 6 Stat Cards -->
-        <ClientOnly>
-            <DashboardStats ref="statsRef" />
-        </ClientOnly>
+        <!-- Main Dashboard Content Container -->
+        <div
+            class="space-y-6 lg:space-y-8 flex flex-col h-full pb-10 transition-opacity duration-300"
+            :class="{ 'opacity-0': isPageLoading, 'opacity-100': !isPageLoading }"
+        >
+            <!-- Page Header matching ref.html -->
+            <section class="page-head">
+                <div class="ph-left">
+                    <div class="ph-icon">
+                        <UIcon name="i-heroicons-squares-2x2-solid" class="w-6 h-6 text-[var(--green)]" />
+                    </div>
+                    <div>
+                        <h1>{{ $t('dashboard.title') }}</h1>
+                        <p class="sub">{{ $t('dashboard.subtitle') }}</p>
+                    </div>
+                </div>
+                <div class="ph-right">
+                    <span class="live-pill">
+                        <span class="pulse"></span>
+                        LIVE
+                    </span>
+                    <button
+                        type="button"
+                        class="btn-ref ghost"
+                        :disabled="isSyncing"
+                        @click="handleSync"
+                    >
+                        <UIcon
+                            name="i-heroicons-arrow-path"
+                            class="w-4 h-4"
+                            :class="{ 'animate-spin': isSyncing }"
+                        />
+                        <span>{{ isSyncing ? 'Syncing...' : $t('common.refresh') }}</span>
+                    </button>
+                </div>
+            </section>
 
-        <!-- Main Chart & Recent Updates Feed Grid -->
-        <section class="dash-grid">
-            <!-- Left: IP Mutation Frequency Chart -->
-            <div class="h-full min-h-[380px]">
-                <ClientOnly>
-                    <AnalyticsIpChangeChart />
-                </ClientOnly>
-            </div>
+            <!-- 6 Stat Cards with Pre-fetched Data -->
+            <ClientOnly>
+                <DashboardStats ref="statsRef" :initial-data="initialStats" />
+            </ClientOnly>
+
+            <!-- Main Chart & Recent Updates Feed Grid -->
+            <section class="dash-grid">
+                <!-- Left: IP Mutation Frequency Chart with Pre-fetched Data -->
+                <div class="h-full min-h-[380px]">
+                    <ClientOnly>
+                        <AnalyticsIpChangeChart :initial-data="initialAnalytics" />
+                    </ClientOnly>
+                </div>
 
             <!-- Right: Recent Updates Feed -->
             <div class="card feed-card flex flex-col h-full">
@@ -242,5 +288,6 @@ onMounted(() => {
                 </button>
             </div>
         </section>
+    </div>
     </div>
 </template>
