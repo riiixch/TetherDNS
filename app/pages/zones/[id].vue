@@ -223,7 +223,7 @@ const confirmDdnsWarning = async () => {
             color: 'success'
         })
     } catch (e: any) {
-        toast.add({ title: 'Failed', description: e.data?.statusMessage || e.message, color: 'error' })
+        toast.add({ title: t('common.failed'), description: e.data?.statusMessage || e.data?.message || e.message, color: 'error' })
     } finally {
         ddnsWarningOpen.value = false
         ddnsWarningRecord.value = null
@@ -239,7 +239,7 @@ const executeDeleteRecord = async () => {
         selectedIds.value.delete(deletingRecord.value.id)
         loadData()
     } catch (e: any) {
-        toast.add({ title: 'Delete Failed', description: e.data?.statusMessage || e.message, color: 'error' })
+        toast.add({ title: t('common.failed'), description: e.data?.statusMessage || e.data?.message || e.message, color: 'error' })
     } finally {
         deleteRecordLoading.value = false
         deleteRecordModalOpen.value = false
@@ -256,7 +256,7 @@ const checkPropagation = async (record: any) => {
         const res = await $fetch<any>(`/api/records/${record.id}/propagate`)
         propagationResults.value = res
     } catch (e: any) {
-        toast.add({ title: 'Propagation Check Failed', description: e.data?.statusMessage || e.message, color: 'error' })
+        toast.add({ title: t('common.failed'), description: e.data?.statusMessage || e.data?.message || e.message, color: 'error' })
         propagationModalOpen.value = false
     } finally {
         propagationLoading.value = false
@@ -272,7 +272,7 @@ const openHistory = async (record: any) => {
         const res = await $fetch<{ data: any[] }>(`/api/records/${record.id}/history`)
         historyLogs.value = res.data || []
     } catch (e: any) {
-        toast.add({ title: 'Failed to load history', description: e.data?.statusMessage || e.message, color: 'error' })
+        toast.add({ title: t('common.failed'), description: e.data?.statusMessage || e.data?.message || e.message, color: 'error' })
         historyModalOpen.value = false
     } finally {
         historyLoading.value = false
@@ -290,7 +290,8 @@ const openHealthModal = async (record: any) => {
             healthData.value = res.data
         }
     } catch (e: any) {
-        toast.add({ title: 'Failed to load health check', description: e.message, color: 'error' })
+        toast.add({ title: t('common.failed'), description: e.data?.statusMessage || e.data?.message || e.message, color: 'error' })
+        healthModalOpen.value = false
     } finally {
         healthLoading.value = false
     }
@@ -303,7 +304,7 @@ const bulkSetDdns = async (enabled: boolean) => {
         targets.forEach(r => { r.isAutoUpdate = enabled })
         toast.add({ title: t('common.success'), description: `Updated ${targets.length} records`, color: 'success' })
     } catch (e: any) {
-        toast.add({ title: t('common.failed'), description: e.message, color: 'error' })
+        toast.add({ title: t('common.failed'), description: e.data?.statusMessage || e.data?.message || e.message, color: 'error' })
     }
 }
 
@@ -316,7 +317,7 @@ const bulkDelete = async () => {
         selectedIds.value.clear()
         loadData()
     } catch (e: any) {
-        toast.add({ title: t('common.failed'), description: e.message, color: 'error' })
+        toast.add({ title: t('common.failed'), description: e.data?.statusMessage || e.data?.message || e.message, color: 'error' })
     }
 }
 
@@ -331,7 +332,7 @@ const formatTtl = (ttl: number) => {
 const switchTab = (tab: 'records' | 'security') => {
     activeTab.value = tab
     router.replace({ query: { ...route.query, tab: tab === 'security' ? 'security' : undefined } })
-    if (tab === 'security' && !securitySettings.value && !securityLoading.value) {
+    if (tab === 'security' && !securityLoading.value) {
         loadSecurityData()
     }
 }
@@ -370,7 +371,7 @@ const loadSecurityData = async () => {
             }
         }
     } catch (e: any) {
-        toast.add({ title: t('common.failed'), description: e.message, color: 'error' })
+        toast.add({ title: t('common.failed'), description: e.data?.statusMessage || e.data?.message || e.message, color: 'error' })
     } finally {
         securityLoading.value = false
         accessRulesLoading.value = false
@@ -467,7 +468,6 @@ const handleDeleteIpRule = async (ruleId: string) => {
 }
 
 const handleToggleWafRule = async (rule: WafCustomRule, nextState: boolean) => {
-    if (!rule.rulesetId) return
     togglingWafId.value = rule.id
     try {
         const res = await $fetch<any>(`/api/zones/${resolvedCfZoneId.value}/security/waf-rules/${rule.id}`, {
@@ -1236,24 +1236,36 @@ onMounted(async () => {
                     </div>
 
                     <div v-else-if="propagationResults" class="space-y-4">
-                        <div class="p-3 rounded-xl bg-[var(--surface2)] border border-[var(--border)] flex items-center justify-between">
+                        <div class="p-3.5 rounded-xl bg-[var(--surface2)] border border-[var(--border)] flex items-center justify-between">
                             <div>
-                                <span class="text-xs text-[var(--text3)] block">Target Record</span>
-                                <b class="font-mono text-sm text-[var(--text)]">{{ propagationRecord?.name }}</b>
+                                <span class="text-xs text-[var(--text3)] block">{{ $t('propagation.expected_ip') }}</span>
+                                <b class="font-mono text-sm text-[var(--text)]">{{ propagationResults.expected }}</b>
                             </div>
-                            <span class="pill ok">{{ propagationResults.summary || 'Propagated' }}</span>
+                            <span class="pill" :class="propagationResults.fullyPropagated ? 'ok' : 'pending'">
+                                {{ propagationResults.fullyPropagated ? $t('propagation.fully_propagated') : $t('propagation.in_progress') }}
+                            </span>
                         </div>
 
-                        <div class="max-h-60 overflow-y-auto divide-y divide-[var(--border)]">
+                        <div class="max-h-64 overflow-y-auto divide-y divide-[var(--border)]">
                             <div
-                                v-for="(res, idx) in (propagationResults.resolvers || [])"
+                                v-for="(res, idx) in (propagationResults.resolvers || propagationResults.results || [])"
                                 :key="idx"
-                                class="py-2.5 flex items-center justify-between text-xs"
+                                class="py-2.5 flex items-center justify-between text-xs gap-3"
                             >
-                                <span class="font-semibold">{{ res.name || res.resolver }}</span>
-                                <span class="font-mono" :class="res.matched ? 'text-[var(--green)]' : 'text-[var(--danger)]'">
-                                    {{ res.ip || 'NXDOMAIN' }}
-                                </span>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-semibold text-[var(--text)]">{{ res.name || res.resolver }}</span>
+                                    <span class="text-[10px] text-[var(--text3)] font-mono">({{ res.ip }})</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-mono" :class="(res.propagated ?? res.matched) ? 'text-[var(--green)]' : 'text-[var(--danger)]'">
+                                        {{ (res.resolved && res.resolved.length) ? res.resolved.join(', ') : (res.ipDisplay || $t('propagation.not_found')) }}
+                                    </span>
+                                    <UIcon
+                                        :name="(res.propagated ?? res.matched) ? 'i-heroicons-check-circle' : 'i-heroicons-x-circle'"
+                                        class="w-4 h-4 shrink-0"
+                                        :class="(res.propagated ?? res.matched) ? 'text-[var(--green)]' : 'text-[var(--danger)]'"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1279,7 +1291,7 @@ onMounted(async () => {
                         <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 animate-spin text-[var(--green)] mx-auto mb-2" />
                     </div>
                     <div v-else-if="historyLogs.length === 0" class="py-8 text-center text-xs text-[var(--text3)]">
-                        No previous IP mutation history found.
+                        {{ $t('records.history_empty') }}
                     </div>
                     <div v-else class="space-y-2 max-h-72 overflow-y-auto">
                         <div

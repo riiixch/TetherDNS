@@ -313,14 +313,29 @@ export class CloudflareSecurityService {
     static async toggleWafRule(
         account: any,
         zone: any,
-        rulesetId: string,
+        rulesetId: string | undefined,
         ruleId: string,
         enabled: boolean,
         user: any
     ): Promise<void> {
+        let targetRulesetId = rulesetId
+
+        // If rulesetId wasn't provided, resolve it from the entrypoint
+        if (!targetRulesetId) {
+            const entryRes = await callCloudflareApi(
+                account,
+                `/zones/${zone.cfZoneId}/rulesets/phases/http_request_firewall_custom/entrypoint`
+            )
+            targetRulesetId = entryRes.result?.id
+        }
+
+        if (!targetRulesetId) {
+            throw new Error('Ruleset ID not found for this zone')
+        }
+
         await callCloudflareApi(
             account,
-            `/zones/${zone.cfZoneId}/rulesets/${rulesetId}/rules/${ruleId}`,
+            `/zones/${zone.cfZoneId}/rulesets/${targetRulesetId}/rules/${ruleId}`,
             {
                 method: 'PATCH',
                 body: JSON.stringify({ enabled })

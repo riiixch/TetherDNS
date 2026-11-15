@@ -7,6 +7,9 @@
 ### _ระบบจัดการ Cloudflare DNS, Dynamic IP, Zero Trust Tunnel และ Edge Security ครบวงจร_
 
 <p align="center">
+  <a href="https://github.com/riiixch/TetherDNS/releases">
+    <img src="https://img.shields.io/badge/Release-v1.1.0-12E08A?style=for-the-badge&logo=github&logoColor=black" alt="Version 1.1.0">
+  </a>
   <a href="https://nuxt.com/">
     <img src="https://img.shields.io/badge/Nuxt_4-00C58E?style=for-the-badge&logo=nuxt.js&logoColor=white" alt="Nuxt 4">
   </a>
@@ -99,7 +102,17 @@
   - **เป้าหมายที่รองรับ**: ไอพีเดี่ยว (`ip`), ช่วงไอพี Subnet CIDR (`ip_range`), หมายเลขระบบเครือข่าย (`asn`) และรหัสประเทศ (`country` พร้อมแสดงธงชาติ 🇹🇭 🇺🇸 🇯🇵)
   - **รูปแบบการจัดการ (Action Modes)**: `Block` (บล็อก), `Managed Challenge` (Cloudflare Turnstile), `Challenge` (แคปช่าโต้ตอบ), `JS Challenge` (จาวาสคริปต์ตรวจสอบ) และ `Whitelist` (อนุญาตพิเศษ)
   - ระบบค้นหาและบันทึกหมายเหตุ (Notes) สำหรับแต่ละกฎเพื่อใช้อ้างอิง
-- **WAF Custom Rules**: ตรวจสอบและเปิด/ปิดกฎไฟร์วอลล์แบบกำหนดเองของ Cloudflare ได้โดยตรง
+- **WAF Custom Rules (Ruleset Engine)**: บริหารจัดการกฎ WAF `http_request_firewall_custom` ครบวงจร พร้อมตัวนับจำนวนกฎเทียบกับขีดจำกัดแพ็กเกจฟรี (สูงสุด 5 กฎ)
+- **WAF Presets Hub (ชุดกฎความปลอดภัยสำเร็จรูป 1-คลิก)**: ติดตั้งกฎมาตรฐานระดับสากลได้ทันที 8 ชุด:
+  - 🛡️ **ป้องกันไฟล์คอนฟิกและความลับ**: บล็อกการเข้าถึงไฟล์ `.env`, `.git`, `wp-config.php`, `composer.json` เป็นต้น
+  - 🤖 **บล็อกบอทและสแครปเปอร์รบกวน (Aggressive Scrapers)**: บล็อกบอทสูบข้อมูลโหลดสูง เช่น `SemrushBot`, `AhrefsBot`, `MJ12bot`, `DotBot`, `Bytespider` เพื่อประหยัด CPU & Bandwidth
+  - 🔐 **WordPress & Admin Shield**: บังคับตรวจสอบ `Managed Challenge` ก่อนเข้าสู่ `/wp-admin`, `/wp-login.php`, `xmlrpc.php` ป้องกัน Brute Force
+  - 💉 **ป้องกันการโจมตี SQL Injection & XSS**: ตรวจจับและบล็อกคำขอที่มีคีย์เวิร์ด `UNION SELECT` หรือฉีดแท็ก `<script>` ใน Query URL
+  - 🤖 **บล็อกบอท AI / LLM Scrapers**: บล็อกบอทดูดข้อมูลเพื่อเทรนโมเดล AI เช่น `GPTBot`, `ClaudeBot`, `CCBot`, `PerplexityBot`
+  - 🗄️ **บล็อกการค้นหา phpMyAdmin & Web Shell**: บล็อกบอทสแกนหา `phpmyadmin`, `adminer`, `pma`, `shell.php`
+  - 🇹🇭 **Domestic Shield (คัดกรองทราฟฟิกต่างประเทศ)**: ส่ง `Managed Challenge` ท้าทายผู้เข้าชมทั้งหมดที่อยู่นอกประเทศไทย
+  - 🚫 **บล็อกคำขอที่ไม่มี User-Agent**: บล็อก Request ที่ไม่ระบุ User-Agent Header
+- **ตัวสร้างกฎ Custom Wirefilter Expression**: เครื่องมือเขียนกฎ WAF พร้อมระบบตรวจเช็ค Syntax, เลือก Action (`Block`, `Managed Challenge`, `JS Challenge`, `Challenge`, `Log`) และปุ่มแทรก Snippet ด่วน (`+ Path contains`, `+ User-Agent contains`, `+ Country in`, `+ IP in`)
 - **Quick Security Modal**: หน้าต่างควบคุมความปลอดภัยแบบด่วนบนแถบนำทางและหัว Zone ให้คุณกดรับมือการโจมตี DDoS หรือบล็อกไอพีได้ทันท่วงทีจากทุกหน้า
 
 ### 📈 สถิติทราฟฟิกและการวิเคราะห์ภัยคุกคาม (Analytics)

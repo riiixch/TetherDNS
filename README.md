@@ -7,6 +7,9 @@
 ### _Precision Cloudflare DNS, Dynamic IP, Zero Trust & Security Orchestrator_
 
 <p align="center">
+  <a href="https://github.com/riiixch/TetherDNS/releases">
+    <img src="https://img.shields.io/badge/Release-v1.1.0-12E08A?style=for-the-badge&logo=github&logoColor=black" alt="Version 1.1.0">
+  </a>
   <a href="https://nuxt.com/">
     <img src="https://img.shields.io/badge/Nuxt_4-00C58E?style=for-the-badge&logo=nuxt.js&logoColor=white" alt="Nuxt 4">
   </a>
@@ -99,7 +102,17 @@
   - **Targets**: Single IP (`ip`), Subnet CIDR (`ip_range`), Autonomous System Number (`asn`), or Country Code (`country` with ISO 3166-1 alpha-2 flags).
   - **Action Modes**: `Block`, `Managed Challenge` (Cloudflare Turnstile), `Challenge` (Interactive CAPTCHA), `JS Challenge` (Non-interactive JavaScript challenge), and `Whitelist`.
   - Search, filter, and note annotations per firewall rule.
-- **WAF Custom Rules**: View and toggle custom Cloudflare WAF firewall rules.
+- **WAF Custom Rules & Ruleset Engine**: Full lifecycle management of Cloudflare `http_request_firewall_custom` rulesets with live rule count against free tier limits (up to 5 rules).
+- **WAF Security Presets Hub**: 1-click deployment of 8 battle-tested security presets:
+  - 🛡️ **Protect Sensitive Files**: Blocks scans targeting `/.env`, `/.git`, `/wp-config.php`, `/composer.json`, etc.
+  - 🤖 **Block Aggressive Scrapers & Bad Bots**: Mitigates high-volume crawlers (`SemrushBot`, `AhrefsBot`, `MJ12bot`, `DotBot`, `Bytespider`).
+  - 🔐 **WordPress & Admin Shield**: Enforces `Managed Challenge` on `/wp-admin`, `/wp-login.php`, and `xmlrpc.php`.
+  - 💉 **SQLi & XSS Exploit Shield**: Detects and drops requests injecting `UNION SELECT` or `<script>` tags in query strings.
+  - 🤖 **AI Model Scraper Shield**: Blocks major AI training bots (`GPTBot`, `ClaudeBot`, `CCBot`, `PerplexityBot`).
+  - 🗄️ **phpMyAdmin & Shell Probe Blocker**: Drops automated probes looking for `phpmyadmin`, `adminer`, `pma`, or `shell.php`.
+  - 🇹🇭 **Domestic Shield (Geo-Fencing)**: Issues `Managed Challenge` to all requests originating outside the primary region.
+  - 🚫 **Empty User-Agent Blocker**: Drops automated raw HTTP probes with missing or blank User-Agent headers.
+- **Custom Wirefilter Expression Builder**: Interactive rule composer with syntax checking, action modes (`Block`, `Managed Challenge`, `JS Challenge`, `Interactive Challenge`, `Log`), and Quick Insert Snippet Helpers (`+ Path contains`, `+ User-Agent contains`, `+ Country in`, `+ IP in`).
 - **Quick Security Modal**: Rapid-access floating security panel in the top navbar and zone headers for immediate threat mitigation during live DDoS attacks.
 
 ### 📈 Traffic Analytics & Threat Intelligence

@@ -79,7 +79,7 @@ const executeDelete = () => {
                         <span>{{ $t('waf.waf_rules_title') }}</span>
                     </h3>
                     <span class="px-2 py-0.5 rounded text-[11px] font-mono font-semibold bg-[var(--surface2)] border border-[var(--border)] text-[var(--cyan)]">
-                        {{ rules.length }} / 5 กฎ
+                        {{ $t('waf.rules_count_badge', { count: rules.length }) }}
                     </span>
                     <span class="chip green uppercase text-[10px]">RULESETS ENGINE</span>
                 </div>

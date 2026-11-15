@@ -62,7 +62,7 @@ const handleSubmit = () => {
     if (!desc || !expr) {
         toast.add({
             title: t('common.failed'),
-            description: 'Please fill in both rule name and expression.',
+            description: t('waf.fill_required_fields'),
             color: 'error'
         })
         return
@@ -74,7 +74,7 @@ const handleSubmit = () => {
     if (openParen !== closeParen) {
         toast.add({
             title: t('common.failed'),
-            description: `Expression has unmatched parentheses (${openParen} '(' vs ${closeParen} ')').`,
+            description: t('waf.unmatched_parentheses', { open: openParen, close: closeParen }),
             color: 'error'
         })
         return

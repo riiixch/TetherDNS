@@ -10,8 +10,8 @@ export default defineEventHandler(async (event) => {
     }
 
     const body = await readBody(event)
-    if (!body || body.enabled === undefined || !body.rulesetId) {
-        throw createError({ statusCode: 400, statusMessage: 'Ruleset ID and enabled state are required' })
+    if (!body || body.enabled === undefined) {
+        throw createError({ statusCode: 400, statusMessage: 'Enabled state is required' })
     }
 
     try {

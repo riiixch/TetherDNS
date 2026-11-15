@@ -104,6 +104,7 @@
         "management_title": "การจัดการระบบ"
     },
     "accounts": {
+        "loading": "กำลังโหลดบัญชีผู้ใช้...",
         "title": "บัญชี Cloudflare",
         "subtitle": "จัดการ API Token และการเชื่อมต่อกับ Cloudflare",
         "add_account": "เพิ่มบัญชี",
@@ -137,6 +138,7 @@
         "delete_confirm": "ยกเลิกการเชื่อมต่อบัญชี"
     },
     "zones": {
+        "loading": "กำลังโหลดโดเมนโซน...",
         "title": "โดเมนโซน (DNS Zones)",
         "subtitle": "จัดการโดเมนที่เชื่อมโยงอยู่ภายใต้บัญชี Cloudflare ของคุณ",
         "add_zone": "เพิ่มโซนแบบกำหนดเอง",
@@ -236,6 +238,7 @@
         "history_empty": "ไม่พบประวัติการเปลี่ยนแปลง IP"
     },
     "logs": {
+        "loading": "กำลังโหลดประวัติการอัปเดต...",
         "title": "บันทึกกิจกรรม (Activity Logs)",
         "subtitle": "ติดตามประวัติการทำงานของระบบ DDNS และเหตุการณ์ย้อนหลัง",
         "col_time": "วันเวลา (Timestamp)",
@@ -314,6 +317,7 @@
         }
     },
     "audit": {
+        "loading": "กำลังโหลดบันทึกการตรวจสอบ...",
         "title": "บันทึกระบบ",
         "subtitle": "บัญชีแยกประเภทแบบแก้ไขไม่ได้ (Immutable ledger) สำหรับบันทึกการทำงานของผู้ดูแลระบบ",
         "col_time": "วันเวลา (Timestamp)",
@@ -420,6 +424,10 @@
         "rule_created_success": "สร้างและเปิดใช้งานกฎ WAF บน Cloudflare สำเร็จ",
         "rule_deleted_success": "ลบกฎ WAF สำเร็จ",
         "delete_waf_confirm": "คุณต้องการลบกฎ WAF นี้ออกจาก Cloudflare หรือไม่?",
+        "delete_confirm_title": "ยืนยันการลบกฎ WAF",
+        "delete_confirm_desc": "คุณแน่ใจหรือไม่ว่าต้องการลบกฎ WAF นี้ออกจาก Cloudflare? เมื่อลบแล้วการคัดกรองทราฟฟิกตามกฎนี้จะหยุดลงทันที",
+        "fill_required_fields": "กรุณากรอกชื่อกฎและเงื่อนไข Wirefilter Expression ให้ครบถ้วน",
+        "unmatched_parentheses": "นิพจน์มีวงเล็บเปิดและปิดไม่เท่ากัน ({open} '(' กับ {close} ')') กรุณาตรวจสอบไวยากรณ์",
         "add_waf_modal_title": "เพิ่มกฎ WAF Custom Rule",
         "add_waf_modal_desc": "กำหนดเงื่อนไข Wirefilter Expression และการตอบสนองของ Edge Server",
         "rule_desc_label": "ชื่อหรือคำอธิบายกฎ (Rule Name)",
@@ -433,6 +441,7 @@
         "copy_expr": "คัดลอกเงื่อนไข",
         "copied_expr": "คัดลอกนิพจน์เรียบร้อย",
         "rules_limit_hint": "Cloudflare แผนฟรีจำกัดสูงสุด 5 Custom Rules ต่อโซน",
+        "rules_count_badge": "{count} / 5 กฎ",
         "no_presets_found": "ไม่พบ Preset ที่ตรงกับคำค้นหา",
         "action_block": "บล็อกทันที (Block)",
         "action_managed_challenge": "ท้าทายความปลอดภัย (Managed Challenge)",

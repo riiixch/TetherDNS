@@ -56,14 +56,24 @@ export default defineEventHandler(async (event) => {
             })
         )
 
+        const isAllPropagated = results.every(r => r.propagated)
+        const formattedResolvers = results.map(r => ({
+            ...r,
+            name: r.resolver,
+            matched: r.propagated,
+            ipDisplay: r.resolved.length > 0 ? r.resolved.join(', ') : 'NXDOMAIN'
+        }))
+
         return {
             success: true,
             record: record.name,
             expected: record.proxied ? 'Cloudflare IPs (Proxied)' : record.content,
-            results,
-            fullyPropagated: results.every(r => r.propagated)
+            results: formattedResolvers,
+            resolvers: formattedResolvers,
+            fullyPropagated: isAllPropagated,
+            summary: isAllPropagated ? 'Fully Propagated' : 'Propagating...'
         }
     } catch (error: any) {
-        throw createError({ statusCode: 500, statusMessage: error.message })
+        throw createError({ statusCode: error.statusCode || 500, statusMessage: error.statusMessage || error.message })
     }
 })

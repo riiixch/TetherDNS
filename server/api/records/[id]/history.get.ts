@@ -13,6 +13,6 @@ export default defineEventHandler(async (event) => {
 
         return { success: true, data: logs }
     } catch (e: any) {
-        throw createError({ statusCode: 500, statusMessage: e.message || 'Failed to fetch history' })
+        throw createError({ statusCode: e.statusCode || 500, statusMessage: e.statusMessage || e.message || 'Failed to fetch history' })
     }
 })

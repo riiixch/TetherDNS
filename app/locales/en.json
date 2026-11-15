@@ -104,6 +104,7 @@
         "management_title": "Infrastructure Management"
     },
     "accounts": {
+        "loading": "Loading Accounts...",
         "title": "Cloudflare Accounts",
         "subtitle": "Manage your Cloudflare API tokens and connections.",
         "add_account": "Add Account",
@@ -137,6 +138,7 @@
         "delete_confirm": "Unlink Account"
     },
     "zones": {
+        "loading": "Loading DNS Zones...",
         "title": "DNS Zones",
         "subtitle": "Manage domains linked to your Cloudflare accounts.",
         "add_zone": "Add Zone Manually",
@@ -236,6 +238,7 @@
         "history_empty": "No IP change history found."
     },
     "logs": {
+        "loading": "Loading Activity Logs...",
         "title": "Activity Logs",
         "subtitle": "Track historical DDNS updates and system events.",
         "col_time": "Timestamp",
@@ -314,6 +317,7 @@
         }
     },
     "audit": {
+        "loading": "Loading Audit Logs...",
         "title": "Audit Logs",
         "subtitle": "Immutable ledger of all administrative actions.",
         "col_time": "Timestamp",
@@ -420,6 +424,10 @@
         "rule_created_success": "WAF rule created and deployed to Cloudflare.",
         "rule_deleted_success": "WAF rule removed successfully.",
         "delete_waf_confirm": "Are you sure you want to delete this WAF rule from Cloudflare?",
+        "delete_confirm_title": "Confirm Delete WAF Rule",
+        "delete_confirm_desc": "Are you sure you want to delete this WAF rule from Cloudflare? Traffic matching this rule will no longer be intercepted.",
+        "fill_required_fields": "Please provide both rule name and Wirefilter expression.",
+        "unmatched_parentheses": "Expression has unmatched parentheses ({open} '(' vs {close} ')'). Please verify the syntax.",
         "add_waf_modal_title": "Add WAF Custom Rule",
         "add_waf_modal_desc": "Define Wirefilter expression and edge action behavior.",
         "rule_desc_label": "Rule Description",
@@ -433,6 +441,7 @@
         "copy_expr": "Copy Expression",
         "copied_expr": "Expression copied to clipboard",
         "rules_limit_hint": "Cloudflare Free plan supports up to 5 custom rules per zone",
+        "rules_count_badge": "{count} / 5 Rules",
         "no_presets_found": "No presets match your search query",
         "action_block": "Block",
         "action_managed_challenge": "Managed Challenge (Recommended)",

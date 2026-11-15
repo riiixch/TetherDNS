@@ -50,6 +50,10 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-    // Attach userId to event context
+    // Attach userId and user object to event context
     event.context.userId = session.data.userId
+    event.context.user = {
+        id: session.data.userId,
+        username: session.data.username
+    }
 })

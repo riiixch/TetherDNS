@@ -26,6 +26,6 @@ export default defineEventHandler(async (event) => {
             data: record.healthCheck || null
         }
     } catch (e: any) {
-        throw createError({ statusCode: 500, statusMessage: e.message || 'Failed to fetch health check' })
+        throw createError({ statusCode: e.statusCode || 500, statusMessage: e.statusMessage || e.message || 'Failed to fetch health check' })
     }
 })
