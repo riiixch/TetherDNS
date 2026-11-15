@@ -120,87 +120,151 @@ const add = async () => {
                 </button>
             </div>
 
-            <!-- Table -->
-            <div class="overflow-x-auto w-full">
-                <table v-if="!loading && channels.length > 0" class="rtable-ref">
-                    <thead>
-                        <tr>
-                            <th class="w-1/3 min-w-[160px]">{{ $t('settings.col_label') }}</th>
-                            <th class="w-1/4 min-w-[120px]">{{ $t('settings.col_type') }}</th>
-                            <th class="w-1/4 min-w-[120px]">{{ $t('settings.col_status') }}</th>
-                            <th class="w-24 text-right"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="ch in channels" :key="ch.id">
-                            <td>
-                                <div class="font-bold text-[var(--text)] text-xs">{{ ch.label }}</div>
-                                <span v-if="ch.lastUsedAt" class="text-[10px] text-[var(--text3)] font-mono">
-                                    Last active: {{ new Date(ch.lastUsedAt).toLocaleDateString() }}
+            <!-- Loading -->
+            <div v-if="loading" class="flex items-center justify-center py-12">
+                <UIcon name="i-heroicons-arrow-path" class="w-6 h-6 animate-spin text-[var(--green)]" />
+            </div>
+
+            <!-- Empty State -->
+            <div v-else-if="channels.length === 0" class="flex flex-col items-center justify-center py-12 text-center">
+                <div class="w-12 h-12 rounded-full bg-[var(--surface2)] flex items-center justify-center mb-3">
+                    <UIcon name="i-heroicons-bell-slash" class="w-6 h-6 text-[var(--text3)]" />
+                </div>
+                <p class="text-xs text-[var(--text2)]">{{ $t('settings.no_notifs') }}</p>
+                <span class="text-[11px] text-[var(--text3)] mt-1">
+                    Notifications are optional. TetherDNS operates normally in silent mode if none are configured.
+                </span>
+            </div>
+
+            <template v-else>
+                <!-- Desktop Table (hidden on mobile < 768px) -->
+                <div class="overflow-x-auto w-full hidden md:block">
+                    <table class="rtable-ref w-full">
+                        <thead>
+                            <tr>
+                                <th class="w-1/3 min-w-[160px]">{{ $t('settings.col_label') }}</th>
+                                <th class="w-1/4 min-w-[120px]">{{ $t('settings.col_type') }}</th>
+                                <th class="w-1/4 min-w-[120px]">{{ $t('settings.col_status') }}</th>
+                                <th class="w-24 text-right"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="ch in channels" :key="ch.id">
+                                <td>
+                                    <div class="font-bold text-[var(--text)] text-xs">{{ ch.label }}</div>
+                                    <span v-if="ch.lastUsedAt" class="text-[10px] text-[var(--text3)] font-mono">
+                                        Last active: {{ new Date(ch.lastUsedAt).toLocaleDateString() }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span
+                                        class="badge"
+                                        :class="{
+                                            't-CNAME': ch.type === 'discord',
+                                            't-AAAA': ch.type === 'telegram',
+                                            't-TXT': ch.type === 'email',
+                                            't-A': ch.type === 'line'
+                                        }"
+                                    >
+                                        {{ ch.type.toUpperCase() }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button
+                                        type="button"
+                                        class="badge cursor-pointer transition-colors"
+                                        :class="ch.enabled ? 'badge-ok hover:opacity-80' : 'badge-crit hover:opacity-80'"
+                                        :title="ch.enabled ? 'Click to disable' : 'Click to enable'"
+                                        @click="emit('toggle', ch)"
+                                    >
+                                        {{ ch.enabled ? $t('common.active') : $t('common.disabled') }}
+                                    </button>
+                                </td>
+                                <td class="text-right">
+                                    <div class="inline-flex items-center gap-1 justify-end">
+                                        <button
+                                            type="button"
+                                            class="icon-btn sm text-[var(--text2)] hover:text-[var(--text)] hover:bg-[var(--surface2)]"
+                                            :title="$t('common.test')"
+                                            @click="emit('test', ch)"
+                                        >
+                                            <UIcon name="i-heroicons-paper-airplane" class="w-3.5 h-3.5" />
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="icon-btn sm text-[var(--danger)] hover:bg-[rgba(251,94,122,0.15)]"
+                                            :title="$t('common.delete')"
+                                            @click="emit('delete', ch.id)"
+                                        >
+                                            <UIcon name="i-heroicons-trash" class="w-3.5 h-3.5" />
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Mobile Channel Cards List (shown only on mobile < 768px) -->
+                <div class="notif-mobile-list block md:hidden divide-y divide-[var(--border)]">
+                    <div
+                        v-for="ch in channels"
+                        :key="'mob-ch-' + ch.id"
+                        class="p-4 space-y-2.5 hover:bg-[var(--surface2)]/40 transition-colors"
+                    >
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="min-w-0">
+                                <div class="font-bold text-sm text-[var(--text)] truncate">{{ ch.label }}</div>
+                                <span v-if="ch.lastUsedAt" class="text-[10.5px] text-[var(--text3)] font-mono">
+                                    Last: {{ new Date(ch.lastUsedAt).toLocaleDateString() }}
                                 </span>
-                            </td>
-                            <td>
-                                <span
-                                    class="badge"
-                                    :class="{
-                                        't-CNAME': ch.type === 'discord',
-                                        't-AAAA': ch.type === 'telegram',
-                                        't-TXT': ch.type === 'email',
-                                        't-A': ch.type === 'line'
-                                    }"
-                                >
-                                    {{ ch.type.toUpperCase() }}
-                                </span>
-                            </td>
-                            <td>
+                            </div>
+                            <span
+                                class="badge shrink-0"
+                                :class="{
+                                    't-CNAME': ch.type === 'discord',
+                                    't-AAAA': ch.type === 'telegram',
+                                    't-TXT': ch.type === 'email',
+                                    't-A': ch.type === 'line'
+                                }"
+                            >
+                                {{ ch.type.toUpperCase() }}
+                            </span>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <button
+                                type="button"
+                                class="badge cursor-pointer transition-colors"
+                                :class="ch.enabled ? 'badge-ok hover:opacity-80' : 'badge-crit hover:opacity-80'"
+                                @click="emit('toggle', ch)"
+                            >
+                                {{ ch.enabled ? $t('common.active') : $t('common.disabled') }}
+                            </button>
+
+                            <div class="inline-flex items-center gap-1.5">
                                 <button
                                     type="button"
-                                    class="badge cursor-pointer transition-colors"
-                                    :class="ch.enabled ? 'badge-ok hover:opacity-80' : 'badge-crit hover:opacity-80'"
-                                    :title="ch.enabled ? 'Click to disable' : 'Click to enable'"
-                                    @click="emit('toggle', ch)"
+                                    class="btn-ref ghost sm flex items-center gap-1"
+                                    :title="$t('common.test')"
+                                    @click="emit('test', ch)"
                                 >
-                                    {{ ch.enabled ? $t('common.active') : $t('common.disabled') }}
+                                    <UIcon name="i-heroicons-paper-airplane" class="w-3.5 h-3.5" />
+                                    <span>Test</span>
                                 </button>
-                            </td>
-                            <td class="text-right">
-                                <div class="inline-flex items-center gap-1 justify-end">
-                                    <button
-                                        type="button"
-                                        class="icon-btn sm text-[var(--text2)] hover:text-[var(--text)] hover:bg-[var(--surface2)]"
-                                        :title="$t('common.test')"
-                                        @click="emit('test', ch)"
-                                    >
-                                        <UIcon name="i-heroicons-paper-airplane" class="w-3.5 h-3.5" />
-                                    </button>
-                                    <button
-                                        type="button"
-                                        class="icon-btn sm text-[var(--danger)] hover:bg-[rgba(251,94,122,0.15)]"
-                                        :title="$t('common.delete')"
-                                        @click="emit('delete', ch.id)"
-                                    >
-                                        <UIcon name="i-heroicons-trash" class="w-3.5 h-3.5" />
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div v-if="!loading && channels.length === 0" class="flex flex-col items-center justify-center py-12 text-center">
-                    <div class="w-12 h-12 rounded-full bg-[var(--surface2)] flex items-center justify-center mb-3">
-                        <UIcon name="i-heroicons-bell-slash" class="w-6 h-6 text-[var(--text3)]" />
+                                <button
+                                    type="button"
+                                    class="icon-btn sm text-[var(--danger)] hover:bg-[rgba(251,94,122,0.15)]"
+                                    :title="$t('common.delete')"
+                                    @click="emit('delete', ch.id)"
+                                >
+                                    <UIcon name="i-heroicons-trash" class="w-3.5 h-3.5" />
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <p class="text-xs text-[var(--text2)]">{{ $t('settings.no_notifs') }}</p>
-                    <span class="text-[11px] text-[var(--text3)] mt-1">
-                        Notifications are optional. TetherDNS operates normally in silent mode if none are configured.
-                    </span>
                 </div>
-
-                <div v-if="loading" class="flex items-center justify-center py-12">
-                    <UIcon name="i-heroicons-arrow-path" class="w-6 h-6 animate-spin text-[var(--green)]" />
-                </div>
-            </div>
+            </template>
         </div>
 
         <!-- Add Channel Modal -->

@@ -143,7 +143,7 @@ onMounted(() => {
             <!-- Main Chart & Recent Updates Feed Grid -->
             <section class="dash-grid">
                 <!-- Left: IP Mutation Frequency Chart with Pre-fetched Data -->
-                <div class="h-full min-h-[380px]">
+                <div class="h-full min-h-[220px] sm:min-h-[280px] lg:min-h-[380px]">
                     <ClientOnly>
                         <AnalyticsIpChangeChart :initial-data="initialAnalytics" />
                     </ClientOnly>

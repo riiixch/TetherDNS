@@ -135,94 +135,162 @@ const handleDelete = (ruleId: string) => {
             <span class="text-xs">{{ $t('waf.no_ip_rules') }}</span>
         </div>
 
-        <div v-else class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-xs">
-                <thead>
-                    <tr class="border-b border-[var(--border)] text-[var(--text3)] font-mono text-[11px] uppercase tracking-wider">
-                        <th class="py-2.5 px-3">{{ $t('waf.col_target') }}</th>
-                        <th class="py-2.5 px-3">{{ $t('waf.col_action') }}</th>
-                        <th class="py-2.5 px-3">{{ $t('waf.col_notes') }}</th>
-                        <th class="py-2.5 px-3">{{ $t('waf.col_created') }}</th>
-                        <th class="py-2.5 px-3 text-right">{{ $t('waf.col_actions') }}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-[var(--border)]">
-                    <tr
-                        v-for="rule in filteredRules"
-                        :key="rule.id"
-                        class="hover:bg-[var(--surface2)]/60 transition-colors"
-                    >
-                        <!-- Target (IP/Country/ASN) -->
-                        <td class="py-3 px-3">
-                            <div class="flex items-center gap-2">
+        <div v-else class="w-full">
+            <!-- Desktop Table (hidden on mobile < 768px) -->
+            <div class="table-wrap overflow-x-auto hidden md:block">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="border-b border-[var(--border)] text-[var(--text3)] font-mono text-[11px] uppercase tracking-wider">
+                            <th class="py-2.5 px-3">{{ $t('waf.col_target') }}</th>
+                            <th class="py-2.5 px-3">{{ $t('waf.col_action') }}</th>
+                            <th class="py-2.5 px-3">{{ $t('waf.col_notes') }}</th>
+                            <th class="py-2.5 px-3">{{ $t('waf.col_created') }}</th>
+                            <th class="py-2.5 px-3 text-right">{{ $t('waf.col_actions') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[var(--border)]">
+                        <tr
+                            v-for="rule in filteredRules"
+                            :key="rule.id"
+                            class="hover:bg-[var(--surface2)]/60 transition-colors"
+                        >
+                            <!-- Target (IP/Country/ASN) -->
+                            <td class="py-3 px-3">
+                                <div class="flex items-center gap-2">
+                                    <span
+                                        class="px-1.5 py-0.5 rounded text-[10px] font-bold font-mono border"
+                                        :class="getTargetBadge(rule.target).class"
+                                    >
+                                        {{ getTargetBadge(rule.target).label }}
+                                    </span>
+                                    <span v-if="rule.target === 'country'" class="text-sm select-none" :title="rule.value">
+                                        {{ getCountryFlag(rule.value) }}
+                                    </span>
+                                    <span class="font-mono font-semibold text-[var(--text)]">
+                                        {{ rule.value }}
+                                    </span>
+                                </div>
+                            </td>
+
+                            <!-- Action -->
+                            <td class="py-3 px-3">
                                 <span
-                                    class="px-1.5 py-0.5 rounded text-[10px] font-bold font-mono border"
-                                    :class="getTargetBadge(rule.target).class"
+                                    class="px-2 py-0.5 rounded text-[10px] font-bold font-mono tracking-wider border uppercase"
+                                    :class="getActionColor(rule.mode)"
                                 >
-                                    {{ getTargetBadge(rule.target).label }}
+                                    {{ rule.mode.replace(/_/g, ' ') }}
                                 </span>
-                                <span v-if="rule.target === 'country'" class="text-sm select-none" :title="rule.value">
-                                    {{ getCountryFlag(rule.value) }}
-                                </span>
-                                <span class="font-mono font-semibold text-[var(--text)]">
-                                    {{ rule.value }}
-                                </span>
-                            </div>
-                        </td>
+                            </td>
 
-                        <!-- Action -->
-                        <td class="py-3 px-3">
+                            <!-- Notes -->
+                            <td class="py-3 px-3 text-[var(--text2)] max-w-xs truncate">
+                                {{ rule.notes || '-' }}
+                            </td>
+
+                            <!-- Created On -->
+                            <td class="py-3 px-3 text-[var(--text3)] font-mono text-[11px] whitespace-nowrap">
+                                {{ formatDate(rule.createdOn) }}
+                            </td>
+
+                            <!-- Action Buttons -->
+                            <td class="py-3 px-3 text-right">
+                                <div v-if="confirmDeleteId === rule.id" class="flex items-center justify-end gap-1.5">
+                                    <button
+                                        type="button"
+                                        class="px-2 py-1 rounded text-[11px] font-bold bg-red-600 hover:bg-red-500 text-white transition-colors"
+                                        :disabled="deletingId === rule.id"
+                                        @click="handleDelete(rule.id)"
+                                    >
+                                        <UIcon v-if="deletingId === rule.id" name="i-heroicons-arrow-path" class="w-3 h-3 animate-spin" />
+                                        <span v-else>{{ $t('common.delete') }}</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="px-2 py-1 rounded text-[11px] text-[var(--text3)] hover:text-[var(--text)]"
+                                        @click="confirmDeleteId = null"
+                                    >
+                                        {{ $t('common.cancel') }}
+                                    </button>
+                                </div>
+                                <button
+                                    v-else
+                                    type="button"
+                                    class="p-1.5 rounded-lg text-[var(--text3)] hover:text-[var(--danger)] hover:bg-red-500/10 transition-colors"
+                                    :title="$t('common.delete')"
+                                    @click="confirmDeleteId = rule.id"
+                                >
+                                    <UIcon name="i-heroicons-trash" class="w-4 h-4" />
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile Rules Cards List (shown only on mobile < 768px) -->
+            <div class="ip-rules-mobile-list block md:hidden divide-y divide-[var(--border)]">
+                <div
+                    v-for="rule in filteredRules"
+                    :key="'mob-' + rule.id"
+                    class="p-3.5 space-y-2.5 hover:bg-[var(--surface2)]/50 transition-colors"
+                >
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2 min-w-0">
                             <span
-                                class="px-2 py-0.5 rounded text-[10px] font-bold font-mono tracking-wider border uppercase"
-                                :class="getActionColor(rule.mode)"
+                                class="px-1.5 py-0.5 rounded text-[10px] font-bold font-mono border shrink-0"
+                                :class="getTargetBadge(rule.target).class"
                             >
-                                {{ rule.mode.replace(/_/g, ' ') }}
+                                {{ getTargetBadge(rule.target).label }}
                             </span>
-                        </td>
+                            <span v-if="rule.target === 'country'" class="text-sm select-none shrink-0" :title="rule.value">
+                                {{ getCountryFlag(rule.value) }}
+                            </span>
+                            <span class="font-mono font-bold text-sm text-[var(--text)] truncate">
+                                {{ rule.value }}
+                            </span>
+                        </div>
+                        <span
+                            class="px-2 py-0.5 rounded text-[10px] font-bold font-mono tracking-wider border uppercase shrink-0"
+                            :class="getActionColor(rule.mode)"
+                        >
+                            {{ rule.mode.replace(/_/g, ' ') }}
+                        </span>
+                    </div>
 
-                        <!-- Notes -->
-                        <td class="py-3 px-3 text-[var(--text2)] max-w-xs truncate">
-                            {{ rule.notes || '-' }}
-                        </td>
+                    <p v-if="rule.notes" class="text-xs text-[var(--text2)] line-clamp-2">
+                        {{ rule.notes }}
+                    </p>
 
-                        <!-- Created On -->
-                        <td class="py-3 px-3 text-[var(--text3)] font-mono text-[11px] whitespace-nowrap">
-                            {{ formatDate(rule.createdOn) }}
-                        </td>
-
-                        <!-- Action Buttons -->
-                        <td class="py-3 px-3 text-right">
-                            <div v-if="confirmDeleteId === rule.id" class="flex items-center justify-end gap-1.5">
-                                <button
-                                    type="button"
-                                    class="px-2 py-1 rounded text-[11px] font-bold bg-red-600 hover:bg-red-500 text-white transition-colors"
-                                    :disabled="deletingId === rule.id"
-                                    @click="handleDelete(rule.id)"
-                                >
-                                    <UIcon v-if="deletingId === rule.id" name="i-heroicons-arrow-path" class="w-3 h-3 animate-spin" />
-                                    <span v-else>{{ $t('common.delete') }}</span>
-                                </button>
-                                <button
-                                    type="button"
-                                    class="px-2 py-1 rounded text-[11px] text-[var(--text3)] hover:text-[var(--text)]"
-                                    @click="confirmDeleteId = null"
-                                >
-                                    {{ $t('common.cancel') }}
-                                </button>
-                            </div>
+                    <div class="flex items-center justify-between pt-1 text-[11px] text-[var(--text3)]">
+                        <span class="font-mono">{{ formatDate(rule.createdOn) }}</span>
+                        <div v-if="confirmDeleteId === rule.id" class="flex items-center gap-1.5">
                             <button
-                                v-else
                                 type="button"
-                                class="p-1.5 rounded-lg text-[var(--text3)] hover:text-[var(--danger)] hover:bg-red-500/10 transition-colors"
-                                :title="$t('common.delete')"
-                                @click="confirmDeleteId = rule.id"
+                                class="px-2 py-0.5 rounded text-[11px] font-bold bg-red-600 text-white"
+                                :disabled="deletingId === rule.id"
+                                @click="handleDelete(rule.id)"
                             >
-                                <UIcon name="i-heroicons-trash" class="w-4 h-4" />
+                                {{ $t('common.delete') }}
                             </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                            <button
+                                type="button"
+                                class="px-2 py-0.5 rounded text-[11px] text-[var(--text3)]"
+                                @click="confirmDeleteId = null"
+                            >
+                                {{ $t('common.cancel') }}
+                            </button>
+                        </div>
+                        <button
+                            v-else
+                            type="button"
+                            class="p-1 rounded text-[var(--text3)] hover:text-[var(--danger)]"
+                            @click="confirmDeleteId = rule.id"
+                        >
+                            <UIcon name="i-heroicons-trash" class="w-4 h-4" />
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>

@@ -85,48 +85,76 @@ onMounted(() => loadTokens())
                 </button>
             </div>
 
-            <!-- Token Table -->
-            <div class="overflow-x-auto w-full">
-                <table v-if="!loading && tokens.length > 0" class="rtable-ref">
-                    <thead>
-                        <tr>
-                            <th class="w-1/2 min-w-[180px]">{{ $t('api_tokens.col_name') }}</th>
-                            <th class="w-2/5 min-w-[140px]">{{ $t('api_tokens.col_created') }}</th>
-                            <th class="w-20 text-right"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="tok in tokens" :key="tok.id">
-                            <td>
-                                <span class="font-bold text-[var(--text)]">{{ tok.name }}</span>
-                            </td>
-                            <td>
-                                <span class="text-xs text-[var(--text2)] font-mono">{{ formatDate(tok.createdAt) }}</span>
-                            </td>
-                            <td class="text-right">
-                                <button
-                                    type="button"
-                                    class="icon-btn sm text-[var(--danger)] hover:bg-[rgba(251,94,122,0.15)] inline-flex items-center justify-center"
-                                    @click="deleteToken(tok.id)"
-                                >
-                                    <UIcon name="i-heroicons-trash" class="w-4 h-4" />
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div v-if="!loading && tokens.length === 0" class="flex flex-col items-center justify-center py-12 text-center">
-                    <div class="w-12 h-12 rounded-full bg-[var(--surface2)] flex items-center justify-center mb-3">
-                        <UIcon name="i-heroicons-key" class="w-6 h-6 text-[var(--text3)]" />
-                    </div>
-                    <p class="text-xs text-[var(--text2)]">{{ $t('api_tokens.no_tokens') }}</p>
-                </div>
-
-                <div v-if="loading" class="flex items-center justify-center py-12">
-                    <UIcon name="i-heroicons-arrow-path" class="w-6 h-6 animate-spin text-[var(--green)]" />
-                </div>
+            <!-- Loading -->
+            <div v-if="loading" class="flex items-center justify-center py-12">
+                <UIcon name="i-heroicons-arrow-path" class="w-6 h-6 animate-spin text-[var(--green)]" />
             </div>
+
+            <!-- Empty State -->
+            <div v-else-if="tokens.length === 0" class="flex flex-col items-center justify-center py-12 text-center">
+                <div class="w-12 h-12 rounded-full bg-[var(--surface2)] flex items-center justify-center mb-3">
+                    <UIcon name="i-heroicons-key" class="w-6 h-6 text-[var(--text3)]" />
+                </div>
+                <p class="text-xs text-[var(--text2)]">{{ $t('api_tokens.no_tokens') }}</p>
+            </div>
+
+            <template v-else>
+                <!-- Desktop Table (hidden on mobile < 640px) -->
+                <div class="overflow-x-auto w-full hidden sm:block">
+                    <table class="rtable-ref w-full">
+                        <thead>
+                            <tr>
+                                <th class="w-1/2 min-w-[180px]">{{ $t('api_tokens.col_name') }}</th>
+                                <th class="w-2/5 min-w-[140px]">{{ $t('api_tokens.col_created') }}</th>
+                                <th class="w-20 text-right"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="tok in tokens" :key="tok.id">
+                                <td>
+                                    <span class="font-bold text-[var(--text)]">{{ tok.name }}</span>
+                                </td>
+                                <td>
+                                    <span class="text-xs text-[var(--text2)] font-mono">{{ formatDate(tok.createdAt) }}</span>
+                                </td>
+                                <td class="text-right">
+                                    <button
+                                        type="button"
+                                        class="icon-btn sm text-[var(--danger)] hover:bg-[rgba(251,94,122,0.15)] inline-flex items-center justify-center"
+                                        @click="deleteToken(tok.id)"
+                                    >
+                                        <UIcon name="i-heroicons-trash" class="w-4 h-4" />
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Mobile Token List (shown only on mobile < 640px) -->
+                <div class="token-mobile-list block sm:hidden divide-y divide-[var(--border)]">
+                    <div
+                        v-for="tok in tokens"
+                        :key="'mob-tok-' + tok.id"
+                        class="p-4 flex items-center justify-between gap-3 hover:bg-[var(--surface2)]/40 transition-colors"
+                    >
+                        <div class="min-w-0 space-y-1">
+                            <span class="font-bold text-sm text-[var(--text)] truncate block">{{ tok.name }}</span>
+                            <div class="text-[11px] text-[var(--text3)] font-mono">
+                                {{ formatDate(tok.createdAt) }}
+                            </div>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="icon-btn sm text-[var(--danger)] hover:bg-[rgba(251,94,122,0.15)] shrink-0"
+                            @click="deleteToken(tok.id)"
+                        >
+                            <UIcon name="i-heroicons-trash" class="w-4 h-4" />
+                        </button>
+                    </div>
+                </div>
+            </template>
         </div>
 
         <!-- Create Token Modal -->

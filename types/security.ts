@@ -31,3 +31,17 @@ export interface WafCustomRule {
     enabled: boolean
     lastUpdated: string
 }
+
+export interface WafPreset {
+    id: string
+    title: string
+    titleTh?: string
+    description: string
+    descriptionTh?: string
+    category: 'threat' | 'bot' | 'compliance' | 'cms'
+    icon: string
+    action: 'block' | 'challenge' | 'managed_challenge' | 'js_challenge' | 'log'
+    expression: string
+    recommended?: boolean
+    badge?: string
+}

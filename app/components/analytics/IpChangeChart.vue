@@ -71,7 +71,12 @@ const chartOptions = computed<ApexOptions>(() => ({
         axisTicks: { show: false }
     },
     yaxis: {
+        min: 0,
+        forceNiceScale: true,
         labels: {
+            formatter: (val: number) => {
+                return Number.isInteger(val) ? val.toString() : Math.round(val).toString()
+            },
             style: {
                 colors: isDark.value ? '#62728f' : '#64748b',
                 fontSize: '11px',
@@ -98,6 +103,28 @@ const chartOptions = computed<ApexOptions>(() => ({
         strokeDashArray: 3,
         padding: { top: 10, right: 10, bottom: 0, left: 10 }
     },
+    responsive: [
+        {
+            breakpoint: 640,
+            options: {
+                chart: {
+                    height: 210
+                },
+                xaxis: {
+                    labels: {
+                        style: { fontSize: '9.5px' }
+                    },
+                    tickAmount: 4
+                },
+                yaxis: {
+                    labels: {
+                        style: { fontSize: '9.5px' }
+                    },
+                    tickAmount: 3
+                }
+            }
+        }
+    ],
     theme: {
         mode: isDark.value ? ('dark' as const) : ('light' as const)
     },
@@ -143,7 +170,7 @@ const series = computed(() => [
             <span class="meta-chip">Avg <b>{{ avg }}</b></span>
         </div>
 
-        <div class="flex-1 min-h-[260px] relative w-full pt-2">
+        <div class="flex-1 min-h-[190px] sm:min-h-[230px] lg:min-h-[260px] relative w-full pt-2">
             <div v-if="isPending" class="absolute inset-0 flex items-center justify-center">
                 <UIcon name="i-heroicons-arrow-path" class="w-7 h-7 animate-spin text-[var(--text3)]" />
             </div>

@@ -506,7 +506,8 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            flex: none
+            flex: none;
+            margin-left: auto;
         }
 
         .lang-seg {
@@ -2756,8 +2757,8 @@
 
         .tun-meta {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
         }
 
         .tun-meta>div {
@@ -3522,11 +3523,22 @@
         }
 
         @media(max-width:640px) {
+            #app {
+                padding-top: calc(var(--nav-h) + 16px) !important;
+                padding-bottom: 32px !important;
+            }
+
             .wrap {
                 padding: 0 16px !important;
             }
 
             .stats {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 10px !important;
+                margin-bottom: 14px !important;
+            }
+
+            .stats-4 {
                 grid-template-columns: repeat(2, 1fr) !important;
                 gap: 10px !important;
                 margin-bottom: 14px !important;
@@ -3565,8 +3577,9 @@
             }
 
             .stat-ip {
-                font-size: 13px !important;
+                font-size: 13.5px !important;
                 margin-bottom: 4px !important;
+                letter-spacing: -0.01em;
             }
 
             .stat-sub {
@@ -3575,7 +3588,7 @@
 
             .stat-last {
                 min-height: unset !important;
-                gap: 4px !important;
+                gap: 6px !important;
                 margin-bottom: 4px !important;
             }
 
@@ -3583,61 +3596,264 @@
                 font-size: 10.5px !important;
             }
 
+            /* IP & Last Update cards span 2 columns on mobile for spaciousness */
+            .stat-ip-card,
+            .stat-last-card {
+                grid-column: span 2 !important;
+            }
+
+            .stat-ip-card .stat-ip {
+                font-size: 15px !important;
+                margin-top: 2px;
+            }
+
             .acc-grid,
             .tun-grid {
                 grid-template-columns: 1fr;
             }
 
-            .f-grid {
-                grid-template-columns: 1fr;
-                gap: 28px;
+            .acc-card,
+            .tun-card {
+                padding: 16px 14px !important;
+            }
+
+            .tun-meta {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 6px !important;
+            }
+
+            .tun-meta > div {
+                padding: 6px 8px !important;
+            }
+
+            .tun-meta small {
+                font-size: 8px !important;
+            }
+
+            .tun-meta b {
+                font-size: 11.5px !important;
+            }
+
+            .set-row {
+                padding: 12px 14px !important;
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 10px !important;
+            }
+
+            .set-row:has(.switch-ref) {
+                flex-direction: row !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+            }
+
+            .set-row .seg {
+                width: 100% !important;
+            }
+
+            .set-row .seg button {
+                flex: 1 1 50% !important;
+                justify-content: center !important;
+            }
+
+            .range-row {
+                padding: 12px 14px !important;
             }
 
             .page-head {
-                align-items: flex-start;
-                flex-direction: column;
-                gap: 12px;
-                margin-bottom: 20px;
+                display: flex !important;
+                align-items: stretch !important;
+                flex-direction: column !important;
+                gap: 12px !important;
+                margin-bottom: 16px !important;
             }
 
             .ph-left {
-                gap: 12px;
+                display: flex !important;
+                align-items: center !important;
+                gap: 12px !important;
             }
 
             .ph-icon, .ph-ic {
-                width: 40px !important;
-                height: 40px !important;
-                border-radius: 12px !important;
+                width: 38px !important;
+                height: 38px !important;
+                border-radius: 10px !important;
+                flex-shrink: 0;
             }
 
             .page-head h1,
             .ph-left h1 {
-                font-size: 22px !important;
+                font-size: 20px !important;
+                line-height: 1.2 !important;
             }
 
             .sub {
-                font-size: 12px !important;
+                font-size: 11.5px !important;
+                margin-top: 2px !important;
             }
 
             .ph-right {
-                width: 100%;
+                width: 100% !important;
                 display: flex !important;
+                align-items: center !important;
                 flex-wrap: wrap !important;
                 gap: 8px !important;
+                padding-top: 2px;
+            }
+
+            .ph-right .live-pill {
+                flex: 0 0 auto !important;
             }
 
             .ph-right .btn,
             .ph-right .btn-ref {
-                flex: 1 1 calc(50% - 4px) !important;
+                flex: 1 1 auto !important;
+                min-width: 0 !important;
                 justify-content: center !important;
-                padding: 9px 12px !important;
-                font-size: 12.5px !important;
+                padding: 7px 12px !important;
+                font-size: 11.5px !important;
                 white-space: nowrap !important;
             }
 
-            .ph-right .btn-ref.primary,
-            .ph-right .btn.primary {
-                flex: 1 1 100% !important;
+            .dash-grid {
+                grid-template-columns: 1fr !important;
+                gap: 14px !important;
+            }
+
+            .chart-card {
+                padding-bottom: 8px !important;
+            }
+
+            .chart-meta {
+                padding: 8px 14px 0 !important;
+                gap: 6px !important;
+            }
+
+            .meta-chip {
+                font-size: 10px !important;
+                padding: 3px 8px !important;
+            }
+
+            .feed {
+                max-height: 280px !important;
+                padding: 0 14px 10px !important;
+            }
+
+            .feed-item {
+                padding: 9px 0 !important;
+                gap: 8px !important;
+            }
+
+            .fi-host {
+                font-size: 12px !important;
+            }
+
+            .fi-ips {
+                font-size: 10px !important;
+                gap: 4px !important;
+            }
+
+            .fi-time {
+                font-size: 10px !important;
+            }
+
+            .hz-row {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                padding: 12px 16px !important;
+                gap: 6px 10px !important;
+            }
+
+            .hz-name {
+                flex: 1 1 auto;
+                min-width: 0;
+                font-size: 12.5px !important;
+            }
+
+            .hz-name .mono {
+                max-width: 140px;
+            }
+
+            .hz-row .pill {
+                margin-left: auto;
+            }
+
+            .hz-nums {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 2px;
+                padding-left: 17px;
+                font-size: 10.5px !important;
+            }
+
+            .hz-bar {
+                display: none !important;
+            }
+
+            .promo {
+                padding: 20px 18px !important;
+                min-height: unset !important;
+                border-radius: 14px !important;
+            }
+
+            .promo h3 {
+                font-size: 17px !important;
+                margin-bottom: 6px !important;
+            }
+
+            .promo p {
+                font-size: 12px !important;
+                line-height: 1.5 !important;
+                margin-bottom: 14px !important;
+                max-width: 100% !important;
+            }
+
+            .promo-btn {
+                width: 100% !important;
+                justify-content: center !important;
+            }
+
+            .promo-svg {
+                display: none !important;
+            }
+
+            .f-grid {
+                grid-template-columns: 1fr !important;
+                gap: 22px !important;
+                padding: 28px 16px 20px !important;
+            }
+
+            .f-brand p {
+                font-size: 12px !important;
+                margin-bottom: 10px !important;
+            }
+
+            .f-links {
+                display: grid !important;
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 4px 14px !important;
+            }
+
+            .f-links .f-head {
+                grid-column: 1 / -1;
+                margin-bottom: 6px !important;
+            }
+
+            .f-links a {
+                font-size: 12.5px !important;
+                padding: 4px 0 !important;
+            }
+
+            .f-bottom {
+                padding: 14px 16px !important;
+                flex-direction: column !important;
+                gap: 6px !important;
+                text-align: center !important;
+                font-size: 11px !important;
             }
 
             .bulkbar {
@@ -3672,16 +3888,6 @@
                 flex-shrink: 0 !important;
                 padding: 8px 12px !important;
                 font-size: 12px !important;
-            }
-
-            .hz-row {
-                grid-template-columns: 1fr auto;
-                grid-auto-rows: auto;
-                row-gap: 8px;
-            }
-
-            .hz-bar {
-                display: none;
             }
 
             .lang-seg .ic {
@@ -3762,9 +3968,23 @@
             }
         }
 
-        @media(max-width:340px) {
-            .stats {
+        @media(max-width:360px) {
+            .stats,
+            .stats-4 {
                 grid-template-columns: 1fr !important;
+            }
+            .tun-meta {
+                grid-template-columns: 1fr !important;
+            }
+            .stat-ip-card,
+            .stat-last-card {
+                grid-column: span 1 !important;
+            }
+            .nav-in {
+                gap: 6px !important;
+            }
+            .brand-t span {
+                font-size: 14px !important;
             }
         }
 

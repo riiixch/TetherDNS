@@ -121,34 +121,39 @@ const timeAgo = (dateStr: string) => {
         </div>
 
         <!-- Current IP with copy button -->
-        <div class="stat card">
-            <div class="stat-top">
-                <span class="stat-ic green">
-                    <UIcon name="i-heroicons-signal" class="w-4 h-4" />
-                </span>
-                <span class="stat-label">{{ $t('dashboard.stats_current_ip') }}</span>
+        <div class="stat card stat-ip-card">
+            <div class="stat-top flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="stat-ic green">
+                        <UIcon name="i-heroicons-signal" class="w-4 h-4" />
+                    </span>
+                    <span class="stat-label">{{ $t('dashboard.stats_current_ip') }}</span>
+                </div>
+                <button
+                    type="button"
+                    class="stat-sub copy-btn focus:outline-none flex items-center gap-1.5"
+                    :class="{ copied }"
+                    @click="copyIp"
+                >
+                    <UIcon :name="copied ? 'i-heroicons-check' : 'i-heroicons-clipboard-document'" class="w-3.5 h-3.5" />
+                    <span>{{ copied ? 'COPIED' : 'COPY IP' }}</span>
+                </button>
             </div>
             <div class="stat-ip mono truncate">{{ stats?.currentIp || '127.0.0.1' }}</div>
-            <button
-                type="button"
-                class="stat-sub copy-btn focus:outline-none flex items-center gap-1.5"
-                :class="{ copied }"
-                @click="copyIp"
-            >
-                <UIcon :name="copied ? 'i-heroicons-check' : 'i-heroicons-clipboard-document'" class="w-3.5 h-3.5" />
-                <span>{{ copied ? 'COPIED' : 'COPY IP' }}</span>
-            </button>
         </div>
 
         <!-- Last Update -->
-        <div class="stat card">
-            <div class="stat-top">
-                <span class="stat-ic cyan">
-                    <UIcon name="i-heroicons-arrow-path" class="w-4 h-4" />
-                </span>
-                <span class="stat-label">{{ $t('dashboard.stats_last_update') }}</span>
+        <div class="stat card stat-last-card">
+            <div class="stat-top flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="stat-ic cyan">
+                        <UIcon name="i-heroicons-arrow-path" class="w-4 h-4" />
+                    </span>
+                    <span class="stat-label">{{ $t('dashboard.stats_last_update') }}</span>
+                </div>
+                <div class="stat-sub text-[11px] font-mono">Success {{ stats?.recentSuccessRate ?? 100 }}%</div>
             </div>
-            <div class="stat-last">
+            <div class="stat-last flex items-center gap-2 flex-wrap">
                 <span
                     v-if="stats?.lastUpdate"
                     class="pill"
@@ -161,7 +166,6 @@ const timeAgo = (dateStr: string) => {
                     {{ timeAgo(stats.lastUpdate.time) }}
                 </span>
             </div>
-            <div class="stat-sub">Success Rate {{ stats?.recentSuccessRate ?? 100 }}%</div>
         </div>
     </section>
 </template>

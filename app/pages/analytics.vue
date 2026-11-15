@@ -111,9 +111,8 @@ const changeZone = (zoneTag: string) => {
 }
 
 const setTimeRange = (range: '24h' | '7d' | '30d') => {
-    if (timeRange.value === range) return
     timeRange.value = range
-    fetchAnalytics(false)
+    fetchAnalytics(true)
 }
 
 const toggleDemoMode = () => {
@@ -385,7 +384,7 @@ onMounted(async () => {
                         </div>
                         <div class="flex items-center justify-between p-2 rounded bg-[var(--surface2)]">
                             <span class="text-[var(--text3)]">Cloudflare Zone ID:</span>
-                            <span class="mono text-[11px] text-[var(--cyan)] truncate max-w-[200px]">{{ currentZone?.cfZoneId || '-' }}</span>
+                            <span class="mono text-[11px] text-[var(--cyan)] truncate max-w-[140px] sm:max-w-[220px]">{{ currentZone?.cfZoneId || '-' }}</span>
                         </div>
                         <div class="flex items-center justify-between p-2 rounded bg-[var(--surface2)]">
                             <span class="text-[var(--text3)]">Cache Performance:</span>

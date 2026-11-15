@@ -339,4 +339,177 @@ export class CloudflareSecurityService {
             }).catch(e => console.warn('[AuditLog] Failed to record:', e.message))
         }
     }
+
+    /**
+     * Create or Append a WAF Custom Rule to Ruleset Engine
+     */
+    static async createWafRule(
+        account: any,
+        zone: any,
+        payload: {
+            description: string
+            expression: string
+            action: string
+            enabled?: boolean
+        },
+        user: any
+    ): Promise<WafCustomRule> {
+        let rulesetId: string | null = null
+        try {
+            const entryRes = await callCloudflareApi(
+                account,
+                `/zones/${zone.cfZoneId}/rulesets/phases/http_request_firewall_custom/entrypoint`
+            )
+            if (entryRes.result?.id) {
+                rulesetId = entryRes.result.id
+            }
+        } catch (e: any) {
+            if (this.isPermissionError(e.message)) {
+                throw e
+            }
+            console.info(`[CloudflareSecurity] Entrypoint not found for zone ${zone.cfZoneId}: ${e.message}`)
+        }
+
+        let newRule: WafCustomRule
+
+        if (rulesetId) {
+            // Append rule to existing ruleset
+            const res = await callCloudflareApi(
+                account,
+                `/zones/${zone.cfZoneId}/rulesets/${rulesetId}/rules`,
+                {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        description: payload.description,
+                        expression: payload.expression,
+                        action: payload.action,
+                        enabled: payload.enabled !== false
+                    })
+                }
+            )
+
+            const resultData = res.result
+            if (resultData && Array.isArray(resultData.rules)) {
+                const created = resultData.rules.find((r: any) => r.description === payload.description && r.expression === payload.expression) || resultData.rules[resultData.rules.length - 1]
+                newRule = {
+                    id: created.id,
+                    rulesetId: resultData.id || rulesetId,
+                    description: created.description,
+                    expression: created.expression,
+                    action: created.action,
+                    enabled: created.enabled !== false,
+                    lastUpdated: created.last_updated || new Date().toISOString()
+                }
+            } else if (resultData?.id) {
+                newRule = {
+                    id: resultData.id,
+                    rulesetId: rulesetId,
+                    description: resultData.description || payload.description,
+                    expression: resultData.expression || payload.expression,
+                    action: resultData.action || payload.action,
+                    enabled: resultData.enabled !== false,
+                    lastUpdated: resultData.last_updated || new Date().toISOString()
+                }
+            } else {
+                newRule = {
+                    id: `rule_${Date.now()}`,
+                    rulesetId: rulesetId,
+                    description: payload.description,
+                    expression: payload.expression,
+                    action: payload.action as any,
+                    enabled: payload.enabled !== false,
+                    lastUpdated: new Date().toISOString()
+                }
+            }
+        } else {
+            // Initialize phase entrypoint via PUT
+            const res = await callCloudflareApi(
+                account,
+                `/zones/${zone.cfZoneId}/rulesets/phases/http_request_firewall_custom/entrypoint`,
+                {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        rules: [
+                            {
+                                description: payload.description,
+                                expression: payload.expression,
+                                action: payload.action,
+                                enabled: payload.enabled !== false
+                            }
+                        ]
+                    })
+                }
+            )
+
+            const ruleset = res.result
+            const created = ruleset?.rules?.[0]
+            newRule = {
+                id: created?.id || `rule_${Date.now()}`,
+                rulesetId: ruleset?.id,
+                description: created?.description || payload.description,
+                expression: created?.expression || payload.expression,
+                action: created?.action || payload.action,
+                enabled: created?.enabled !== false,
+                lastUpdated: created?.last_updated || new Date().toISOString()
+            }
+        }
+
+        // Audit log
+        if (user?.id) {
+            await prisma.auditLog.create({
+                data: {
+                    userId: user.id,
+                    action: 'SECURITY_WAF_ADD',
+                    target: zone.name,
+                    details: `Added WAF Rule "${payload.description}" [${payload.action.toUpperCase()}]: ${payload.expression}`
+                }
+            }).catch(e => console.warn('[AuditLog] Failed to record:', e.message))
+        }
+
+        return newRule
+    }
+
+    /**
+     * Delete a WAF Custom Rule from Ruleset Engine
+     */
+    static async deleteWafRule(
+        account: any,
+        zone: any,
+        rulesetId: string | undefined,
+        ruleId: string,
+        user: any
+    ): Promise<void> {
+        let targetRulesetId = rulesetId
+
+        // If rulesetId wasn't provided, resolve it from the entrypoint
+        if (!targetRulesetId) {
+            const entryRes = await callCloudflareApi(
+                account,
+                `/zones/${zone.cfZoneId}/rulesets/phases/http_request_firewall_custom/entrypoint`
+            )
+            targetRulesetId = entryRes.result?.id
+        }
+
+        if (!targetRulesetId) {
+            throw new Error('Ruleset ID not found for this zone')
+        }
+
+        await callCloudflareApi(
+            account,
+            `/zones/${zone.cfZoneId}/rulesets/${targetRulesetId}/rules/${ruleId}`,
+            { method: 'DELETE' }
+        )
+
+        // Audit log
+        if (user?.id) {
+            await prisma.auditLog.create({
+                data: {
+                    userId: user.id,
+                    action: 'SECURITY_WAF_DELETE',
+                    target: zone.name,
+                    details: `Deleted WAF rule "${ruleId}" from ruleset "${targetRulesetId}"`
+                }
+            }).catch(e => console.warn('[AuditLog] Failed to record:', e.message))
+        }
+    }
 }

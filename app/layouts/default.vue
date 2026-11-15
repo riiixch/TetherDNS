@@ -469,7 +469,7 @@ onUnmounted(() => {
                     <NuxtLink v-if="user" to="/audit">{{ $t('nav.audit') }}</NuxtLink>
                     <NuxtLink v-if="user" to="/settings">{{ $t('nav.settings') }}</NuxtLink>
                     <a href="https://github.com/riiixch/TetherDNS" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5">
-                        <UIcon name="i-simple-icons-github" class="w-3.5 h-3.5 opacity-70" />
+                        <UIcon name="i-simple-icons-github" class="w-3.5 h-3.5 opacity-70 me-1.5" />
                         <span>{{ $t('footer.links.repository') }}</span>
                     </a>
                 </div>

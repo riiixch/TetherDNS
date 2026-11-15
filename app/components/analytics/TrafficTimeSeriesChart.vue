@@ -43,13 +43,13 @@ const series = computed(() => [
 
 const chartOptions = computed<ApexOptions>(() => ({
     chart: {
-        id: 'cf-traffic-chart',
         toolbar: { show: false },
         animations: { enabled: true, easing: 'easeinout', speed: 600 },
         background: 'transparent',
         fontFamily: "'JetBrains Mono', 'Anuphan', sans-serif"
     },
     xaxis: {
+        type: 'category',
         categories: labels.value,
         labels: {
             style: {
@@ -128,7 +128,28 @@ const chartOptions = computed<ApexOptions>(() => ({
     markers: {
         size: 0,
         hover: { size: 5 }
-    }
+    },
+    responsive: [
+        {
+            breakpoint: 640,
+            options: {
+                chart: {
+                    height: 220
+                },
+                legend: {
+                    position: 'bottom',
+                    horizontalAlign: 'center',
+                    fontSize: '11px'
+                },
+                xaxis: {
+                    tickAmount: 4
+                },
+                yaxis: {
+                    tickAmount: 3
+                }
+            }
+        }
+    ]
 }))
 </script>
 
@@ -150,7 +171,7 @@ const chartOptions = computed<ApexOptions>(() => ({
             <span class="meta-chip">{{ $t('analytics.points') }} <b>{{ points.length }}</b></span>
         </div>
 
-        <div class="h-[320px] w-full relative px-2 pt-2">
+        <div class="min-h-[220px] sm:min-h-[280px] lg:min-h-[320px] h-[230px] sm:h-[300px] lg:h-[320px] w-full relative px-2 pt-2">
             <div v-if="loading" class="absolute inset-0 flex items-center justify-center">
                 <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 animate-spin text-[var(--text3)]" />
             </div>
@@ -160,7 +181,13 @@ const chartOptions = computed<ApexOptions>(() => ({
             </div>
             <div v-else class="h-full w-full">
                 <ClientOnly>
-                    <VueApexCharts type="area" height="300" :options="chartOptions" :series="series" />
+                    <VueApexCharts
+                        :key="`traffic-chart-${points.length}-${labels[0] || ''}-${labels[labels.length - 1] || ''}`"
+                        type="area"
+                        height="100%"
+                        :options="chartOptions"
+                        :series="series"
+                    />
                 </ClientOnly>
             </div>
         </div>

@@ -6,10 +6,11 @@ import type {
     IpAccessRule,
     AccessRuleMode,
     AccessRuleTarget,
-    WafCustomRule
+    WafCustomRule,
+    WafPreset
 } from '~~/types/security'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 definePageMeta({ layout: 'default' })
 
 const route = useRoute()
@@ -45,6 +46,12 @@ const addIpLoading = ref(false)
 const wafRules = ref<WafCustomRule[]>([])
 const wafRulesLoading = ref(false)
 const togglingWafId = ref<string | null>(null)
+const isWafPresetsModalOpen = ref(false)
+const isAddWafModalOpen = ref(false)
+const customizingWafRule = ref<Partial<WafCustomRule> | null>(null)
+const applyingPresetId = ref<string | null>(null)
+const deletingWafId = ref<string | null>(null)
+const addWafLoading = ref(false)
 
 // Modals State
 const isAddModalOpen = ref(false)
@@ -482,6 +489,109 @@ const handleToggleWafRule = async (rule: WafCustomRule, nextState: boolean) => {
     }
 }
 
+const handleOpenAddWafModal = () => {
+    customizingWafRule.value = null
+    isAddWafModalOpen.value = true
+}
+
+const handleApplyWafPreset = async (preset: WafPreset) => {
+    applyingPresetId.value = preset.id
+    try {
+        const ruleTitle = (locale.value === 'th' && preset.titleTh) ? preset.titleTh : preset.title
+        const res = await $fetch<any>(`/api/zones/${resolvedCfZoneId.value}/security/waf-rules`, {
+            method: 'POST',
+            body: {
+                description: ruleTitle,
+                expression: preset.expression,
+                action: preset.action,
+                enabled: true
+            }
+        })
+        if (res.success && res.data) {
+            wafRules.value.push(res.data)
+            toast.add({
+                title: t('common.success'),
+                description: t('waf.rule_created_success'),
+                color: 'success'
+            })
+            isWafPresetsModalOpen.value = false
+        }
+    } catch (e: any) {
+        toast.add({
+            title: t('common.failed'),
+            description: e.data?.statusMessage || e.data?.message || e.message,
+            color: 'error'
+        })
+    } finally {
+        applyingPresetId.value = null
+    }
+}
+
+const handleCustomizeWafPreset = (preset: WafPreset) => {
+    const ruleTitle = (locale.value === 'th' && preset.titleTh) ? preset.titleTh : preset.title
+    customizingWafRule.value = {
+        description: ruleTitle,
+        expression: preset.expression,
+        action: preset.action,
+        enabled: true
+    }
+    isWafPresetsModalOpen.value = false
+    isAddWafModalOpen.value = true
+}
+
+const handleAddWafRule = async (payload: { description: string; expression: string; action: string; enabled: boolean }) => {
+    addWafLoading.value = true
+    try {
+        const res = await $fetch<any>(`/api/zones/${resolvedCfZoneId.value}/security/waf-rules`, {
+            method: 'POST',
+            body: payload
+        })
+        if (res.success && res.data) {
+            wafRules.value.push(res.data)
+            toast.add({
+                title: t('common.success'),
+                description: t('waf.rule_created_success'),
+                color: 'success'
+            })
+            isAddWafModalOpen.value = false
+            customizingWafRule.value = null
+        }
+    } catch (e: any) {
+        toast.add({
+            title: t('common.failed'),
+            description: e.data?.statusMessage || e.data?.message || e.message,
+            color: 'error'
+        })
+    } finally {
+        addWafLoading.value = false
+    }
+}
+
+const handleDeleteWafRule = async (rule: WafCustomRule) => {
+    deletingWafId.value = rule.id
+    try {
+        const res = await $fetch<any>(`/api/zones/${resolvedCfZoneId.value}/security/waf-rules/${rule.id}?rulesetId=${rule.rulesetId || ''}`, {
+            method: 'DELETE'
+        })
+        if (res.success) {
+            wafRules.value = wafRules.value.filter(r => r.id !== rule.id)
+            toast.add({
+                title: t('common.success'),
+                description: t('waf.rule_deleted_success'),
+                color: 'success'
+            })
+        }
+    } catch (e: any) {
+        toast.add({
+            title: t('common.failed'),
+            description: e.data?.statusMessage || e.data?.message || e.message,
+            color: 'error'
+        })
+    } finally {
+        deletingWafId.value = null
+    }
+}
+
 watch(() => route.params.id, async (newId) => {
     if (newId) {
         resolvedCfZoneId.value = newId as string
@@ -587,7 +697,7 @@ onMounted(async () => {
         <div class="flex items-center gap-2 border-b border-[var(--border)] pb-3">
             <button
                 type="button"
-                class="px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all border"
+                class="flex-1 sm:flex-initial justify-center px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all border"
                 :class="activeTab === 'records'
                     ? 'bg-[var(--surface2)] text-[var(--green)] border-[var(--green)]/40 shadow-[0_0_12px_rgba(18,224,138,0.15)] ring-1 ring-[var(--green)]/20'
                     : 'text-[var(--text2)] border-transparent hover:text-[var(--text)] hover:bg-[var(--surface2)]'"
@@ -602,7 +712,7 @@ onMounted(async () => {
 
             <button
                 type="button"
-                class="px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all border relative"
+                class="flex-1 sm:flex-initial justify-center px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all border relative"
                 :class="activeTab === 'security'
                     ? 'bg-[var(--surface2)] text-[var(--danger)] border-red-500/40 shadow-[0_0_12px_rgba(251,94,122,0.15)] ring-1 ring-red-500/20'
                     : 'text-[var(--text2)] border-transparent hover:text-[var(--text)] hover:bg-[var(--surface2)]'"
@@ -1054,10 +1164,34 @@ onMounted(async () => {
                 :rules="wafRules"
                 :loading="wafRulesLoading"
                 :toggling-id="togglingWafId"
+                :deleting-id="deletingWafId"
                 @toggle-rule="handleToggleWafRule"
+                @delete-rule="handleDeleteWafRule"
+                @add-rule="handleOpenAddWafModal"
+                @open-presets="isWafPresetsModalOpen = true"
             />
         </div>
         <!-- END TAB 2: SECURITY & WAF -->
+
+        <!-- WAF Presets Modal -->
+        <SecurityWafPresetsModal
+            :is-open="isWafPresetsModalOpen"
+            :existing-rules="wafRules"
+            :applying-id="applyingPresetId"
+            @close="isWafPresetsModalOpen = false"
+            @apply="handleApplyWafPreset"
+            @customize="handleCustomizeWafPreset"
+        />
+
+        <!-- Add / Customize WAF Rule Modal -->
+        <SecurityAddWafRuleModal
+            :is-open="isAddWafModalOpen"
+            :loading="addWafLoading"
+            :initial-data="customizingWafRule"
+            @close="isAddWafModalOpen = false"
+            @submit="handleAddWafRule"
+            @open-presets="isWafPresetsModalOpen = true; isAddWafModalOpen = false"
+        />
 
         <!-- Add IP Rule Modal -->
         <SecurityAddIpRuleModal

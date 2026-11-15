@@ -121,21 +121,30 @@ export class CloudflareAnalyticsService {
         const sinceIso = fromDate.toISOString()
         const untilIso = toDate.toISOString()
 
+        // Cloudflare httpRequestsAdaptiveGroups has a strict hard limit of maxDuration: 2592000s (4w2d / 30 days)
+        // If the datetime range exceeds 2592000s even by 1 millisecond, Cloudflare rejects the entire query.
+        // We safely clamp adaptive groups duration to 2,590,000s (29d 23h 40m) for 30d queries to stay strictly within quota.
+        const maxAdaptiveMs = 2590000 * 1000
+        const adaptiveMs = isHourly ? 24 * 3600 * 1000 : (timeRange === '7d' ? 7 * 86400 * 1000 : maxAdaptiveMs)
+        const adaptiveSinceIso = new Date(toDate.getTime() - adaptiveMs).toISOString()
+
         let analyticsData: ZoneAnalyticsData
 
         // 3. Query Cloudflare GraphQL Analytics API (Cloudflare has sunsetted the legacy REST dashboard API)
         try {
-            analyticsData = await this.queryGraphQL(token, cfZoneId, sinceIso, untilIso, isHourly, timeRange)
+            analyticsData = await this.queryGraphQL(token, cfZoneId, sinceIso, untilIso, adaptiveSinceIso, isHourly, timeRange)
+            // Cache successful result only
+            cache.set(cacheKey, { timestamp: now, data: analyticsData })
         } catch (gqlErr: any) {
             if (this.isPermissionError(gqlErr.message)) {
                 throw new CloudflarePermissionError(gqlErr.message, 'Zone > Analytics > Read')
             }
             console.warn(`[Cloudflare Analytics] GraphQL query failed (${gqlErr.message}). Returning empty baseline analytics.`)
+            // Evict stale or failed cache entry so next user request can retry cleanly
+            cache.delete(cacheKey)
             analyticsData = this.generateEmptyAnalytics(cfZoneId, timeRange)
         }
 
-        // Cache result
-        cache.set(cacheKey, { timestamp: now, data: analyticsData })
         return analyticsData
     }
 
@@ -145,54 +154,110 @@ export class CloudflareAnalyticsService {
     private static async queryGraphQL(
         token: string,
         zoneTag: string,
-        since: string,
-        until: string,
+        sinceIso: string,
+        untilIso: string,
+        adaptiveSinceIso: string,
         isHourly: boolean,
         timeRange: '24h' | '7d' | '30d'
     ): Promise<ZoneAnalyticsData> {
         const groupType = isHourly ? 'httpRequests1hGroups' : 'httpRequests1dGroups'
 
-        const query = `
-        query ZoneAnalytics($zoneTag: String!, $since: String!, $until: String!) {
-          viewer {
-            zones(filter: { zoneTag: $zoneTag }) {
-              ${groupType}(
-                limit: 1000
-                filter: { datetime_geq: $since, datetime_leq: $until }
-                orderBy: [datetime_ASC]
-              ) {
-                dimensions {
-                  datetime
-                }
-                sum {
-                  requests
-                  cachedRequests
-                  bytes
-                  cachedBytes
-                  threats
-                  responseStatusMap {
-                    edgeResponseStatus
-                    requests
+        let query: string
+        let variables: Record<string, any>
+
+        if (isHourly) {
+            query = `
+            query ZoneAnalyticsHourly($zoneTag: String!, $since: String!, $until: String!, $adaptiveSince: String!) {
+              viewer {
+                zones(filter: { zoneTag: $zoneTag }) {
+                  httpRequests1hGroups(
+                    limit: 1000
+                    filter: { datetime_geq: $since, datetime_leq: $until }
+                    orderBy: [datetime_ASC]
+                  ) {
+                    dimensions {
+                      datetime
+                    }
+                    sum {
+                      requests
+                      cachedRequests
+                      bytes
+                      cachedBytes
+                      threats
+                      responseStatusMap {
+                        edgeResponseStatus
+                        requests
+                      }
+                    }
+                    uniq {
+                      uniques
+                    }
                   }
-                }
-                uniq {
-                  uniques
-                }
-              }
-              httpRequestsAdaptiveGroups(
-                limit: 10
-                filter: { datetime_geq: $since, datetime_leq: $until }
-                orderBy: [count_DESC]
-              ) {
-                count
-                dimensions {
-                  clientCountryName
+                  httpRequestsAdaptiveGroups(
+                    limit: 10
+                    filter: { datetime_geq: $adaptiveSince, datetime_leq: $until }
+                    orderBy: [count_DESC]
+                  ) {
+                    count
+                    dimensions {
+                      clientCountryName
+                    }
+                  }
                 }
               }
             }
-          }
+            `
+            variables = { zoneTag, since: sinceIso, until: untilIso, adaptiveSince: adaptiveSinceIso }
+        } else {
+            // For 7d and 30d (daily aggregation):
+            // Cloudflare httpRequests1dGroups uses `date_geq` / `date_leq` with "YYYY-MM-DD" and dimension `date`
+            // while httpRequestsAdaptiveGroups accepts ISO datetime timestamps clamped to <= 2592000s
+            const sinceDate = sinceIso.split('T')[0]
+            const untilDate = untilIso.split('T')[0]
+
+            query = `
+            query ZoneAnalyticsDaily($zoneTag: String!, $adaptiveSince: String!, $untilIso: String!) {
+              viewer {
+                zones(filter: { zoneTag: $zoneTag }) {
+                  httpRequests1dGroups(
+                    limit: 1000
+                    filter: { date_geq: "${sinceDate}", date_leq: "${untilDate}" }
+                    orderBy: [date_ASC]
+                  ) {
+                    dimensions {
+                      date
+                    }
+                    sum {
+                      requests
+                      cachedRequests
+                      bytes
+                      cachedBytes
+                      threats
+                      responseStatusMap {
+                        edgeResponseStatus
+                        requests
+                      }
+                    }
+                    uniq {
+                      uniques
+                    }
+                  }
+                  httpRequestsAdaptiveGroups(
+                    limit: 10
+                    filter: { datetime_geq: $adaptiveSince, datetime_leq: $untilIso }
+                    orderBy: [count_DESC]
+                  ) {
+                    count
+                    dimensions {
+                      clientCountryName
+                    }
+                  }
+                }
+              }
+            }
+            `
+            variables = { zoneTag, adaptiveSince: adaptiveSinceIso, untilIso }
         }
-        `
 
         const response = await fetch('https://api.cloudflare.com/client/v4/graphql', {
             method: 'POST',
@@ -202,23 +267,75 @@ export class CloudflareAnalyticsService {
             },
             body: JSON.stringify({
                 query,
-                variables: { zoneTag, since, until }
+                variables
             })
         })
 
         const resJson: any = await response.json()
-        if (!response.ok || resJson.errors?.length) {
-            const errDetail = resJson.errors?.[0]?.message || response.statusText
-            throw new Error(`Cloudflare GraphQL Error: ${errDetail}`)
+        if (!response.ok) {
+            throw new Error(`Cloudflare GraphQL Error: ${response.statusText}`)
         }
 
         const zoneData = resJson.data?.viewer?.zones?.[0]
+        const rawGroups = zoneData?.[groupType] || []
+        const countryGroups = zoneData?.httpRequestsAdaptiveGroups || []
+
+        // If the primary traffic dataset is empty AND there are GraphQL errors, throw to trigger fallback
+        if (!rawGroups.length && resJson.errors?.length) {
+            const errDetail = resJson.errors?.[0]?.message || 'GraphQL Query Failed'
+            console.error('[Cloudflare Analytics] GraphQL error response:', JSON.stringify(resJson.errors || resJson))
+            throw new Error(`Cloudflare GraphQL Error: ${errDetail}`)
+        }
+
+        if (resJson.errors?.length) {
+            console.warn('[Cloudflare Analytics] Non-fatal GraphQL warning:', resJson.errors?.[0]?.message)
+        }
+
         if (!zoneData) {
             throw new Error('Zone not found in GraphQL response')
         }
 
-        const groups = zoneData[groupType] || []
-        const countryGroups = zoneData.httpRequestsAdaptiveGroups || []
+        // If daily aggregation, fill in missing calendar days with 0s so the chart timeline is always complete and continuous
+        let groups = rawGroups
+        if (!isHourly) {
+            const dataByDate = new Map<string, any>()
+            for (const g of rawGroups) {
+                if (g.dimensions?.date) {
+                    dataByDate.set(g.dimensions.date, g)
+                }
+            }
+
+            const sinceDate = sinceIso.split('T')[0]!
+            const untilDate = untilIso.split('T')[0]!
+            const [sy = 1970, sm = 1, sd = 1] = sinceDate.split('-').map(Number)
+            const [ey = 1970, em = 1, ed = 1] = untilDate.split('-').map(Number)
+
+            const cur = new Date(Date.UTC(sy, sm - 1, sd))
+            const end = new Date(Date.UTC(ey, em - 1, ed))
+
+            const filled: any[] = []
+            while (cur <= end) {
+                const dateKey = cur.toISOString().split('T')[0]!
+                if (dataByDate.has(dateKey)) {
+                    filled.push(dataByDate.get(dateKey))
+                } else {
+                    filled.push({
+                        dimensions: { date: dateKey },
+                        sum: {
+                            requests: 0,
+                            cachedRequests: 0,
+                            bytes: 0,
+                            cachedBytes: 0,
+                            threats: 0,
+                            responseStatusMap: []
+                        },
+                        uniq: { uniques: 0 }
+                    })
+                }
+                cur.setUTCDate(cur.getUTCDate() + 1)
+            }
+            groups = filled
+        }
 
         // Aggregates
         let totalReqs = 0
@@ -231,12 +348,22 @@ export class CloudflareAnalyticsService {
         const statusCounts = { '2xx': 0, '3xx': 0, '4xx': 0, '5xx': 0 }
 
         const timeSeries = groups.map((g: any) => {
-            const d = new Date(g.dimensions.datetime)
-            const req = g.sum.requests || 0
-            const cReq = g.sum.cachedRequests || 0
-            const b = g.sum.bytes || 0
-            const cB = g.sum.cachedBytes || 0
-            const thr = g.sum.threats || 0
+            const rawTime = g.dimensions?.datetime || g.dimensions?.date
+            let d: Date
+            if (g.dimensions?.datetime) {
+                d = new Date(g.dimensions.datetime)
+            } else if (g.dimensions?.date) {
+                const [y = '1970', m = '1', day = '1'] = String(g.dimensions.date).split('-')
+                d = new Date(Number(y), Number(m) - 1, Number(day))
+            } else {
+                d = new Date()
+            }
+
+            const req = g.sum?.requests || 0
+            const cReq = g.sum?.cachedRequests || 0
+            const b = g.sum?.bytes || 0
+            const cB = g.sum?.cachedBytes || 0
+            const thr = g.sum?.threats || 0
 
             totalReqs += req
             cachedReqs += cReq
@@ -246,7 +373,7 @@ export class CloudflareAnalyticsService {
             totalUniques += (g.uniq?.uniques || 0)
 
             // Parse response statuses
-            if (Array.isArray(g.sum.responseStatusMap)) {
+            if (Array.isArray(g.sum?.responseStatusMap)) {
                 for (const item of g.sum.responseStatusMap) {
                     const st = item.edgeResponseStatus
                     const count = item.requests || 0
@@ -262,7 +389,7 @@ export class CloudflareAnalyticsService {
                 : d.toLocaleDateString([], { month: 'short', day: 'numeric' })
 
             return {
-                timestamp: g.dimensions.datetime,
+                timestamp: rawTime || d.toISOString(),
                 timeLabel,
                 requests: req,
                 cached: cReq,
@@ -306,8 +433,8 @@ export class CloudflareAnalyticsService {
         return {
             zoneId: zoneTag,
             timeRange,
-            from: since,
-            to: until,
+            from: sinceIso,
+            to: untilIso,
             cachedAt: new Date().toISOString(),
             summary: {
                 totalRequests: totalReqs,
@@ -358,10 +485,11 @@ export class CloudflareAnalyticsService {
             })
         }
 
+        const rangeMs = isHourly ? 24 * 3600 * 1000 : (timeRange === '7d' ? 7 : 30) * 86400 * 1000
         return {
             zoneId,
             timeRange,
-            from: new Date(now.getTime() - (isHourly ? 24 * 3600 * 1000 : 30 * 86400 * 1000)).toISOString(),
+            from: new Date(now.getTime() - rangeMs).toISOString(),
             to: now.toISOString(),
             cachedAt: now.toISOString(),
             summary: {
@@ -437,10 +565,11 @@ export class CloudflareAnalyticsService {
         const bytesSavedRatio = Math.round((cachedBytes / totalBytes) * 1000) / 10
         const threatRatio = Math.round((totalThreats / totalReqs) * 1000) / 10
 
+        const rangeMs = isHourly ? 24 * 3600 * 1000 : (timeRange === '7d' ? 7 : 30) * 86400 * 1000
         return {
             zoneId,
             timeRange,
-            from: new Date(now.getTime() - (isHourly ? 24 * 3600 * 1000 : 30 * 86400 * 1000)).toISOString(),
+            from: new Date(now.getTime() - rangeMs).toISOString(),
             to: now.toISOString(),
             cachedAt: now.toISOString(),
             summary: {

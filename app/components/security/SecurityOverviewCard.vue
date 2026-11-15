@@ -155,9 +155,12 @@ const toggleBrowserCheck = () => {
                     :key="lvl.value"
                     type="button"
                     class="p-3 rounded-xl border text-left transition-all relative flex flex-col justify-between gap-2"
-                    :class="selectedLevel === lvl.value
-                        ? 'bg-[var(--surface2)] border-[var(--green)] shadow-[0_0_15px_rgba(18,224,138,0.15)] ring-1 ring-[var(--green)]'
-                        : 'bg-[var(--surface)] border-[var(--border)] hover:border-[var(--border2)] opacity-80 hover:opacity-100'"
+                    :class="[
+                        lvl.value === 'under_attack' ? 'col-span-2 sm:col-span-1' : '',
+                        selectedLevel === lvl.value
+                            ? 'bg-[var(--surface2)] border-[var(--green)] shadow-[0_0_15px_rgba(18,224,138,0.15)] ring-1 ring-[var(--green)]'
+                            : 'bg-[var(--surface)] border-[var(--border)] hover:border-[var(--border2)] opacity-80 hover:opacity-100'
+                    ]"
                     :disabled="loading || updating"
                     @click="handleLevelChange(lvl.value)"
                 >
@@ -190,7 +193,7 @@ const toggleBrowserCheck = () => {
                     </div>
                     <div>
                         <select
-                            class="w-full sm:w-64 px-3 py-1.5 rounded-lg text-xs bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] focus:border-[var(--green)] outline-none"
+                            class="w-full px-3 py-2 rounded-lg text-xs bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] focus:border-[var(--green)] outline-none"
                             :value="settings?.challengeTtl ?? 1800"
                             :disabled="loading || updating"
                             @change="handleTtlChange"
