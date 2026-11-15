@@ -1,7 +1,6 @@
 services:
   tetherdns:
-    build: .
-    image: tetherdns:latest
+    image: docker-private.riiixch.com/tetherdns:latest
     container_name: tetherdns
     restart: always
     volumes:
@@ -14,4 +13,3 @@ services:
       - TZ=Asia/Bangkok
     ports:
       - "3000:3000"
-    command: sh -c "./node_modules/.bin/prisma db push --accept-data-loss && node .output/server/index.mjs"
