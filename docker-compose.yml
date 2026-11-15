@@ -1,6 +1,6 @@
 services:
   tetherdns:
-    image: docker-private.riiixch.com/tetherdns:latest
+    image: tetherdns:latest
     container_name: tetherdns
     restart: always
     volumes:
